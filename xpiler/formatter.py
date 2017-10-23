@@ -12,10 +12,10 @@ class Formatter:
         raise NotImplementedError()
 
 class FormatterContext:
-    def format_cell(self, cell_def):
+    def format_cell(self, definition):
         raise NotImplementedError()
 
-    def format_consts(self, consts__def):
+    def format_consts(self, definition):
         raise NotImplementedError()
 
     def format_reference(self, reference):

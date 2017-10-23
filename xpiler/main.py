@@ -6,16 +6,15 @@ import sys
 
 from options import Options
 
-from xml_handler import XmlHandler
-from python3_formatter import Python3Formatter
-
 def _init_handlers():
     result = {}
+    from xml_handler import XmlHandler
     result['.xml'] = XmlHandler()
     return result
 
 def _init_formatters():
     result = {}
+    from python3_formatter import Python3Formatter
     result['py'] = Python3Formatter()
     return result
 
@@ -84,9 +83,11 @@ class Main:
         if (self.error or unit is None):
             return
 
+        unit.basename = basename
+
         if ((out_dir and len(out_dir) != 0) and not os.path.exists(out_dir)):
             os.makedirs(out_dir)
 
-        result = formatter.format(unit, out_dir)
+        result = self.formatter.format(unit, out_dir)
         if (result == False):
             self.error = True

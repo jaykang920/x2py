@@ -2,7 +2,7 @@
 # See the file LICENSE for details.
 
 class Cell(object):
-    """Common base class for all custom types."""
+    """ Common base class for all custom types. """
 
     class Tag:
         def __init__(self, base, runtime_type, num_props):

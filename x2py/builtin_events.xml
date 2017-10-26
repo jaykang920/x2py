@@ -1,6 +1,6 @@
-<x2 namespace="x2py">
+<x2 namespace="x2py" builtin="true">
   <references>
-    <file target="event"/>
+    <file target=".event"/>
   </references>
   <definitions>
     <consts name="BuiltinEventType">

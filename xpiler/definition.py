@@ -2,13 +2,14 @@
 # See the file LICENSE for details.
 
 class Unit:
-    """Represents a single definition unit."""
+    """ Represents a single definition unit. """
 
     def __init__(self):
         self.basename = ""
         self.namespace = ""
         self.references = []
         self.definitions = []
+        self.is_builtin = False
 
 class Reference:
     def __init__(self, target=""):

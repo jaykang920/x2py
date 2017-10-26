@@ -24,6 +24,8 @@ class XmlHandler(Handler):
 
         unit = Unit()
         unit.namespace = root.attrib['namespace']
+        if ('builtin' in root.attrib and root.attrib['builtin'].endswith('rue')):
+            unit.is_builtin = True
 
         for node in root:
             if (node.tag == 'references'):
@@ -102,9 +104,8 @@ class XmlHandler(Handler):
             cell.id = id
         cell.base = node.attrib['base'] if ('base' in node.attrib) else ''
 
-        if ('local' in node.attrib):
-            if node.attrib['local'].endswith('rue'):
-                cell.local = True
+        if ('local' in node.attrib and node.attrib['local'].endswith('rue')):
+            cell.local = True
 
         for child in node:
             if (child.tag == 'property'):

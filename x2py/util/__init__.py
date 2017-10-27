@@ -1,1 +1,1 @@
-from .trace import *
+from .trace import TraceLevel, Trace

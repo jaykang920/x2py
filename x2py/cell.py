@@ -1,6 +1,8 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+from .fingerprint import Fingerprint
+
 class Cell(object):
     """ Common base class for all custom types. """
 
@@ -16,5 +18,4 @@ class Cell(object):
     tag = Tag(None, 'Cell', 0)
 
     def __init__(self, length):
-        # firngerprint(length)
-        pass
+        self.fingerprint = Fingerprint(length)

@@ -10,7 +10,7 @@ from .util.rwlock import ReadLock, WriteLock, ReadWriteLock
 def binary_search(a, x):
     index = bisect(a, x)
     if (index and a[index - 1] == x):
-        return index - 1  # index of the existing
+        return index - 1  # right-most index of the found
     else:
         return ~index  # insertion point
 
@@ -36,12 +36,37 @@ class Binder:
 
         def add(type_id, fingerprint):
             if type_id in self.map:
-                slots = map[type_id]
+                slots = self.map[type_id]
             else:
                 slots = []
-                map[type_id] = slots
+                self.map[type_id] = slots
+            slot = Slot(fingerprint)
+            index = binary_search(slots, slot)
+            if (index >= 0):
+                slots[index].add_ref()
+            else:
+                index = ~index
+                slots.insert(index, slot)
+
+        def get(type_id):
+            return self.map[type_id] if type_id in self.map else None
+
+        def remove(type_id, fingerprint):
+            if type_id not in self.map:
+                return
+            slots = self.map[type_id]
+            index = binary_search(slots, Slot(fingerprint))
+            if index < 0:
+                return
+            if (slots[index].remove_ref() == 0):
+                del slots[index]
+            if len(slots) == 0:
+                del self.map[type_id]
 
     def __init__(self):
         self.map = {}
         self.filter = Binder._Filter()
         self.rwlock = ReadWriteLock()
+
+    def bind(event, handler):
+        pass

@@ -55,8 +55,19 @@ def test_accessors():
         fp.wipe(i)
         assert fp.get(i) == False
 
-def test_eq():
-    # __eq__
+def test_equivalence():
+    fp1 = Fingerprint(33)
+    fp2 = Fingerprint(33)
+    assert fp1.equivalent(fp1)
+    assert fp1.equivalent(fp2)
+    assert fp2.equivalent(fp1)
+    fp1.touch(32)
+    fp2.touch(31)
+    fp2.touch(32)
+    assert fp1.equivalent(fp2)
+    assert not fp2.equivalent(fp1)
+
+def test_eq_():
     fp1 = Fingerprint(33)
     fp2 = Fingerprint(33)
     assert fp1 == fp1
@@ -66,8 +77,14 @@ def test_eq():
     assert not (fp1 == fp2)
     assert fp1 != fp2
 
-def test_lt():
-    # __lt__
+def test_hash_():
+    fp1 = Fingerprint(33)
+    fp2 = Fingerprint(33)
+    assert fp1.__hash__() == fp2.__hash__()
+    fp2.touch(32)
+    assert fp1.__hash__() != fp2.__hash__()
+
+def test_lt_():
     fp1 = Fingerprint(32)
     fp2 = Fingerprint(33)
     fp3 = Fingerprint(33)

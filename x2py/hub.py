@@ -83,6 +83,7 @@ class Hub:
             with self.rwlock.rlock():
                 snapshot = self.cases[:]
             for case in snapshot:
+                Trace.trace("hub: setting up case '{}'", type(case).__name__)
                 case.setup()
 
         def teardown(self):
@@ -90,6 +91,7 @@ class Hub:
                 snapshot = self.cases[::-1]
             for case in snapshot:
                 try:
+                    Trace.trace("hub: tearing down case '{}'", type(case).__name__)
                     case.teardown()
                 except:
                     pass
@@ -98,6 +100,7 @@ class Hub:
             with self.rwlock.rlock():
                 snapshot = self.flows[:]
             for flow in snapshot:
+                Trace.trace("hub: starting flow '{}'", flow.name)
                 flow.start()
 
         def stop_flows(self):
@@ -105,6 +108,7 @@ class Hub:
                 snapshot = self.flows[::-1]
             for flow in snapshot:
                 try:
+                    Trace.trace("hub: stopping flow '{}'", flow.name)
                     flow.stop()
                 except:
                     pass

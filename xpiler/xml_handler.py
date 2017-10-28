@@ -23,7 +23,8 @@ class XmlHandler(Handler):
             return True, unit
 
         unit = Unit()
-        unit.namespace = root.attrib['namespace']
+        if 'namespace' in root.attrib:
+            unit.namespace = root.attrib['namespace']
         if ('builtin' in root.attrib and root.attrib['builtin'].endswith('rue')):
             unit.is_builtin = True
 

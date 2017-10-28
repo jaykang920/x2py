@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<x2>
+  <definitions>
+    <consts name="MyConsts">
+      <const name="MyConst1">1</const>
+      <const name="MyConst2">2</const>
+    </consts>
+
+    <cell name="MyCell1">
+      <property name="Foo" type="int32"/>
+    </cell>
+    <cell name="MyCell2" base="MyCell1">
+      <property name="Bar" type="string"/>
+    </cell>
+
+    <event name="MyEvent1" id="1">
+      <property name="Foo" type="string"/>
+    </event>
+    <event name="MyEvent2" id="2" base="MyEvent1">
+      <property name="Bar" type="string"/>
+    </event>
+  </definitions>
+</x2>

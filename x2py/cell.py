@@ -2,6 +2,7 @@
 # See the file LICENSE for details.
 
 from .fingerprint import Fingerprint
+from .util.misc import HASH_SEED, hash_update
 
 class Cell(object):
     """ Common base class for all custom types. """
@@ -19,3 +20,20 @@ class Cell(object):
 
     def __init__(self, length):
         self.fingerprint = Fingerprint(length)
+
+    def equivalent(self, other):
+        if self is other:
+            return True
+        if not isinstance(self, type(other)):
+            return False
+        return True
+
+    def __eq__(self, other):
+        if self is other:
+            return True
+        if type(self) != type(other):
+            return False
+        return True
+
+    def __hash__(self):
+        return HASH_SEED

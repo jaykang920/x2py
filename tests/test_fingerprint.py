@@ -64,8 +64,8 @@ def test_equivalence():
     fp1.touch(32)
     fp2.touch(31)
     fp2.touch(32)
-    assert fp1.equivalent(fp2)
-    assert not fp2.equivalent(fp1)
+    assert fp2.equivalent(fp1)
+    assert not fp1.equivalent(fp2)
 
 def test_eq_():
     fp1 = Fingerprint(33)

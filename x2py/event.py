@@ -20,17 +20,42 @@ class Event(Cell):
     def type_id(self):
         return Event.tag.type_id
 
+    def type_tag(self):
+        return Event.tag
+
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        return True
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        return value
+
+    def _hash_code(self, fingerprint, type_id):
+        value = self.hash_code(fingerprint)
+        value = hash_update(value, -1)  # separator
+        value = hash_update(value, type_id)
+        return value
 
     def __hash__(self):
-        value = super().__hash__()
-        value = hash_update(value, self.type_id())
-        return value
+        return self._hash_code(self.fingerprint, self.type_id())
+
+class EventProxy:
+    """ Supports dictionary search by equivalence. """
+
+    def __init__(self):
+        self.event = None
+        self.fingerprint = None
+        self.type_id = 0
+
+    def equals(self, other):
+        return self.event.equivalent(other)
+
+    def __hash__(self):
+        return self.event._hash_code(self.fingerprint, self.type_id)

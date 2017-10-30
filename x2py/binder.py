@@ -3,6 +3,7 @@
 
 from bisect import bisect
 
+from .event import Event, EventProxy
 from .fingerprint import Fingerprint
 from .util.atomic import AtomicInt
 from .util.rwlock import ReadLock, WriteLock, ReadWriteLock
@@ -34,7 +35,7 @@ class Binder:
         def __init__(self):
             self.map = {}
 
-        def add(type_id, fingerprint):
+        def add(self, type_id, fingerprint):
             if type_id in self.map:
                 slots = self.map[type_id]
             else:
@@ -48,10 +49,10 @@ class Binder:
                 index = ~index
                 slots.insert(index, slot)
 
-        def get(type_id):
-            return self.map[type_id] if type_id in self.map else None
+        def get(self, type_id):
+            return self.map.get(type_id)
 
-        def remove(type_id, fingerprint):
+        def remove(self, type_id, fingerprint):
             if type_id not in self.map:
                 return
             slots = self.map[type_id]
@@ -64,9 +65,50 @@ class Binder:
                 del self.map[type_id]
 
     def __init__(self):
-        self.map = {}
+        self.map = {}  # event => list of handlers
         self.filter = Binder._Filter()
         self.rwlock = ReadWriteLock()
 
-    def bind(event, handler):
-        pass
+    def bind(self, event, handler):
+        with self.rwlock.wlock():
+            handlers = self.map.get(event)
+            if handlers is None:
+                handlers = []
+                self.map[event] = handlers
+
+            if handler not in handlers:
+                handlers.append(handler)
+                self.filter.add(event.type_id(), event.fingerprint)
+                # event sink marking
+
+    def unbind(self, event, handler):
+        with self.rwlock.wlock():
+            handlers = self.map.get(event)
+            if handler is None:
+                return
+            if handler not in handlers:
+                return
+            handlers.remove(handler)
+            if len(handlers) == 0:
+                del self.map[event]
+            self.filter.remove(event.type_id(), event.fingerprint)
+
+    def build_handler_chain(self, event, event_proxy, handler_chain):
+        event_proxy.event = event
+        tag = event.type_tag()
+        fingerprint = event.fingerprint
+        with self.rwlock.rlock():
+            while tag is not None:
+                type_id = tag.type_id
+                event_proxy.type_id = type_id
+                slots = self.filter.get(type_id)
+                if slots is not None:
+                    for slot in slots:
+                        if fingerprint.equivalent(slot):
+                            event_proxy.fingerprint = slot
+
+                            handlers = self.map.get(event_proxy)
+                            if handlers is not None:
+                                handler_chain += handlers
+                tag = tag.base
+

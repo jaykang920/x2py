@@ -3,6 +3,7 @@
 
 from .event_based_flow import EventBasedFlow
 from ..builtin_events import *
+from ..flow import Flow
 from ..util.trace import Trace
 
 class ThreadlessFlow(EventBasedFlow):
@@ -14,6 +15,13 @@ class ThreadlessFlow(EventBasedFlow):
         with self._lock:
             if self.running:
                 return
+
+            self.cases.setup(self)
+
+            Flow.thread_local.current = self
+            Flow.thread_local.event_proxy = EventProxy()
+            Flow.thread_local.handler_chain = []
+
             self.running = True
             self.queue.enqueue(FlowStart())
 
@@ -23,8 +31,15 @@ class ThreadlessFlow(EventBasedFlow):
         with self._lock:
             if not self.running:
                 return
+
             self.queue.close(FlowStop())
             self.running = False
+
+            Flow.thread_local.handler_chain = None
+            Flow.thread_local.event_proxy = None
+            Flow.thread_local.current = None
+
+            self.cases.teardown(self)
 
         Trace.debug("stopped flow '{}'", self.name)
 

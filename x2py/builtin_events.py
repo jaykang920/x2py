@@ -10,7 +10,7 @@ class BuiltinEventType:
     TIMEOUT_EVENT = -4
 
 class MyCell(Cell):
-    tag = Cell.Tag(Cell.tag, 'MyCell', 1)
+    tag = Cell.Tag(None, 'MyCell', 1)
 
     def __init__(self, length=0):
         super().__init__(MyCell.tag.num_props + length)
@@ -30,6 +30,13 @@ class MyCell(Cell):
     def type_tag(self):
         return MyCell.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        if self._foo != other._foo:
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
@@ -39,16 +46,12 @@ class MyCell(Cell):
                 return False
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        if self._foo != other._foo:
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
-        value = hash_update(value, hash(self._foo))
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = MyCell.tag.offset
+        if fingerprint.get(base + 0):
+            value = hash_update(value, base + 0)
+            value = hash_update(value, hash(self._foo))
         return value
 
 class HeartbeatEvent(Event):
@@ -65,19 +68,20 @@ class HeartbeatEvent(Event):
     def type_tag(self):
         return HeartbeatEvent.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
         base = HeartbeatEvent.tag.offset
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = HeartbeatEvent.tag.offset
         return value
 
 class FlowStart(Event):
@@ -94,19 +98,20 @@ class FlowStart(Event):
     def type_tag(self):
         return FlowStart.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
         base = FlowStart.tag.offset
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = FlowStart.tag.offset
         return value
 
 class FlowStop(Event):
@@ -123,19 +128,20 @@ class FlowStop(Event):
     def type_tag(self):
         return FlowStop.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
         base = FlowStop.tag.offset
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = FlowStop.tag.offset
         return value
 
 class TimeoutEvent(Event):
@@ -178,6 +184,17 @@ class TimeoutEvent(Event):
     def type_tag(self):
         return TimeoutEvent.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        if self._key != other._key:
+            return False
+        if self._int_param != other._int_param:
+            return False
+        if self._test != other._test:
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
@@ -193,20 +210,16 @@ class TimeoutEvent(Event):
                 return False
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        if self._key != other._key:
-            return False
-        if self._int_param != other._int_param:
-            return False
-        if self._test != other._test:
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
-        value = hash_update(value, hash(self._key))
-        value = hash_update(value, hash(self._int_param))
-        value = hash_update(value, hash(self._test))
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = TimeoutEvent.tag.offset
+        if fingerprint.get(base + 0):
+            value = hash_update(value, base + 0)
+            value = hash_update(value, hash(self._key))
+        if fingerprint.get(base + 1):
+            value = hash_update(value, base + 1)
+            value = hash_update(value, hash(self._int_param))
+        if fingerprint.get(base + 2):
+            value = hash_update(value, base + 2)
+            value = hash_update(value, hash(self._test))
         return value

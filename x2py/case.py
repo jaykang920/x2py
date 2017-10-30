@@ -34,11 +34,11 @@ class Case:
         """ Called before the holding flow stops. """
         self.on_stop()
 
-    def setup(self):
+    def on_setup(self):
         """ Overridden by subclasses to build a initialization chain. """
         pass
 
-    def teardown(self):
+    def on_teardown(self):
         """ Overridden by subclasses to build a cleanup chain. """
         pass
 
@@ -52,11 +52,11 @@ class Case:
 
     def _setup(self):
         """ Called internally when this case is initialized. """
-        self.setup()
+        self.on_setup()
 
     def _teardown(self):
         """ Called internally when this case is cleaned up. """
-        self.teardown()
+        self.on_teardown()
 
 class CaseStack:
     """ Handles a group of cases. """
@@ -68,13 +68,13 @@ class CaseStack:
     def add(self, case):
         if case in self.cases:
             return False
-        cases.append(case)
+        self.cases.append(case)
         return True
 
     def remove(self, case):
         if case not in self.cases:
             return False
-        cases.remove(case)
+        self.cases.remove(case)
         return True
 
     def setup(self, flow):

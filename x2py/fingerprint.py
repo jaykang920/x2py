@@ -35,6 +35,8 @@ class Fingerprint:
         self.block = other.block
         if other.blocks is not None:
             self.blocks = copy(other.blocks)
+        else:
+            self.blocks = None
 
     def get(self, index):
         """ Gets the bit value at the specified index. """
@@ -72,16 +74,16 @@ class Fingerprint:
     def equivalent(self, other):
         if self is other:
             return True
-        if not isinstance(other, Fingerprint) or self.length > other.length:
+        if not isinstance(other, Fingerprint) or self.length < other.length:
             return False
-        if (self.block & other.block) != self.block:
+        if (self.block & other.block) != other.block:
             return False
-        if self.blocks is not None:
-            count = len(self.blocks)
+        if other.blocks is not None:
+            count = len(other.blocks)
             i = 0
             while i < count:
-                block = self.blocks[i]
-                if (block & other.blocks[i]) != block:
+                block = other.blocks[i]
+                if (self.blocks[i] & block) != block:
                     return False
                 i += 1
         return True

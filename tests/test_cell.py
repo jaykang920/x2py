@@ -7,6 +7,7 @@ import pytest
 
 sys.path.append('..')
 import x2py
+
 from test import *
 
 def test_creation():

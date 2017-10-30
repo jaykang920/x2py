@@ -9,7 +9,7 @@ class MyConsts:
     MY_CONST2 = 2
 
 class MyCell1(Cell):
-    tag = Cell.Tag(Cell.tag, 'MyCell1', 1)
+    tag = Cell.Tag(None, 'MyCell1', 1)
 
     def __init__(self, length=0):
         super().__init__(MyCell1.tag.num_props + length)
@@ -29,6 +29,13 @@ class MyCell1(Cell):
     def type_tag(self):
         return MyCell1.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        if self._foo != other._foo:
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
@@ -38,16 +45,12 @@ class MyCell1(Cell):
                 return False
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        if self._foo != other._foo:
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
-        value = hash_update(value, hash(self._foo))
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = MyCell1.tag.offset
+        if fingerprint.get(base + 0):
+            value = hash_update(value, base + 0)
+            value = hash_update(value, hash(self._foo))
         return value
 
 class MyCell2(MyCell1):
@@ -71,6 +74,13 @@ class MyCell2(MyCell1):
     def type_tag(self):
         return MyCell2.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        if self._bar != other._bar:
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
@@ -80,16 +90,12 @@ class MyCell2(MyCell1):
                 return False
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        if self._bar != other._bar:
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
-        value = hash_update(value, hash(self._bar))
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = MyCell2.tag.offset
+        if fingerprint.get(base + 0):
+            value = hash_update(value, base + 0)
+            value = hash_update(value, hash(self._bar))
         return value
 
 class MyEvent1(Event):
@@ -114,6 +120,13 @@ class MyEvent1(Event):
     def type_tag(self):
         return MyEvent1.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        if self._foo != other._foo:
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
@@ -123,16 +136,12 @@ class MyEvent1(Event):
                 return False
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        if self._foo != other._foo:
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
-        value = hash_update(value, hash(self._foo))
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = MyEvent1.tag.offset
+        if fingerprint.get(base + 0):
+            value = hash_update(value, base + 0)
+            value = hash_update(value, hash(self._foo))
         return value
 
 class MyEvent2(MyEvent1):
@@ -157,6 +166,13 @@ class MyEvent2(MyEvent1):
     def type_tag(self):
         return MyEvent2.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        if self._bar != other._bar:
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
@@ -166,14 +182,10 @@ class MyEvent2(MyEvent1):
                 return False
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        if self._bar != other._bar:
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
-        value = hash_update(value, hash(self._bar))
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = MyEvent2.tag.offset
+        if fingerprint.get(base + 0):
+            value = hash_update(value, base + 0)
+            value = hash_update(value, hash(self._bar))
         return value

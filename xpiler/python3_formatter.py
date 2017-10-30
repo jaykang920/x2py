@@ -114,9 +114,8 @@ class Python3FormatterContext(FormatterContext):
 
         definition.base_class = definition.base
         if (definition.base_class is None or len(definition.base_class) == 0):
-            definition.base_class = tag_type
-        else:
             definition.base = ''
+            definition.base_class = tag_type
 
         self._preprocess_properties(definition)
 
@@ -124,7 +123,7 @@ class Python3FormatterContext(FormatterContext):
 
         base_tag = definition.base_class
         if (len(definition.base) == 0):
-            base_tag = definition.base_class + '.tag'#if definition.is_event else 'None'
+            base_tag = definition.base_class + '.tag' if definition.is_event else 'None'
         else:
             base_tag += '.tag'
 
@@ -225,9 +224,9 @@ class Python3FormatterContext(FormatterContext):
 
     def _format_methods(self, definition):
         self._format_type(definition)
+        self._format_equals(definition)
         self._format_equivalent(definition)
-        self._format_eq_(definition)
-        self._format_hash_(definition)
+        self._format_hash_code(definition)
 
     def _format_type(self, definition):
         self.out.write("\n")
@@ -236,6 +235,16 @@ class Python3FormatterContext(FormatterContext):
         self.out.write("\n")
         self._out(1, "def type_tag(self):\n")
         self._out(2, "return {}.tag\n".format(definition.name))
+
+    def _format_equals(self, definition):
+        self.out.write("\n")
+        self._out(1, "def equals(self, other):\n")
+        self._out(2, "if not super().equals(other):\n")
+        self._out(3, "return False\n")
+        for prop in definition.properties:
+            self._out(2, "if self.{0} != other.{0}:\n".format(prop.var_name))
+            self._out(3, "return False\n")
+        self._out(2, "return True\n")
 
     def _format_equivalent(self, definition):
         self.out.write("\n")
@@ -249,22 +258,15 @@ class Python3FormatterContext(FormatterContext):
             self._out(4, "return False\n")
         self._out(2, "return True\n")
 
-    def _format_eq_(self, definition):
+    def _format_hash_code(self, definition):
         self.out.write("\n")
-        self._out(1, "def __eq__(self, other):\n")
-        self._out(2, "if not super().__eq__(other):\n")
-        self._out(3, "return False\n")
-        for prop in definition.properties:
-            self._out(2, "if self.{0} != other.{0}:\n".format(prop.var_name))
-            self._out(3, "return False\n")
-        self._out(2, "return True\n")
-
-    def _format_hash_(self, definition):
-        self.out.write("\n")
-        self._out(1, "def __hash__(self):\n")
-        self._out(2, "value = super().__hash__()\n")
-        for prop in definition.properties:
-            self._out(2, "value = hash_update(value, hash(self.{0}))\n".format(prop.var_name))
+        self._out(1, "def hash_code(self, fingerprint):\n")
+        self._out(2, "value = super().hash_code(fingerprint)\n")
+        self._out(2, "base = {0}.tag.offset\n".format(definition.name))
+        for index, prop in enumerate(definition.properties):
+            self._out(2, "if fingerprint.get(base + {}):\n".format(index))
+            self._out(3, "value = hash_update(value, base + {})\n".format(index))
+            self._out(3, "value = hash_update(value, hash(self.{}))\n".format(prop.var_name))
         self._out(2, "return value\n")
 
     def _out(self, indentation, s):

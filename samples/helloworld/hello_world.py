@@ -26,6 +26,13 @@ class HelloReq(Event):
     def type_tag(self):
         return HelloReq.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        if self._name != other._name:
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
@@ -35,16 +42,12 @@ class HelloReq(Event):
                 return False
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        if self._name != other._name:
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
-        value = hash_update(value, hash(self._name))
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = HelloReq.tag.offset
+        if fingerprint.get(base + 0):
+            value = hash_update(value, base + 0)
+            value = hash_update(value, hash(self._name))
         return value
 
 class HelloResp(Event):
@@ -69,6 +72,13 @@ class HelloResp(Event):
     def type_tag(self):
         return HelloResp.tag
 
+    def equals(self, other):
+        if not super().equals(other):
+            return False
+        if self._message != other._message:
+            return False
+        return True
+
     def equivalent(self, other):
         if not super().equivalent(other):
             return False
@@ -78,14 +88,10 @@ class HelloResp(Event):
                 return False
         return True
 
-    def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
-        if self._message != other._message:
-            return False
-        return True
-
-    def __hash__(self):
-        value = super().__hash__()
-        value = hash_update(value, hash(self._message))
+    def hash_code(self, fingerprint):
+        value = super().hash_code(fingerprint)
+        base = HelloResp.tag.offset
+        if fingerprint.get(base + 0):
+            value = hash_update(value, base + 0)
+            value = hash_update(value, hash(self._message))
         return value

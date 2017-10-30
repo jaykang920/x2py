@@ -21,6 +21,16 @@ class Cell(object):
     def __init__(self, length):
         self.fingerprint = Fingerprint(length)
 
+    def type_tag(self):
+        return Cell.tag
+
+    def equals(self, other):
+        if self is other:
+            return True
+        if type(self) != type(other):
+            return False
+        return True
+
     def equivalent(self, other):
         if self is other:
             return True
@@ -28,12 +38,11 @@ class Cell(object):
             return False
         return True
 
+    def hash_code(self, fingerprint):
+        return HASH_SEED
+
     def __eq__(self, other):
-        if self is other:
-            return True
-        if type(self) != type(other):
-            return False
-        return True
+        return other.equals(self)
 
     def __hash__(self):
-        return HASH_SEED
+        return self.hash_code(self.fingerprint)

@@ -18,7 +18,8 @@ class SingleThreadFlow(EventBasedFlow):
             if self.thread is not None:
                 return
 
-            self.cases.setup(self)
+            self._setup()
+            self.cases.setup_with(self)
 
             self.thread = Thread(target=self)
             self.thread.setName(self.name)
@@ -38,7 +39,8 @@ class SingleThreadFlow(EventBasedFlow):
             self.thread.join()
             self.thread = None
 
-            self.cases.teardown(self)
+            self.cases.teardown_with(self)
+            self._teardown()
 
         Trace.debug("stopped flow '{}'", self.name)
 

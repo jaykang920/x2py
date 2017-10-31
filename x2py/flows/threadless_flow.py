@@ -16,7 +16,8 @@ class ThreadlessFlow(EventBasedFlow):
             if self.running:
                 return
 
-            self.cases.setup(self)
+            self._setup()
+            self.cases.setup_with(self)
 
             Flow.thread_local.current = self
             Flow.thread_local.event_proxy = EventProxy()
@@ -39,7 +40,8 @@ class ThreadlessFlow(EventBasedFlow):
             Flow.thread_local.event_proxy = None
             Flow.thread_local.current = None
 
-            self.cases.teardown(self)
+            self.cases.teardown_with(self)
+            self._teardown()
 
         Trace.debug("stopped flow '{}'", self.name)
 

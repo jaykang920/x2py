@@ -39,7 +39,7 @@ class Event(Cell):
 
     def _hash_code(self, fingerprint, type_id):
         value = self.hash_code(fingerprint)
-        value = hash_update(value, -1)  # separator
+        value = hash_update(value, -1)  # delimiter for type id
         value = hash_update(value, type_id)
         return value
 

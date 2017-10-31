@@ -1,13 +1,19 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+from .event_sink import EventSink
 from .util.trace import Trace
 
-class Case:
+class Case(EventSink):
     """ Represents a set of application logic. """
 
-    def setup(self, flow):
+    def __init__(self):
+        super().__init__()
+
+    def setup_with(self, flow):
         """ Initializes this case with the specified holding flow. """
+        self.flow = flow
+
         from .flow import Flow
         backup = Flow.thread_local.current
         Flow.thread_local.current = flow
@@ -16,7 +22,7 @@ class Case:
 
         Flow.thread_local.current = backup
 
-    def teardown(self, flow):
+    def teardown_with(self, flow):
         """ Cleans up this case with the specified holding flow. """
         from .flow import Flow
         backup = Flow.thread_local.current
@@ -26,6 +32,8 @@ class Case:
 
         Flow.thread_local.current = backup
 
+        self.cleanup()  # eventsink cleanup
+
     def start(self):
         """ Called after the holding flow starts. """
         self.on_start()
@@ -34,11 +42,11 @@ class Case:
         """ Called before the holding flow stops. """
         self.on_stop()
 
-    def on_setup(self):
+    def setup(self):
         """ Overridden by subclasses to build a initialization chain. """
         pass
 
-    def on_teardown(self):
+    def teardown(self):
         """ Overridden by subclasses to build a cleanup chain. """
         pass
 
@@ -52,11 +60,11 @@ class Case:
 
     def _setup(self):
         """ Called internally when this case is initialized. """
-        self.on_setup()
+        self.setup()
 
     def _teardown(self):
         """ Called internally when this case is cleaned up. """
-        self.on_teardown()
+        self.teardown()
 
 class CaseStack:
     """ Handles a group of cases. """
@@ -66,31 +74,35 @@ class CaseStack:
         self.activated = False
 
     def add(self, case):
+        if case is None or not isinstance(case, Case):
+            raise TypeError()
         if case in self.cases:
             return False
         self.cases.append(case)
         return True
 
     def remove(self, case):
+        if case is None or not isinstance(case, Case):
+            raise TypeError()
         if case not in self.cases:
             return False
         self.cases.remove(case)
         return True
 
-    def setup(self, flow):
+    def setup_with(self, flow):
         if self.activated:
             return
         self.activated = True
         for case in self.cases:
-            case.setup(flow)
+            case.setup_with(flow)
 
-    def teardown(self, flow):
+    def teardown_with(self, flow):
         if not self.activated:
             return
         self.activated = False
         for case in reversed(self.cases):
             try:
-                case.teardown(flow)
+                case.teardown_with(flow)
             except BaseException as ex:
                 Trace.error("{} {} teardown: {}", flow.name, type(case).__name__, ex)
 

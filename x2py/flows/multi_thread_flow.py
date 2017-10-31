@@ -20,7 +20,8 @@ class MultiThreadFlow(EventBasedFlow):
             if len(self.threads) != 0:
                 return
 
-            self.cases.setup(self)
+            self._setup()
+            self.cases.setup_with(self)
 
             for i in range(self.num_threads):
                 thread = Thread(target=self)
@@ -43,7 +44,8 @@ class MultiThreadFlow(EventBasedFlow):
                 thread.join()
             self.threads.clear()
 
-            self.cases.teardown(self)
+            self.cases.teardown_with(self)
+            self._teardown()
 
         Trace.debug("stopped flow '{}'", self.name)
 

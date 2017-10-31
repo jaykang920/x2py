@@ -36,9 +36,8 @@ class Binder:
             self.map = {}
 
         def add(self, type_id, fingerprint):
-            if type_id in self.map:
-                slots = self.map[type_id]
-            else:
+            slots = self.map.get(type_id)
+            if slots is None:
                 slots = []
                 self.map[type_id] = slots
             slot = Slot(fingerprint)
@@ -53,13 +52,13 @@ class Binder:
             return self.map.get(type_id)
 
         def remove(self, type_id, fingerprint):
-            if type_id not in self.map:
+            slots = self.map.get(type_id)
+            if slots is None:
                 return
-            slots = self.map[type_id]
             index = binary_search(slots, Slot(fingerprint))
             if index < 0:
                 return
-            if (slots[index].remove_ref() == 0):
+            if slots[index].remove_ref() == 0:
                 del slots[index]
             if len(slots) == 0:
                 del self.map[type_id]
@@ -76,22 +75,42 @@ class Binder:
                 handlers = []
                 self.map[event] = handlers
 
+            token = (event, handler)
             if handler not in handlers:
                 handlers.append(handler)
                 self.filter.add(event.type_id(), event.fingerprint)
-                # event sink marking
+
+                if hasattr(handler, '__self__'):
+                    from .event_sink import EventSink
+                    target = handler.__self__
+                    if isinstance(target, EventSink):
+                        target._add_binding(token)
+            return token
+
+    def _unbind_(self, event, handler):
+        handlers = self.map.get(event)
+        if handler is None:
+            return
+        if handler not in handlers:
+            return
+        handlers.remove(handler)
+        if len(handlers) == 0:
+            del self.map[event]
+        self.filter.remove(event.type_id(), event.fingerprint)
+
+    def _unbind(self, event, handler):
+        with self.rwlock.wlock():
+            self._unbind_(event, handler)
 
     def unbind(self, event, handler):
         with self.rwlock.wlock():
-            handlers = self.map.get(event)
-            if handler is None:
-                return
-            if handler not in handlers:
-                return
-            handlers.remove(handler)
-            if len(handlers) == 0:
-                del self.map[event]
-            self.filter.remove(event.type_id(), event.fingerprint)
+            self._unbind_(event, handler)
+
+            if hasattr(handler, '__self__'):
+                from .event_sink import EventSink
+                target = handler.__self__
+                if isinstance(target, EventSink):
+                    target._remove_binding((event, handler))
 
     def build_handler_chain(self, event, event_proxy, handler_chain):
         event_proxy.event = event

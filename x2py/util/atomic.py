@@ -10,23 +10,20 @@ class AtomicInt(object):
 
     def decrement(self):
         with self._lock:
-            self.value -= 1
-            return self.value
+            self._value -= 1
+            return self._value
 
     def increment(self):
         with self._lock:
-            self.value += 1
-            return self.value
-
-    def get(self):
-        with self._lock:
+            self._value += 1
             return self._value
 
     @property
     def value(self):
-        return self.get()
+        with self._lock:
+            return self._value
 
     @value.setter
-    def value(self, value):
+    def value(self, val):
         with self._lock:
-            self._value = value
+            self._value = val

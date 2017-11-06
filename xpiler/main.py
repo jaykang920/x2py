@@ -65,29 +65,29 @@ class Main:
         filename = os.path.basename(path)
         basename, extension = os.path.splitext(filename)
 
-        if (Main.options.out_dir is None):
+        if Main.options.out_dir is None:
             out_dir = os.path.dirname(path)
         else:
             out_dir = os.path.join(Main.options.out_dir, os.path.sep.join(self.subdirs))
 
-        if ((extension.lower() not in Main.handlers) or (not Main.options.forced
-                and self.formatter.is_up_to_date(path, out_dir))):
+        if (extension.lower() not in Main.handlers) or (not Main.options.forced
+                and self.formatter.is_up_to_date(path, out_dir)):
             return
 
         print(filename)
 
         handler = Main.handlers[extension.lower()]
         result, unit = handler.handle(path)
-        if (result == False):
+        if result == False:
             self.error = True
-        if (self.error or unit is None):
+        if self.error or unit is None:
             return
 
         unit.basename = basename
 
-        if ((out_dir and len(out_dir) != 0) and not os.path.exists(out_dir)):
+        if (out_dir and len(out_dir) != 0) and not os.path.exists(out_dir):
             os.makedirs(out_dir)
 
         result = self.formatter.format(unit, out_dir)
-        if (result == False):
+        if result == False:
             self.error = True

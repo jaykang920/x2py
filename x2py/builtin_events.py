@@ -10,19 +10,21 @@ class BuiltinEventType:
     TIMEOUT_EVENT = -4
 
 class MyCell(Cell):
-    tag = Cell.Tag(None, 'MyCell', 1)
+    tag = Cell.Tag(None, [('Foo', 9)])
 
     def __init__(self, length=0):
-        super().__init__(MyCell.tag.num_props + length)
-        self._foo = ""
+        super().__init__(len(MyCell.tag.props) + length)
+        base = MyCell.tag.offset
+        self.values[base + 0] = ""
 
     @property
     def foo(self):
-        return self._foo
+        return self.values[MyCell.tag.offset + 0]
     @foo.setter
     def foo(self, value):
-        self.fingerprint.touch(MyCell.tag.offset + 0)
-        self._foo = value
+        index = MyCell.tag.offset + 0
+        self.fingerprint.touch(index)
+        self.values[index] = value
 
     def type_id(self):
         return MyCell.tag.type_id
@@ -33,7 +35,8 @@ class MyCell(Cell):
     def equals(self, other):
         if not super().equals(other):
             return False
-        if self._foo != other._foo:
+        base = MyCell.tag.offset
+        if self.values[base + 0] != other.values[base + 0]:
             return False
         return True
 
@@ -42,7 +45,7 @@ class MyCell(Cell):
             return False
         base = MyCell.tag.offset
         if other.fingerprint.get(base + 0):
-            if self._foo != other._foo:
+            if self.values[base + 0] != other.values[base + 0]:
                 return False
         return True
 
@@ -51,15 +54,16 @@ class MyCell(Cell):
         base = MyCell.tag.offset
         if fingerprint.get(base + 0):
             value = hash_update(value, base + 0)
-            value = hash_update(value, hash(self._foo))
+            value = hash_update(value, hash(self.values[base + 0]))
         return value
 
 class HeartbeatEvent(Event):
-    tag = Event.Tag(Event.tag, 'HeartbeatEvent', 0,
+    tag = Event.Tag(Event.tag, [],
         BuiltinEventType.HEARTBEAT_EVENT)
 
     def __init__(self, length=0):
-        super().__init__(HeartbeatEvent.tag.num_props + length)
+        super().__init__(len(HeartbeatEvent.tag.props) + length)
+        base = HeartbeatEvent.tag.offset
         pass
 
     def type_id(self):
@@ -71,6 +75,7 @@ class HeartbeatEvent(Event):
     def equals(self, other):
         if not super().equals(other):
             return False
+        base = HeartbeatEvent.tag.offset
         return True
 
     def equivalent(self, other):
@@ -85,11 +90,12 @@ class HeartbeatEvent(Event):
         return value
 
 class FlowStart(Event):
-    tag = Event.Tag(Event.tag, 'FlowStart', 0,
+    tag = Event.Tag(Event.tag, [],
         BuiltinEventType.FLOW_START)
 
     def __init__(self, length=0):
-        super().__init__(FlowStart.tag.num_props + length)
+        super().__init__(len(FlowStart.tag.props) + length)
+        base = FlowStart.tag.offset
         pass
 
     def type_id(self):
@@ -101,6 +107,7 @@ class FlowStart(Event):
     def equals(self, other):
         if not super().equals(other):
             return False
+        base = FlowStart.tag.offset
         return True
 
     def equivalent(self, other):
@@ -115,11 +122,12 @@ class FlowStart(Event):
         return value
 
 class FlowStop(Event):
-    tag = Event.Tag(Event.tag, 'FlowStop', 0,
+    tag = Event.Tag(Event.tag, [],
         BuiltinEventType.FLOW_STOP)
 
     def __init__(self, length=0):
-        super().__init__(FlowStop.tag.num_props + length)
+        super().__init__(len(FlowStop.tag.props) + length)
+        base = FlowStop.tag.offset
         pass
 
     def type_id(self):
@@ -131,6 +139,7 @@ class FlowStop(Event):
     def equals(self, other):
         if not super().equals(other):
             return False
+        base = FlowStop.tag.offset
         return True
 
     def equivalent(self, other):
@@ -145,38 +154,42 @@ class FlowStop(Event):
         return value
 
 class TimeoutEvent(Event):
-    tag = Event.Tag(Event.tag, 'TimeoutEvent', 3,
+    tag = Event.Tag(Event.tag, [('Key', 15), ('IntParam', 5), ('Test', 13)],
         BuiltinEventType.TIMEOUT_EVENT)
 
     def __init__(self, length=0):
-        super().__init__(TimeoutEvent.tag.num_props + length)
-        self._key = None
-        self._int_param = 0
-        self._test = None
+        super().__init__(len(TimeoutEvent.tag.props) + length)
+        base = TimeoutEvent.tag.offset
+        self.values[base + 0] = None
+        self.values[base + 1] = 0
+        self.values[base + 2] = None
 
     @property
     def key(self):
-        return self._key
+        return self.values[TimeoutEvent.tag.offset + 0]
     @key.setter
     def key(self, value):
-        self.fingerprint.touch(TimeoutEvent.tag.offset + 0)
-        self._key = value
+        index = TimeoutEvent.tag.offset + 0
+        self.fingerprint.touch(index)
+        self.values[index] = value
 
     @property
     def int_param(self):
-        return self._int_param
+        return self.values[TimeoutEvent.tag.offset + 1]
     @int_param.setter
     def int_param(self, value):
-        self.fingerprint.touch(TimeoutEvent.tag.offset + 1)
-        self._int_param = value
+        index = TimeoutEvent.tag.offset + 1
+        self.fingerprint.touch(index)
+        self.values[index] = value
 
     @property
     def test(self):
-        return self._test
+        return self.values[TimeoutEvent.tag.offset + 2]
     @test.setter
     def test(self, value):
-        self.fingerprint.touch(TimeoutEvent.tag.offset + 2)
-        self._test = value
+        index = TimeoutEvent.tag.offset + 2
+        self.fingerprint.touch(index)
+        self.values[index] = value
 
     def type_id(self):
         return TimeoutEvent.tag.type_id
@@ -187,11 +200,12 @@ class TimeoutEvent(Event):
     def equals(self, other):
         if not super().equals(other):
             return False
-        if self._key != other._key:
+        base = TimeoutEvent.tag.offset
+        if self.values[base + 0] != other.values[base + 0]:
             return False
-        if self._int_param != other._int_param:
+        if self.values[base + 1] != other.values[base + 1]:
             return False
-        if self._test != other._test:
+        if self.values[base + 2] != other.values[base + 2]:
             return False
         return True
 
@@ -200,13 +214,13 @@ class TimeoutEvent(Event):
             return False
         base = TimeoutEvent.tag.offset
         if other.fingerprint.get(base + 0):
-            if self._key != other._key:
+            if self.values[base + 0] != other.values[base + 0]:
                 return False
         if other.fingerprint.get(base + 1):
-            if self._int_param != other._int_param:
+            if self.values[base + 1] != other.values[base + 1]:
                 return False
         if other.fingerprint.get(base + 2):
-            if self._test != other._test:
+            if self.values[base + 2] != other.values[base + 2]:
                 return False
         return True
 
@@ -215,11 +229,11 @@ class TimeoutEvent(Event):
         base = TimeoutEvent.tag.offset
         if fingerprint.get(base + 0):
             value = hash_update(value, base + 0)
-            value = hash_update(value, hash(self._key))
+            value = hash_update(value, hash(self.values[base + 0]))
         if fingerprint.get(base + 1):
             value = hash_update(value, base + 1)
-            value = hash_update(value, hash(self._int_param))
+            value = hash_update(value, hash(self.values[base + 1]))
         if fingerprint.get(base + 2):
             value = hash_update(value, base + 2)
-            value = hash_update(value, hash(self._test))
+            value = hash_update(value, hash(self.values[base + 2]))
         return value

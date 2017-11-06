@@ -8,7 +8,7 @@ class TypeSpec:
 
     def __str__(self):
         tokens = [ self.type ]
-        if (self.details is not None and len(self.details) != 0):
+        if self.details is not None and len(self.details) != 0:
             tokens.append('(')
             for index, detail in enumerate(self.details):
                 if index:
@@ -18,32 +18,40 @@ class TypeSpec:
         return ''.join(tokens)
 
 class TypeProperty:
-    def __init__(self, is_primitive=False, is_collection=False, detail_required=False):
+    def __init__(self, is_primitive, is_collection, detail_required, index):
         self.is_primitive = is_primitive
         self.is_collection = is_collection
         self.detail_required = detail_required
+        self.index = index
 
 def _init_types():
     result = {}
     # Primitive types
-    result["bool"] = TypeProperty(True, False, False)
-    result["byte"] = TypeProperty(True, False, False)
-    result["int8"] = TypeProperty(True, False, False)
-    result["int16"] = TypeProperty(True, False, False)
-    result["int32"] = TypeProperty(True, False, False)
-    result["int64"] = TypeProperty(True, False, False)
-    result["float32"] = TypeProperty(True, False, False)
-    result["float64"] = TypeProperty(True, False, False)
-    result["string"] = TypeProperty(True, False, False)
-    result["datetime"] = TypeProperty(True, False, False)
+    result["bool"] = TypeProperty(True, False, False, 1)
+    result["byte"] = TypeProperty(True, False, False, 2)
+    result["int8"] = TypeProperty(True, False, False, 3)
+    result["int16"] = TypeProperty(True, False, False, 4)
+    result["int32"] = TypeProperty(True, False, False, 5)
+    result["int64"] = TypeProperty(True, False, False, 6)
+    result["float32"] = TypeProperty(True, False, False, 7)
+    result["float64"] = TypeProperty(True, False, False, 8)
+    result["string"] = TypeProperty(True, False, False, 9)
+    result["datetime"] = TypeProperty(True, False, False, 10)
     # Collection types
-    result["bytes"] = TypeProperty(False, True, False)
-    result["list"] = TypeProperty(False, True, True)
-    result["map"] = TypeProperty(False, True, True)
+    result["bytes"] = TypeProperty(False, True, False, 12)
+    result["list"] = TypeProperty(False, True, True, 13)
+    result["map"] = TypeProperty(False, True, True, 14)
+    # Non-serializable
+    result["object"] = TypeProperty(False, False, False, 15)
     return result
 
 class Types:
     map = _init_types()
+
+    @staticmethod
+    def get_type_index(typestr):
+        type_property = Types.map.get(typestr)
+        return type_property.index if type_property is not None else 11
 
     @staticmethod
     def is_builtin(typestr):
@@ -51,19 +59,13 @@ class Types:
 
     @staticmethod
     def is_collection(typestr):
-        try:
-            type_property = Types.map[typestr]
-        except KeyError:
-            return False
-        return type_property.is_collection
+        type_property = Types.map.get(typestr)
+        return type_property.is_collection if type_property is not None else False
 
     @staticmethod
     def is_primitive(typestr):
-        try:
-            type_property = Types.map[typestr]
-        except KeyError:
-            return False
-        return type_property.is_primitive
+        type_property = Types.map.get(typestr)
+        return type_property.is_primitive if type_property is not None else False
 
     @staticmethod
     def parse(s):
@@ -79,21 +81,21 @@ class Types:
         length = len(s)
         while (index < length):
             c = s[index]
-            if (c == '(' and index < (length - 1)):
+            if c == '(' and index < (length - 1):
                 typestr = s[start:index].strip()
                 index += 1
                 details, index = Types._parse_details(s, index)
                 back_margin = 1
                 break
-            elif (c == ','):
+            elif c == ',':
                 index += 1
                 back_margin = 1
                 break
-            elif (c == ')'):
+            elif c == ')':
                 break
             index += 1
 
-        if (typestr is None):
+        if typestr is None:
             typestr = s[start:index - back_margin].strip()
         typespec = None if len(typestr) == 0 else TypeSpec(typestr, details)
         return typespec, index
@@ -104,17 +106,17 @@ class Types:
         length = len(s)
         while (index < length):
             c = s[index]
-            if (c == ','):
+            if c == ',':
                 continue
-            if (c == ')'):
+            if c == ')':
                 index += 1
                 break
             else:
                 detail, index = Types._parse_typespec(s, index)
-                if (detail is not None):
+                if detail is not None:
                     details.append(detail)
                     index -= 1
             index += 1
-        if (len(details) == 0):
+        if len(details) == 0:
             details = None
         return details, index

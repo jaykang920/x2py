@@ -16,6 +16,6 @@ class EventBasedFlow(Flow):
         self._lock = Lock()
 
     def feed(self, event):
-        if (event is None or not isinstance(event, Event)):
+        if event is None or not isinstance(event, Event):
             raise TypeError()
         self.queue.enqueue(event)

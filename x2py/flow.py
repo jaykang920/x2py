@@ -5,7 +5,7 @@ from threading import local
 
 from .binder import Binder
 from .builtin_events import *
-from .case import CaseStack
+from .case import Case, CaseStack
 from .util.trace import Trace
 
 def _init():
@@ -41,11 +41,15 @@ class Flow:
         return self
 
     def add(self, case):
+        if case is None or not isinstance(case, Case):
+            raise TypeError()
         if self.cases.add(case):
             Trace.debug("flow '{}': added case '{}'", self.name, type(case).__name__)
         return self
 
     def remove(self, case):
+        if case is None or not isinstance(case, Case):
+            raise TypeError()
         if self.cases.remove(case):
             Trace.debug("flow '{}': removed case '{}'", self.name, type(case).__name__)
         return self
@@ -65,8 +69,7 @@ class Flow:
             try:
                 handler(event)
             except BaseException as ex:
-                # log
-                pass
+                Trace.error("flow: dispatch {}".format(ex))
 
         handler_chain.clear()
 

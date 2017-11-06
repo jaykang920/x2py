@@ -10,7 +10,7 @@ from .util.rwlock import ReadLock, WriteLock, ReadWriteLock
 
 def binary_search(a, x):
     index = bisect(a, x)
-    if (index and a[index - 1] == x):
+    if index and (a[index - 1] == x):
         return index - 1  # right-most index of the found
     else:
         return ~index  # insertion point
@@ -42,7 +42,7 @@ class Binder:
                 self.map[type_id] = slots
             slot = Slot(fingerprint)
             index = binary_search(slots, slot)
-            if (index >= 0):
+            if index >= 0:
                 slots[index].add_ref()
             else:
                 index = ~index

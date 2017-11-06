@@ -17,7 +17,7 @@ class Hub:
 
         def add(self, case):
             """ Adds the specified hub case to the hub. """
-            if (case is None or not isinstance(case, Hub.Case)):
+            if case is None or not isinstance(case, Hub.Case):
                 raise TypeError()
             with self.rwlock.wlock():
                 if case not in self.cases:
@@ -27,7 +27,7 @@ class Hub:
 
         def insert(self, index, case):
             """ Inserts the specified hub case to the hub, at the specified index. """
-            if (case is None or not isinstance(case, Hub.Case)):
+            if case is None or not isinstance(case, Hub.Case):
                 raise TypeError()
             with self.rwlock.wlock():
                 if case not in self.cases:
@@ -38,7 +38,7 @@ class Hub:
 
         def remove(self, case):
             """ Removes the specified hub case from the hub. """
-            if (case is None or not isinstance(case, Hub.Case)):
+            if case is None or not isinstance(case, Hub.Case):
                 raise TypeError()
             with self.rwlock.wlock():
                 if case in self.cases:
@@ -48,7 +48,7 @@ class Hub:
 
         def attach(self, flow):
             """ Attaches the specified flow to the hub. """
-            if (flow is None or not isinstance(flow, Flow)):
+            if flow is None or not isinstance(flow, Flow):
                 raise TypeError()
             with self.rwlock.wlock():
                 if flow not in self.flows:
@@ -58,7 +58,7 @@ class Hub:
 
         def detach(self, flow):
             """ Detaches the specified flow from the hub. """
-            if (flow is None or not isinstance(flow, Flow)):
+            if flow is None or not isinstance(flow, Flow):
                 raise TypeError()
             with self.rwlock.wlock():
                 if flow in self.flows:
@@ -73,7 +73,7 @@ class Hub:
                 self.detach(flow)
 
         def feed(self, event):
-            if (event is None or not isinstance(event, Event)):
+            if event is None or not isinstance(event, Event):
                 raise TypeError()
             with self.rwlock.rlock():
                 for flow in self.flows:

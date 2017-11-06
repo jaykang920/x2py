@@ -9,19 +9,21 @@ class MyConsts:
     MY_CONST2 = 2
 
 class MyCell1(Cell):
-    tag = Cell.Tag(None, 'MyCell1', 1)
+    tag = Cell.Tag(None, [('Foo', 5)])
 
     def __init__(self, length=0):
-        super().__init__(MyCell1.tag.num_props + length)
-        self._foo = 0
+        super().__init__(len(MyCell1.tag.props) + length)
+        base = MyCell1.tag.offset
+        self.values[base + 0] = 0
 
     @property
     def foo(self):
-        return self._foo
+        return self.values[MyCell1.tag.offset + 0]
     @foo.setter
     def foo(self, value):
-        self.fingerprint.touch(MyCell1.tag.offset + 0)
-        self._foo = value
+        index = MyCell1.tag.offset + 0
+        self.fingerprint.touch(index)
+        self.values[index] = value
 
     def type_id(self):
         return MyCell1.tag.type_id
@@ -32,7 +34,8 @@ class MyCell1(Cell):
     def equals(self, other):
         if not super().equals(other):
             return False
-        if self._foo != other._foo:
+        base = MyCell1.tag.offset
+        if self.values[base + 0] != other.values[base + 0]:
             return False
         return True
 
@@ -41,7 +44,7 @@ class MyCell1(Cell):
             return False
         base = MyCell1.tag.offset
         if other.fingerprint.get(base + 0):
-            if self._foo != other._foo:
+            if self.values[base + 0] != other.values[base + 0]:
                 return False
         return True
 
@@ -50,23 +53,25 @@ class MyCell1(Cell):
         base = MyCell1.tag.offset
         if fingerprint.get(base + 0):
             value = hash_update(value, base + 0)
-            value = hash_update(value, hash(self._foo))
+            value = hash_update(value, hash(self.values[base + 0]))
         return value
 
 class MyCell2(MyCell1):
-    tag = Cell.Tag(MyCell1.tag, 'MyCell2', 1)
+    tag = Cell.Tag(MyCell1.tag, [('Bar', 9)])
 
     def __init__(self, length=0):
-        super().__init__(MyCell2.tag.num_props + length)
-        self._bar = ""
+        super().__init__(len(MyCell2.tag.props) + length)
+        base = MyCell2.tag.offset
+        self.values[base + 0] = ""
 
     @property
     def bar(self):
-        return self._bar
+        return self.values[MyCell2.tag.offset + 0]
     @bar.setter
     def bar(self, value):
-        self.fingerprint.touch(MyCell2.tag.offset + 0)
-        self._bar = value
+        index = MyCell2.tag.offset + 0
+        self.fingerprint.touch(index)
+        self.values[index] = value
 
     def type_id(self):
         return MyCell2.tag.type_id
@@ -77,7 +82,8 @@ class MyCell2(MyCell1):
     def equals(self, other):
         if not super().equals(other):
             return False
-        if self._bar != other._bar:
+        base = MyCell2.tag.offset
+        if self.values[base + 0] != other.values[base + 0]:
             return False
         return True
 
@@ -86,7 +92,7 @@ class MyCell2(MyCell1):
             return False
         base = MyCell2.tag.offset
         if other.fingerprint.get(base + 0):
-            if self._bar != other._bar:
+            if self.values[base + 0] != other.values[base + 0]:
                 return False
         return True
 
@@ -95,24 +101,26 @@ class MyCell2(MyCell1):
         base = MyCell2.tag.offset
         if fingerprint.get(base + 0):
             value = hash_update(value, base + 0)
-            value = hash_update(value, hash(self._bar))
+            value = hash_update(value, hash(self.values[base + 0]))
         return value
 
 class MyEvent1(Event):
-    tag = Event.Tag(Event.tag, 'MyEvent1', 1,
+    tag = Event.Tag(Event.tag, [('Foo', 9)],
         1)
 
     def __init__(self, length=0):
-        super().__init__(MyEvent1.tag.num_props + length)
-        self._foo = ""
+        super().__init__(len(MyEvent1.tag.props) + length)
+        base = MyEvent1.tag.offset
+        self.values[base + 0] = ""
 
     @property
     def foo(self):
-        return self._foo
+        return self.values[MyEvent1.tag.offset + 0]
     @foo.setter
     def foo(self, value):
-        self.fingerprint.touch(MyEvent1.tag.offset + 0)
-        self._foo = value
+        index = MyEvent1.tag.offset + 0
+        self.fingerprint.touch(index)
+        self.values[index] = value
 
     def type_id(self):
         return MyEvent1.tag.type_id
@@ -123,7 +131,8 @@ class MyEvent1(Event):
     def equals(self, other):
         if not super().equals(other):
             return False
-        if self._foo != other._foo:
+        base = MyEvent1.tag.offset
+        if self.values[base + 0] != other.values[base + 0]:
             return False
         return True
 
@@ -132,7 +141,7 @@ class MyEvent1(Event):
             return False
         base = MyEvent1.tag.offset
         if other.fingerprint.get(base + 0):
-            if self._foo != other._foo:
+            if self.values[base + 0] != other.values[base + 0]:
                 return False
         return True
 
@@ -141,24 +150,26 @@ class MyEvent1(Event):
         base = MyEvent1.tag.offset
         if fingerprint.get(base + 0):
             value = hash_update(value, base + 0)
-            value = hash_update(value, hash(self._foo))
+            value = hash_update(value, hash(self.values[base + 0]))
         return value
 
 class MyEvent2(MyEvent1):
-    tag = Event.Tag(MyEvent1.tag, 'MyEvent2', 1,
+    tag = Event.Tag(MyEvent1.tag, [('Bar', 9)],
         2)
 
     def __init__(self, length=0):
-        super().__init__(MyEvent2.tag.num_props + length)
-        self._bar = ""
+        super().__init__(len(MyEvent2.tag.props) + length)
+        base = MyEvent2.tag.offset
+        self.values[base + 0] = ""
 
     @property
     def bar(self):
-        return self._bar
+        return self.values[MyEvent2.tag.offset + 0]
     @bar.setter
     def bar(self, value):
-        self.fingerprint.touch(MyEvent2.tag.offset + 0)
-        self._bar = value
+        index = MyEvent2.tag.offset + 0
+        self.fingerprint.touch(index)
+        self.values[index] = value
 
     def type_id(self):
         return MyEvent2.tag.type_id
@@ -169,7 +180,8 @@ class MyEvent2(MyEvent1):
     def equals(self, other):
         if not super().equals(other):
             return False
-        if self._bar != other._bar:
+        base = MyEvent2.tag.offset
+        if self.values[base + 0] != other.values[base + 0]:
             return False
         return True
 
@@ -178,7 +190,7 @@ class MyEvent2(MyEvent1):
             return False
         base = MyEvent2.tag.offset
         if other.fingerprint.get(base + 0):
-            if self._bar != other._bar:
+            if self.values[base + 0] != other.values[base + 0]:
                 return False
         return True
 
@@ -187,5 +199,5 @@ class MyEvent2(MyEvent1):
         base = MyEvent2.tag.offset
         if fingerprint.get(base + 0):
             value = hash_update(value, base + 0)
-            value = hash_update(value, hash(self._bar))
+            value = hash_update(value, hash(self.values[base + 0]))
         return value

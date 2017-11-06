@@ -18,22 +18,22 @@ class XmlHandler(Handler):
             return False, unit
 
         root = tree.getroot()
-        if (root.tag != 'x2'):
+        if root.tag != 'x2':
             # Not a valid x2 document.
             return True, unit
 
         unit = Unit()
         if 'namespace' in root.attrib:
             unit.namespace = root.attrib['namespace']
-        if ('builtin' in root.attrib and root.attrib['builtin'].endswith('rue')):
+        if 'builtin' in root.attrib and root.attrib['builtin'].endswith('rue'):
             unit.is_builtin = True
 
         for node in root:
-            if (node.tag == 'references'):
-                if (self._parse_references(unit, node) == False):
+            if node.tag == 'references':
+                if self._parse_references(unit, node) == False:
                     return False, unit
-            elif (node.tag == 'definitions'):
-                if (self._parse_definitions(unit, node) == False):
+            elif node.tag == 'definitions':
+                if self._parse_definitions(unit, node) == False:
                     return False, unit
 
         return True, unit
@@ -41,43 +41,43 @@ class XmlHandler(Handler):
     def _parse_references(self, unit, node):
         for child in node:
             # Counts file references only
-            if (child.tag == 'file'):
+            if child.tag == 'file':
                 ref = Reference(child.attrib['target'].strip())
                 unit.references.append(ref)
 
     def _parse_definitions(self, unit, node):
         for child in node:
-            if (child.tag == 'consts'):
-                if (self._parse_consts(unit, child) == False):
+            if child.tag == 'consts':
+                if self._parse_consts(unit, child) == False:
                     return False
-            elif (child.tag in ('cell', 'event')):
-                if (self._parse_cell(unit, child) == False):
+            elif child.tag in ('cell', 'event'):
+                if self._parse_cell(unit, child) == False:
                     return False
 
     def _parse_consts(self, unit, node):
-        if ('name' not in node.attrib):
+        if 'name' not in node.attrib:
             return False
         name = node.attrib['name']
-        if (len(name) == 0):
+        if len(name) == 0:
             return False
 
-        typestr = node.attrib['type'] if ('type' in node.attrib) else 'int32'
+        typestr = node.attrib['type'] if 'type' in node.attrib else 'int32'
 
         consts = Consts(name, typestr)
 
         for child in node:
-            if (child.tag == 'const'):
-                if (self._parse_const(consts, child) == False):
+            if child.tag == 'const':
+                if self._parse_const(consts, child) == False:
                     return False
 
         unit.definitions.append(consts)
         return True
 
     def _parse_const(self, consts, node):
-        if ('name' not in node.attrib):
+        if 'name' not in node.attrib:
             return False
         name = node.attrib['name']
-        if (len(name) == 0):
+        if len(name) == 0:
             return False
 
         const = Constant(name, node.text)
@@ -85,47 +85,47 @@ class XmlHandler(Handler):
         return True
 
     def _parse_cell(self, unit, node):
-        if ('name' not in node.attrib):
+        if 'name' not in node.attrib:
             return False
         name = node.attrib['name']
-        if (len(name) == 0):
+        if len(name) == 0:
             return False
 
         is_event = (node.tag == 'event')
         if is_event:
-            if ('id' not in node.attrib):
+            if 'id' not in node.attrib:
                 return False
             id = node.attrib['id']
-            if (len(id) == 0):
+            if len(id) == 0:
                 return False
 
         cell = Event() if is_event else Cell()
         cell.name = name
         if is_event:
             cell.id = id
-        cell.base = node.attrib['base'] if ('base' in node.attrib) else ''
+        cell.base = node.attrib['base'] if 'base' in node.attrib else ''
 
-        if ('local' in node.attrib and node.attrib['local'].endswith('rue')):
+        if 'local' in node.attrib and node.attrib['local'].endswith('rue'):
             cell.local = True
 
         for child in node:
-            if (child.tag == 'property'):
-                if (self._parse_property(cell, child) == False):
+            if child.tag == 'property':
+                if self._parse_property(cell, child) == False:
                     return False
 
         unit.definitions.append(cell)
         return True
 
     def _parse_property(self, cell, node):
-        if (('name' not in node.attrib) or ('type' not in node.attrib)):
+        if ('name' not in node.attrib) or ('type' not in node.attrib):
             return False
         name = node.attrib['name']
         typestr = node.attrib['type']
-        if (len(name) == 0 or len(typestr) == 0):
+        if len(name) == 0 or len(typestr) == 0:
             return False
 
         typespec = Types.parse(typestr)
-        if (typespec is None):
+        if typespec is None:
             return False
 
         default_value = node.text.strip() if node.text is not None else ''

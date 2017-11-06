@@ -23,12 +23,12 @@ class Trace:
 
     @staticmethod
     def emit(level, message):
-        if (Trace.handler is None or Trace.level > level):
+        if Trace.handler is None or Trace.level > level:
             return
         Trace.handler(level, message)
     @staticmethod
     def emit(level, format_string, *args, **kwargs):
-        if (Trace.handler is None or Trace.level > level):
+        if Trace.handler is None or Trace.level > level:
             return
         Trace.handler(level, format_string.format(*args, **kwargs))
 

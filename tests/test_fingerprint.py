@@ -8,6 +8,9 @@ import pytest
 sys.path.append('..')
 from x2py.fingerprint import Fingerprint
 
+from x2py.deserializer import Deserializer
+from x2py.serializer import Serializer
+
 def test_creation():
     with pytest.raises(ValueError):
         fp = Fingerprint(-1)
@@ -54,6 +57,20 @@ def test_accessors():
         assert fp.get(i) == True
         fp.wipe(i)
         assert fp.get(i) == False
+
+def test_serialization():
+    fp1 = Fingerprint(33)
+    fp1.touch(31)
+    fp1.touch(32)
+
+    s = Serializer()
+    fp1.serialize(s)
+    assert len(s.buffer) == fp1.get_length()
+
+    fp2 = Fingerprint(33)
+    assert fp1 != fp2
+    fp2.deserialize(Deserializer(s.buffer))
+    assert fp1 == fp2
 
 def test_equivalence():
     fp1 = Fingerprint(33)

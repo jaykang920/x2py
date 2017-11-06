@@ -8,6 +8,9 @@ import pytest
 sys.path.append('..')
 import x2py
 
+from x2py.deserializer import Deserializer
+from x2py.serializer import Serializer
+
 from test import *
 
 def test_creation():
@@ -15,6 +18,19 @@ def test_creation():
     assert c1 is not None
     c2 = MyCell2()
     assert c2 is not None
+
+def test_serialization():
+    c1 = MyCell1()
+    c1.foo = 1
+
+    s = Serializer()
+    c1.serialize(s)
+    assert len(s.buffer) == c1.get_length()
+
+    c2 = MyCell1()
+    assert c1 != c2
+    c2.deserialize(Deserializer(s.buffer))
+    assert c1 == c2
 
 def test_equivalence():
     c1 = MyCell2()

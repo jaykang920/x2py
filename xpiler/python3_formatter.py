@@ -25,7 +25,6 @@ def _init_native_types():
     result = {}
     result['bool'] = 'bool'
     result['byte'] = 'int'
-    result['bytes'] = 'bytes'
     result['int8'] = 'int'
     result['int16'] = 'int'
     result['int32'] = 'int'
@@ -34,6 +33,7 @@ def _init_native_types():
     result['float64'] = 'float'
     result['string'] = 'str'
     result['datetime'] = 'datetime'
+    result['bytes'] = 'bytes'
     result['list'] = 'list'
     result['map'] = 'dict'
     return result
@@ -89,7 +89,7 @@ class Python3Formatter(Formatter):
 
         for reference in context.unit.references:
             reference.format(context)
-        if (len(context.unit.references) != 0):
+        if len(context.unit.references) != 0:
             o.write("\n")
 
     def _format_body(self, context):
@@ -113,7 +113,7 @@ class Python3FormatterContext(FormatterContext):
         #    tag_type = 'x2py.' + tag_type
 
         definition.base_class = definition.base
-        if (definition.base_class is None or len(definition.base_class) == 0):
+        if definition.base_class is None or len(definition.base_class) == 0:
             definition.base = ''
             definition.base_class = tag_type
 
@@ -122,15 +122,22 @@ class Python3FormatterContext(FormatterContext):
         self._out(0, "class {0}({1}):\n".format(definition.name, definition.base_class))
 
         base_tag = definition.base_class
-        if (len(definition.base) == 0):
+        if len(definition.base) == 0:
             base_tag = definition.base_class + '.tag' if definition.is_event else 'None'
         else:
             base_tag += '.tag'
 
-        self._out(1, "tag = {0}.Tag({1}, '{2}', {3}".format(tag_type, base_tag, definition.name, len(definition.properties)))
-        if (definition.is_event):
+        # property info
+        props = []
+        for prop in definition.properties:
+            props.append("('{}', {})".format(prop.name,
+                Types.get_type_index(prop.typespec.typestr)))
+        props = ', '.join(props)
+
+        self._out(1, "tag = {0}.Tag({1}, [{2}]".format(tag_type, base_tag, props))
+        if definition.is_event:
             self.out.write(",\n")
-            if ('.' in definition.id):
+            if '.' in definition.id:
                 tokens = definition.id.split('.')
                 tokens[-1] = to_SCREAMING_SNAKE_CASE(tokens[-1])
                 definition.id = '.'.join(tokens)
@@ -142,7 +149,7 @@ class Python3FormatterContext(FormatterContext):
         self._format_methods(definition)
 
     def format_consts(self, definition):
-        if (definition.type == 'string'):
+        if definition.type == 'string':
             for constant in definition.constants:
                 constant.value = '"' + constant.value + '"'
 
@@ -164,13 +171,13 @@ class Python3FormatterContext(FormatterContext):
 
             prop.native_name = to_snake_case(prop.name)
             prop.var_name = '_' + prop.native_name
-            if (keyword.iskeyword(prop.native_name)):
+            if keyword.iskeyword(prop.native_name):
                 prop.native_name += '_'
 
-            if (Types.is_primitive(prop.typespec.typestr)):
-                if (prop.default_value is None or len(prop.default_value) == 0):
+            if Types.is_primitive(prop.typespec.typestr):
+                if prop.default_value is None or len(prop.default_value) == 0:
                     prop.default_value = Python3Formatter.default_values[prop.typespec.typestr]
-                if (prop.typespec.typestr == 'string'):
+                if prop.typespec.typestr == 'string':
                     prop.default_value = '"' + prop.default_value + '"'
             else:
                 prop.default_value = 'None'
@@ -179,16 +186,16 @@ class Python3FormatterContext(FormatterContext):
 
     def _format_typespec(self, typespec):
         typestr = typespec.typestr
-        if (not Types.is_builtin(typestr)):
+        if not Types.is_builtin(typestr):
             return typestr  # custom type
-        if (Types.is_primitive(typestr)):
+        if Types.is_primitive(typestr):
             return Python3Formatter.native_types[typestr]
         else:
             return self._format_collection_type(typespec)
 
     def _format_collection_type(self, typespec):
         tokens = [ typespec.typestr ]
-        if (typespec.details is not None):
+        if typespec.details is not None:
             tokens.append('(')
             for index, detail in enumerate(typespec.details):
                 if index:
@@ -199,11 +206,12 @@ class Python3FormatterContext(FormatterContext):
 
     def _format_constructor(self, definition):
         self._out(1, "def __init__(self, length=0):\n")
-        self._out(2, "super().__init__({}.tag.num_props + length)\n".format(definition.name))
+        self._out(2, "super().__init__(len({}.tag.props) + length)\n".format(definition.name))
+        self._out(2, "base = {0}.tag.offset\n".format(definition.name))
 
         if definition.has_properties():
-            for prop in definition.properties:
-                self._out(2, "self.{0} = {1}\n".format(prop.var_name, prop.default_value))
+            for index, prop in enumerate(definition.properties):
+                self._out(2, "self.values[base + {0}] = {1}\n".format(index, prop.default_value))
             self.out.write("\n")
         else:
             self._out(2, "pass\n")
@@ -215,12 +223,13 @@ class Python3FormatterContext(FormatterContext):
 
             self._out(1, "@property\n")
             self._out(1, "def {}(self):\n".format(prop.native_name))
-            self._out(2, "return self.{}\n".format(prop.var_name))
+            self._out(2, "return self.values[{}.tag.offset + {}]\n".format(definition.name, index))
             #self.out.write("\n")
             self._out(1, "@{}.setter\n".format(prop.native_name))
             self._out(1, "def {}(self, value):\n".format(prop.native_name))
-            self._out(2, "self.fingerprint.touch({}.tag.offset + {})\n".format(definition.name, index))
-            self._out(2, "self.{} = value\n".format(prop.var_name))
+            self._out(2, "index = {}.tag.offset + {}\n".format(definition.name, index))
+            self._out(2, "self.fingerprint.touch(index)\n")
+            self._out(2, "self.values[index] = value\n")
 
     def _format_methods(self, definition):
         self._format_type(definition)
@@ -241,8 +250,9 @@ class Python3FormatterContext(FormatterContext):
         self._out(1, "def equals(self, other):\n")
         self._out(2, "if not super().equals(other):\n")
         self._out(3, "return False\n")
-        for prop in definition.properties:
-            self._out(2, "if self.{0} != other.{0}:\n".format(prop.var_name))
+        self._out(2, "base = {0}.tag.offset\n".format(definition.name))
+        for index, prop in enumerate(definition.properties):
+            self._out(2, "if self.values[base + {0}] != other.values[base + {0}]:\n".format(index))
             self._out(3, "return False\n")
         self._out(2, "return True\n")
 
@@ -254,7 +264,7 @@ class Python3FormatterContext(FormatterContext):
         self._out(2, "base = {0}.tag.offset\n".format(definition.name))
         for index, prop in enumerate(definition.properties):
             self._out(2, "if other.fingerprint.get(base + {}):\n".format(index))
-            self._out(3, "if self.{0} != other.{0}:\n".format(prop.var_name))
+            self._out(3, "if self.values[base + {0}] != other.values[base + {0}]:\n".format(index))
             self._out(4, "return False\n")
         self._out(2, "return True\n")
 
@@ -266,7 +276,7 @@ class Python3FormatterContext(FormatterContext):
         for index, prop in enumerate(definition.properties):
             self._out(2, "if fingerprint.get(base + {}):\n".format(index))
             self._out(3, "value = hash_update(value, base + {})\n".format(index))
-            self._out(3, "value = hash_update(value, hash(self.{}))\n".format(prop.var_name))
+            self._out(3, "value = hash_update(value, hash(self.values[base + {}]))\n".format(index))
         self._out(2, "return value\n")
 
     def _out(self, indentation, s):

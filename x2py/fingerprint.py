@@ -4,6 +4,8 @@
 from array import array
 from copy import copy
 
+from .deserializer import Deserializer
+from .serializer import Serializer
 from .util.misc import HASH_SEED, hash_update
 
 class Fingerprint:
@@ -38,6 +40,10 @@ class Fingerprint:
         else:
             self.blocks = None
 
+    @property
+    def length_in_bytes(self):
+        return ((self.length - 1) >> 3) + 1
+
     def get(self, index):
         """ Gets the bit value at the specified index. """
         if index < 0 or self.length <= index:
@@ -70,6 +76,57 @@ class Fingerprint:
         else:
             index -= 32
             self.blocks[index >> 5] &= ~(1 << index)
+
+    def deserialize(self, deserializer):
+        length, _ = deserializer.read_nonnegative()
+        num_bytes = ((length - 1) >> 3) + 1
+        num_blocks = ((num_bytes - 1) >> 2) + 1
+
+        i = count = 0
+        block = 0
+        while i < 4 and count < num_bytes:
+            b = deserializer.read_byte(None)
+            if count < self.length_in_bytes:
+                block = block | (b << (i << 3))
+            i += 1
+            count += 1
+        self.block = block
+
+        j = 0
+        while j < num_blocks:
+            i = 0
+            block = 0
+            while i < 4 and count < num_bytes:
+                b = deserializer.read_byte(None)
+                if count < self.length_in_bytes:
+                    block = block | (b << (i << 3))
+                i += 1
+                count += 1
+            if self.blocks is not None and j < len(self.blocks):
+                self.blocks[j] = block
+            j += 1
+
+    def get_length(self):
+        return Serializer.get_length_nonnegative(self.length) + self.length_in_bytes
+
+    def serialize(self, serializer):
+        serializer.write_nonnegative(self.length)
+
+        i = count = 0
+        while i < 4 and count < self.length_in_bytes:
+            Serializer.write_byte(serializer.buffer, None, (self.block >> (i << 3)) & 0x0ff)
+            i += 1
+            count += 1
+
+        if self.blocks is None:
+            return
+
+        for block in self.blocks:
+            i = 0
+            while i < 4 and count < self.length_in_bytes:
+                Serializer.write_byte(serializer.buffer, None, (block >> (i << 3)) & 0x0ff)
+                i += 1
+                count += 1
 
     def equivalent(self, other):
         if self is other:

@@ -21,6 +21,14 @@ class Deserializer:
             raise ValueError()
         return value
 
+    def read_string(self, prop_name):
+        length, _ = self.read_nonnegative()
+        if length == 0:
+            return ''
+        temp = self.buffer[self.pos:self.pos + length]
+        self.pos += length
+        return temp.decode('utf-8')
+
     def read_variable32(self):
         value = 0
         i = shift = 0
@@ -39,7 +47,8 @@ class Deserializer:
         if (self.pos + num_bytes) > len(self.buffer):
             raise EOFError()
 
-    readers = [ None, read_bool, read_byte, None, None, read_int32 ]
+    readers = [ None, read_bool, read_byte, None, None, read_int32, None, None, None,
+        read_string ]
 
     def __init__(self, buffer=None):
         self.buffer = buffer

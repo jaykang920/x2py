@@ -52,3 +52,17 @@ def test_nonnegative():
     v, n = d.read_nonnegative()
     assert(v == 128)
     assert(n == 2)
+
+def test_string():
+    for s in ['abcd', '한글']:
+        encoded = s.encode('utf-8')
+        assert Serializer.len_utf8(s) == len(encoded)
+
+        buffer = bytearray()
+        Serializer.write_string(buffer, None, s)
+        assert bytes(buffer[1:]) == encoded
+
+        d = Deserializer(buffer)
+        decoded = d.read_string(None)
+        assert decoded == s
+        assert d.pos == len(buffer)

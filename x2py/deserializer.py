@@ -1,6 +1,7 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+import datetime
 import struct
 
 class Deserializer:
@@ -62,6 +63,14 @@ class Deserializer:
         self.pos += length
         return temp.decode('utf-8')
 
+    def read_datetime(self, prop_name):
+        self.check_length(8)
+        b = self.buffer[self.pos:self.pos + 8]
+        self.pos += 8
+        millisecs = int.from_bytes(b, 'big', signed=True)
+        unix_epoch = datetime.datetime(1970, 1, 1)
+        return unix_epoch + datetime.timedelta(milliseconds=millisecs)
+
     def read_variable32(self):
         return self._read_variable(5)
 
@@ -87,7 +96,7 @@ class Deserializer:
             raise EOFError()
 
     readers = [ None, read_bool, read_byte, read_int8, read_int16, read_int32, read_int64, read_float32, read_float64,
-        read_string ]
+        read_string, read_datetime ]
 
     def __init__(self, buffer=None):
         self.buffer = buffer

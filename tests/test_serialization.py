@@ -1,6 +1,7 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+import datetime
 import sys
 
 import pytest
@@ -98,3 +99,12 @@ def test_string():
         decoded = d.read_string(None)
         assert decoded == s
         assert d.pos == len(buffer)
+
+def test_datetime():
+    buffer = bytearray()
+    d = Deserializer(buffer)
+    for test_value in [ datetime.datetime.now(), datetime.datetime(1969, 12, 31) ]:
+        Serializer.write_datetime(buffer, None, test_value)
+        value = d.read_datetime(None)
+        truncated = test_value - datetime.timedelta(microseconds=(test_value.microsecond % 1000))
+        assert value == truncated

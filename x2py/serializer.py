@@ -1,6 +1,7 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+import datetime
 import struct
 
 class Serializer:
@@ -56,6 +57,10 @@ class Serializer:
                 else:
                     length += 2
         return length
+
+    @staticmethod
+    def len_datetime(value):
+        return 8
 
     @staticmethod
     def len_variable32(value):
@@ -160,6 +165,14 @@ class Serializer:
                 buffer.append(0x080 | ((c >> 0) & 0x3f))
 
     @staticmethod
+    def write_datetime(buffer, prop_name, value):
+        if not isinstance(value, datetime.datetime):
+            raise ValueError()
+        unix_epoch = datetime.datetime(1970, 1, 1)
+        millisecs = int((value - unix_epoch).total_seconds() * 1000)
+        buffer += millisecs.to_bytes(8, 'big', signed=True)
+
+    @staticmethod
     def write_variable(buffer, value):
         while True:
             b = value & 0x7f
@@ -173,7 +186,7 @@ class Serializer:
     len_funcs = [ None, len_bool, len_byte, len_int8, len_int16, len_int32, len_int64, len_float32, len_float64,
         len_string ]
     writers = [ None, write_bool, write_byte, write_int8, write_int16, write_int32, write_int64, write_float32, write_float64,
-        write_string ]
+        write_string, write_datetime ]
 
     def __init__(self, buffer=None):
         self.buffer = buffer

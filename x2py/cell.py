@@ -3,7 +3,7 @@
 
 from .fingerprint import Fingerprint
 from .serializer import Serializer
-from .util.misc import HASH_SEED, hash_update
+from .util.hash import Hash
 
 class PropType:
     BOOL = 1
@@ -96,6 +96,18 @@ class Cell(object):
             return True
         if type(self) != type(other):
             return False
+        return self._equals(self.type_tag(), other)
+
+    def _equals(self, tag, other):
+        if tag.base is not None:
+            if not self._equals(tag.base, other):
+                return False
+        if len(tag.props) == 0:
+            return True
+        base = tag.offset
+        for index, prop in enumerate(tag.props):
+            if self.values[base + index] != other.values[base + index]:
+                return False
         return True
 
     def equivalent(self, other):
@@ -103,10 +115,36 @@ class Cell(object):
             return True
         if not isinstance(self, type(other)):
             return False
+        return self._equivalent(self.type_tag(), other)
+
+    def _equivalent(self, tag, other):
+        if tag.base is not None:
+            if not self._equivalent(tag.base, other):
+                return False
+        if len(tag.props) == 0:
+            return True
+        base = tag.offset
+        for index, prop in enumerate(tag.props):
+            if other.fingerprint.get(base + index):
+                if self.values[base + index] != other.values[base + index]:
+                    return False
         return True
 
     def hash_code(self, fingerprint):
-        return HASH_SEED
+        h = Hash()
+        self._hash_code(self.type_tag(), h, fingerprint)
+        return h.code
+
+    def _hash_code(self, tag, h, fingerprint):
+        if tag.base is not None:
+            self._hash_code(tag.base, h, fingerprint)
+        if len(tag.props) == 0:
+            return
+        base = tag.offset
+        for index, prop in enumerate(tag.props):
+            if fingerprint.get(base + index):
+                h.update(base + index)                     # property index
+                h.update(hash(self.values[base + index]))  # property value
 
     def serialize(self, serializer):
         self.fingerprint.serialize(serializer)
@@ -121,6 +159,11 @@ class Cell(object):
         for index, prop in enumerate(tag.props):
             if self.fingerprint.get(base + index):
                 serializer.write(prop, self.values[base + index])
+
+    def _set_property(self, index, value, type_index):
+        print("type_index", type_index)
+        self.fingerprint.touch(index)
+        self.values[index] = value
 
     def __eq__(self, other):
         return other.equals(self)

@@ -13,16 +13,18 @@ from x2py.serializer import Serializer
 
 def test_byte():
     buffer = bytearray()
+    d = Deserializer(buffer)
     for test_value in [0, 1, 0x07f, 0x080, 0x0ff ]:
         Serializer.write_byte(buffer, None, test_value)
-        value = Deserializer.read_byte(buffer, None)
+        value = d.read_byte(None)
         assert value == test_value
 
 def test_int32():
     buffer = bytearray()
+    d = Deserializer(buffer)
     for test_value in [0, 1, 0x07f, 0x080, 0x03fff, 0x0400 ]:
         Serializer.write_int32(buffer, None, test_value)
-        value = Deserializer.read_int32(buffer, None)
+        value = d.read_int32(None)
         assert value == test_value
 
 def test_nonnegative():
@@ -34,7 +36,7 @@ def test_nonnegative():
     v, n = d.read_nonnegative()
     assert(v == 0)
     assert(n == 1)
-    assert(len(s.buffer) == 0)
+    assert(len(s.buffer) == 1)
 
     s.write_nonnegative(1)
     v, n = d.read_nonnegative()

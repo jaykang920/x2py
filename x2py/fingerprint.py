@@ -6,7 +6,7 @@ from copy import copy
 
 from .deserializer import Deserializer
 from .serializer import Serializer
-from .util.misc import HASH_SEED, hash_update
+from .util.hash import HASH_SEED, hash_update
 
 class Fingerprint:
     """ Manages a fixed-length compact array of bit values.
@@ -50,21 +50,24 @@ class Fingerprint:
             raise ValueError()
 
         if index < 32:
-            return ((self.block & (1 << index)) != 0)
+            return ((self.block & (1 << (index & 0x1f))) != 0)
         else:
             index -= 32
-            return ((self.blocks[index >> 5] & (1 << index)) != 0)
+            return ((self.blocks[index >> 5] & (1 << (index & 0x1f))) != 0)
 
     def touch(self, index):
         """ Sets the bit value at the specified index. """
-        if index < 0 or self.length <= index:
+        if index < 0:
             raise ValueError()
+        # Allow over-indexing, returning False by default.
+        if self.length <= index:
+            return False
 
         if index < 32:
-            self.block |= (1 << index)
+            self.block |= (1 << (index & 0x1f))
         else:
             index -= 32
-            self.blocks[index >> 5] |= (1 << index)
+            self.blocks[index >> 5] |= (1 << (index & 0x1f))
 
     def wipe(self, index):
         """ Clears the bit value at the specified index. """
@@ -72,10 +75,10 @@ class Fingerprint:
             raise ValueError()
 
         if index < 32:
-            self.block &= ~(1 << index)
+            self.block &= ~(1 << (index & 0x1f))
         else:
             index -= 32
-            self.blocks[index >> 5] &= ~(1 << index)
+            self.blocks[index >> 5] &= ~(1 << (index & 0x1f))
 
     def deserialize(self, deserializer):
         length, _ = deserializer.read_nonnegative()

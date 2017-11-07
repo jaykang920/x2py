@@ -2,7 +2,7 @@
 # See the file LICENSE for details.
 
 from .cell import Cell
-from .util.misc import hash_update
+from .util.hash import hash_update
 
 class Event(Cell):
     """ Common base class for all events. """
@@ -31,28 +31,14 @@ class Event(Cell):
     def type_tag(self):
         return Event.tag
 
-    def equals(self, other):
-        if not super().equals(other):
-            return False
-        return True
-
-    def equivalent(self, other):
-        if not super().equivalent(other):
-            return False
-        return True
-
-    def hash_code(self, fingerprint):
-        value = super().hash_code(fingerprint)
-        return value
-
-    def _hash_code(self, fingerprint, type_id):
+    def hash_code_for(self, fingerprint, type_id):
         value = self.hash_code(fingerprint)
         value = hash_update(value, -1)  # delimiter for type id
         value = hash_update(value, type_id)
         return value
 
     def __hash__(self):
-        return self._hash_code(self.fingerprint, self.type_id())
+        return self.hash_code_for(self.fingerprint, self.type_id())
 
 class EventProxy:
     """ Supports dictionary search by equivalence. """
@@ -66,4 +52,4 @@ class EventProxy:
         return self.event.equivalent(other)
 
     def __hash__(self):
-        return self.event._hash_code(self.fingerprint, self.type_id)
+        return self.event.hash_code_for(self.fingerprint, self.type_id)

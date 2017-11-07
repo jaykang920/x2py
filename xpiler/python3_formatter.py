@@ -84,7 +84,6 @@ class Python3Formatter(Formatter):
             #o.write("import x2py\n")
             o.write("from x2py.cell import Cell\n")
             o.write("from x2py.event import Event\n")
-            o.write("from x2py.util.misc import hash_update\n")
             o.write("\n")
 
         for reference in context.unit.references:
@@ -119,22 +118,19 @@ class Python3FormatterContext(FormatterContext):
 
         self._preprocess_properties(definition)
 
-        self._out(0, "class {0}({1}):\n".format(definition.name, definition.base_class))
-
         base_tag = definition.base_class
         if len(definition.base) == 0:
             base_tag = definition.base_class + '.tag' if definition.is_event else 'None'
         else:
             base_tag += '.tag'
 
-        # property info
-        props = []
+        tag_initializer_name = '_init_' + to_snake_case(definition.name) + '_tag'
+        self._out(0, "def {}():\n".format(tag_initializer_name))
+        self._out(1, "props = []\n")
         for prop in definition.properties:
-            props.append("('{}', {})".format(prop.name,
+            self._out(1, "props.append(('{}', {}))\n".format(prop.name,
                 Types.get_type_index(prop.typespec.typestr)))
-        props = ', '.join(props)
-
-        self._out(1, "tag = {0}.Tag({1}, [{2}]".format(tag_type, base_tag, props))
+        self._out(1, "return {}.Tag({}, props".format(tag_type, base_tag))
         if definition.is_event:
             self.out.write(",\n")
             if '.' in definition.id:
@@ -143,6 +139,10 @@ class Python3FormatterContext(FormatterContext):
                 definition.id = '.'.join(tokens)
             self._out(2, definition.id)
         self.out.write(")\n\n")
+
+        self._out(0, "class {0}({1}):\n".format(definition.name, definition.base_class))
+
+        self._out(1, "tag = {}()\n\n".format(tag_initializer_name))
 
         self._format_constructor(definition)
         self._format_properties(definition)
@@ -227,15 +227,11 @@ class Python3FormatterContext(FormatterContext):
             #self.out.write("\n")
             self._out(1, "@{}.setter\n".format(prop.native_name))
             self._out(1, "def {}(self, value):\n".format(prop.native_name))
-            self._out(2, "index = {}.tag.offset + {}\n".format(definition.name, index))
-            self._out(2, "self.fingerprint.touch(index)\n")
-            self._out(2, "self.values[index] = value\n")
+            self._out(2, "self._set_property({}.tag.offset + {}, value,\n".format(definition.name, index))
+            self._out(3, "{}.tag.props[{}][1])\n".format(definition.name, index))
 
     def _format_methods(self, definition):
         self._format_type(definition)
-        self._format_equals(definition)
-        self._format_equivalent(definition)
-        self._format_hash_code(definition)
 
     def _format_type(self, definition):
         self.out.write("\n")
@@ -244,40 +240,6 @@ class Python3FormatterContext(FormatterContext):
         self.out.write("\n")
         self._out(1, "def type_tag(self):\n")
         self._out(2, "return {}.tag\n".format(definition.name))
-
-    def _format_equals(self, definition):
-        self.out.write("\n")
-        self._out(1, "def equals(self, other):\n")
-        self._out(2, "if not super().equals(other):\n")
-        self._out(3, "return False\n")
-        self._out(2, "base = {0}.tag.offset\n".format(definition.name))
-        for index, prop in enumerate(definition.properties):
-            self._out(2, "if self.values[base + {0}] != other.values[base + {0}]:\n".format(index))
-            self._out(3, "return False\n")
-        self._out(2, "return True\n")
-
-    def _format_equivalent(self, definition):
-        self.out.write("\n")
-        self._out(1, "def equivalent(self, other):\n")
-        self._out(2, "if not super().equivalent(other):\n")
-        self._out(3, "return False\n")
-        self._out(2, "base = {0}.tag.offset\n".format(definition.name))
-        for index, prop in enumerate(definition.properties):
-            self._out(2, "if other.fingerprint.get(base + {}):\n".format(index))
-            self._out(3, "if self.values[base + {0}] != other.values[base + {0}]:\n".format(index))
-            self._out(4, "return False\n")
-        self._out(2, "return True\n")
-
-    def _format_hash_code(self, definition):
-        self.out.write("\n")
-        self._out(1, "def hash_code(self, fingerprint):\n")
-        self._out(2, "value = super().hash_code(fingerprint)\n")
-        self._out(2, "base = {0}.tag.offset\n".format(definition.name))
-        for index, prop in enumerate(definition.properties):
-            self._out(2, "if fingerprint.get(base + {}):\n".format(index))
-            self._out(3, "value = hash_update(value, base + {})\n".format(index))
-            self._out(3, "value = hash_update(value, hash(self.values[base + {}]))\n".format(index))
-        self._out(2, "return value\n")
 
     def _out(self, indentation, s):
         self._indent(indentation)

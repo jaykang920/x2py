@@ -2,11 +2,15 @@
 
 from x2py.cell import Cell
 from x2py.event import Event
-from x2py.util.misc import hash_update
+
+def _init_hello_req_tag():
+    props = []
+    props.append(('Name', 9))
+    return Event.Tag(Event.tag, props,
+        1)
 
 class HelloReq(Event):
-    tag = Event.Tag(Event.tag, [('Name', 9)],
-        1)
+    tag = _init_hello_req_tag()
 
     def __init__(self, length=0):
         super().__init__(len(HelloReq.tag.props) + length)
@@ -18,9 +22,8 @@ class HelloReq(Event):
         return self.values[HelloReq.tag.offset + 0]
     @name.setter
     def name(self, value):
-        index = HelloReq.tag.offset + 0
-        self.fingerprint.touch(index)
-        self.values[index] = value
+        self._set_property(HelloReq.tag.offset + 0, value,
+            HelloReq.tag.props[0][1])
 
     def type_id(self):
         return HelloReq.tag.type_id
@@ -28,34 +31,14 @@ class HelloReq(Event):
     def type_tag(self):
         return HelloReq.tag
 
-    def equals(self, other):
-        if not super().equals(other):
-            return False
-        base = HelloReq.tag.offset
-        if self.values[base + 0] != other.values[base + 0]:
-            return False
-        return True
-
-    def equivalent(self, other):
-        if not super().equivalent(other):
-            return False
-        base = HelloReq.tag.offset
-        if other.fingerprint.get(base + 0):
-            if self.values[base + 0] != other.values[base + 0]:
-                return False
-        return True
-
-    def hash_code(self, fingerprint):
-        value = super().hash_code(fingerprint)
-        base = HelloReq.tag.offset
-        if fingerprint.get(base + 0):
-            value = hash_update(value, base + 0)
-            value = hash_update(value, hash(self.values[base + 0]))
-        return value
+def _init_hello_resp_tag():
+    props = []
+    props.append(('Message', 9))
+    return Event.Tag(Event.tag, props,
+        2)
 
 class HelloResp(Event):
-    tag = Event.Tag(Event.tag, [('Message', 9)],
-        2)
+    tag = _init_hello_resp_tag()
 
     def __init__(self, length=0):
         super().__init__(len(HelloResp.tag.props) + length)
@@ -67,9 +50,8 @@ class HelloResp(Event):
         return self.values[HelloResp.tag.offset + 0]
     @message.setter
     def message(self, value):
-        index = HelloResp.tag.offset + 0
-        self.fingerprint.touch(index)
-        self.values[index] = value
+        self._set_property(HelloResp.tag.offset + 0, value,
+            HelloResp.tag.props[0][1])
 
     def type_id(self):
         return HelloResp.tag.type_id
@@ -77,34 +59,14 @@ class HelloResp(Event):
     def type_tag(self):
         return HelloResp.tag
 
-    def equals(self, other):
-        if not super().equals(other):
-            return False
-        base = HelloResp.tag.offset
-        if self.values[base + 0] != other.values[base + 0]:
-            return False
-        return True
-
-    def equivalent(self, other):
-        if not super().equivalent(other):
-            return False
-        base = HelloResp.tag.offset
-        if other.fingerprint.get(base + 0):
-            if self.values[base + 0] != other.values[base + 0]:
-                return False
-        return True
-
-    def hash_code(self, fingerprint):
-        value = super().hash_code(fingerprint)
-        base = HelloResp.tag.offset
-        if fingerprint.get(base + 0):
-            value = hash_update(value, base + 0)
-            value = hash_update(value, hash(self.values[base + 0]))
-        return value
+def _init_num_req_tag():
+    props = []
+    props.append(('Value', 5))
+    return Event.Tag(Event.tag, props,
+        3)
 
 class NumReq(Event):
-    tag = Event.Tag(Event.tag, [('Value', 5)],
-        3)
+    tag = _init_num_req_tag()
 
     def __init__(self, length=0):
         super().__init__(len(NumReq.tag.props) + length)
@@ -116,9 +78,8 @@ class NumReq(Event):
         return self.values[NumReq.tag.offset + 0]
     @value.setter
     def value(self, value):
-        index = NumReq.tag.offset + 0
-        self.fingerprint.touch(index)
-        self.values[index] = value
+        self._set_property(NumReq.tag.offset + 0, value,
+            NumReq.tag.props[0][1])
 
     def type_id(self):
         return NumReq.tag.type_id
@@ -126,34 +87,14 @@ class NumReq(Event):
     def type_tag(self):
         return NumReq.tag
 
-    def equals(self, other):
-        if not super().equals(other):
-            return False
-        base = NumReq.tag.offset
-        if self.values[base + 0] != other.values[base + 0]:
-            return False
-        return True
-
-    def equivalent(self, other):
-        if not super().equivalent(other):
-            return False
-        base = NumReq.tag.offset
-        if other.fingerprint.get(base + 0):
-            if self.values[base + 0] != other.values[base + 0]:
-                return False
-        return True
-
-    def hash_code(self, fingerprint):
-        value = super().hash_code(fingerprint)
-        base = NumReq.tag.offset
-        if fingerprint.get(base + 0):
-            value = hash_update(value, base + 0)
-            value = hash_update(value, hash(self.values[base + 0]))
-        return value
+def _init_num_resp_tag():
+    props = []
+    props.append(('Result', 5))
+    return Event.Tag(Event.tag, props,
+        4)
 
 class NumResp(Event):
-    tag = Event.Tag(Event.tag, [('Result', 5)],
-        4)
+    tag = _init_num_resp_tag()
 
     def __init__(self, length=0):
         super().__init__(len(NumResp.tag.props) + length)
@@ -165,37 +106,11 @@ class NumResp(Event):
         return self.values[NumResp.tag.offset + 0]
     @result.setter
     def result(self, value):
-        index = NumResp.tag.offset + 0
-        self.fingerprint.touch(index)
-        self.values[index] = value
+        self._set_property(NumResp.tag.offset + 0, value,
+            NumResp.tag.props[0][1])
 
     def type_id(self):
         return NumResp.tag.type_id
 
     def type_tag(self):
         return NumResp.tag
-
-    def equals(self, other):
-        if not super().equals(other):
-            return False
-        base = NumResp.tag.offset
-        if self.values[base + 0] != other.values[base + 0]:
-            return False
-        return True
-
-    def equivalent(self, other):
-        if not super().equivalent(other):
-            return False
-        base = NumResp.tag.offset
-        if other.fingerprint.get(base + 0):
-            if self.values[base + 0] != other.values[base + 0]:
-                return False
-        return True
-
-    def hash_code(self, fingerprint):
-        value = super().hash_code(fingerprint)
-        base = NumResp.tag.offset
-        if fingerprint.get(base + 0):
-            value = hash_update(value, base + 0)
-            value = hash_update(value, hash(self.values[base + 0]))
-        return value

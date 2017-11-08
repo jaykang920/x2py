@@ -6,39 +6,39 @@ import struct
 
 class Serializer:
     @staticmethod
-    def len_bool(value):
+    def len_bool(metaprop, value):
         return 1
 
     @staticmethod
-    def len_byte(value):
+    def len_byte(metaprop, value):
         return 1
 
     @staticmethod
-    def len_int8(value):
+    def len_int8(metaprop, value):
         return 1
 
     @staticmethod
-    def len_int16(value):
+    def len_int16(metaprop, value):
         return 2
 
     @staticmethod
-    def len_int32(value):
+    def len_int32(metaprop, value):
         return Serializer.len_variable32(value)
 
     @staticmethod
-    def len_int64(value):
+    def len_int64(metaprop, value):
         return Serializer.len_variable64(value)
 
     @staticmethod
-    def len_float32(value):
+    def len_float32(metaprop, value):
         return 4
 
     @staticmethod
-    def len_float64(value):
+    def len_float64(metaprop, value):
         return 8
 
     @staticmethod
-    def len_string(value):
+    def len_string(metaprop, value):
         if not isinstance(value, str):
             raise ValueError()
         length = Serializer.len_utf8(value)
@@ -59,8 +59,38 @@ class Serializer:
         return length
 
     @staticmethod
-    def len_datetime(value):
+    def len_datetime(metaprop, value):
         return 8
+
+    @staticmethod
+    def len_bytes(metaprop, value):
+        length = 0 if value is None else len(value)
+        return Serializer.get_length_nonnegative(length) + length
+
+    @staticmethod
+    def len_cell(metaprop, value):
+        is_none = (value is None)
+        length = 0 if is_none else value.get_length()
+        return Serializer.get_length_nonnegative(length) + length
+
+    @staticmethod
+    def len_list(metaprop, value):
+        is_none = (value is None)
+        length = 0 if is_none else len(value)
+        result = Serializer.get_length_nonnegative(length)
+        for v in value:
+            result += Serializer.get_length(metaprop.details[0], v)
+        return result
+
+    @staticmethod
+    def len_map(metaprop, value):
+        is_none = (value is None)
+        length = 0 if is_none else len(value)
+        result = Serializer.get_length_nonnegative(length)
+        for k, v in value.items():
+            result += Serializer.get_length(metaprop.details[0], k)
+            result += Serializer.get_length(metaprop.details[1], v)
+        return result
 
     @staticmethod
     def len_variable32(value):
@@ -96,81 +126,106 @@ class Serializer:
             return 9
         return 10
 
-    @staticmethod
-    def write_bool(buffer, prop_name, value):
+    def write_bool(self, metaprop, value):
         if value:
-            buffer.append(1)
+            self.buffer.append(1)
         else:
-            buffer.append(0)
+            self.buffer.append(0)
 
-    @staticmethod
-    def write_byte(buffer, prop_name, value):
+    def write_byte(self, metaprop, value):
         if value < 0 or (2**8 - 1) < value:
             raise ValueError()
-        buffer.append(value)
+        self.buffer.append(value)
 
-    @staticmethod
-    def write_int8(buffer, prop_name, value):
+    def write_int8(self, metaprop, value):
         if value < -(2**7) or (2**7 - 1) < value:
             raise ValueError()
-        buffer += value.to_bytes(1, 'big', signed=True)
+        self.buffer += value.to_bytes(1, 'big', signed=True)
 
-    @staticmethod
-    def write_int16(buffer, prop_name, value):
+    def write_int16(self, metaprop, value):
         if value < -(2**15) or (2**15 - 1) < value:
             raise ValueError()
-        buffer += value.to_bytes(2, 'big', signed=True)
+        self.buffer += value.to_bytes(2, 'big', signed=True)
 
-    @staticmethod
-    def write_int32(buffer, prop_name, value):
+    def write_int32(self, prop_name, value):
         if value < -(2**31) or (2**31 - 1) < value:
             raise ValueError()
         value = (value << 1) ^ (value >> 31)
-        Serializer.write_variable(buffer, value)
+        Serializer.write_variable(self.buffer, value)
 
-    @staticmethod
-    def write_int64(buffer, prop_name, value):
+    def write_int64(self, prop_name, value):
         if value < -(2**63) or (2**63 - 1) < value:
             raise ValueError()
         value = (value << 1) ^ (value >> 63)
-        Serializer.write_variable(buffer, value)
+        Serializer.write_variable(self.buffer, value)
 
-    @staticmethod
-    def write_float32(buffer, prop_name, value):
-        buffer += struct.pack('f', value)
+    def write_float32(self, metaprop, value):
+        self.buffer += struct.pack('f', value)
 
-    @staticmethod
-    def write_float64(buffer, prop_name, value):
-        buffer += struct.pack('d', value)
+    def write_float64(self, metaprop, value):
+        self.buffer += struct.pack('d', value)
 
-    @staticmethod
-    def write_string(buffer, prop_name, value):
+    def write_string(self, metaprop, value):
         if not isinstance(value, str):
             raise ValueError()
         # utf-8 encoding
         length = Serializer.len_utf8(value)
-        Serializer.write_variable(buffer, length)  # write_nonnegative
+        Serializer.write_variable(self.buffer, length)  # write_nonnegative
         if length == 0:
             return
         for char in value:
             c = ord(char)
             if (c & 0xff80) == 0:
-                buffer.append(c & 0x0ff)
+                self.buffer.append(c & 0x0ff)
             elif (c & 0xf800) != 0:
-                buffer.append(0x0e0 | ((c >> 12) & 0x0f))
-                buffer.append(0x080 | ((c >> 6) & 0x3f))
-                buffer.append(0x080 | ((c >> 0) & 0x3f))
+                self.buffer.append(0x0e0 | ((c >> 12) & 0x0f))
+                self.buffer.append(0x080 | ((c >> 6) & 0x3f))
+                self.buffer.append(0x080 | ((c >> 0) & 0x3f))
             else:
-                buffer.append(0x0c0 | ((c >> 6) & 0x1f))
-                buffer.append(0x080 | ((c >> 0) & 0x3f))
+                self.buffer.append(0x0c0 | ((c >> 6) & 0x1f))
+                self.buffer.append(0x080 | ((c >> 0) & 0x3f))
 
-    @staticmethod
-    def write_datetime(buffer, prop_name, value):
+    def write_datetime(self, metaprop, value):
         if not isinstance(value, datetime.datetime):
             raise ValueError()
         unix_epoch = datetime.datetime(1970, 1, 1)
         millisecs = int((value - unix_epoch).total_seconds() * 1000)
-        buffer += millisecs.to_bytes(8, 'big', signed=True)
+        self.buffer += millisecs.to_bytes(8, 'big', signed=True)
+
+    def write_bytes(self, metaprop, value):
+        is_none = (value is None)
+        length = 0 if is_none else len(value)
+        Serializer.write_variable(self.buffer, length)  # write_nonnegative
+        if is_none:
+            return
+        self.buffer += value
+
+    def write_cell(self, metaprop, value):
+        is_none = (value is None)
+        length = 0 if is_none else value.get_length()
+        Serializer.write_variable(self.buffer, length)  # write_nonnegative
+        if is_none:
+            return
+        value.serialize(self)
+
+    def write_list(self, metaprop, value):
+        is_none = (value is None)
+        length = 0 if is_none else len(value)
+        Serializer.write_variable(self.buffer, length)  # write_nonnegative
+        if is_none:
+            return
+        for v in value:
+            self.write(metaprop.details[0], v)
+
+    def write_map(self, metaprop, value):
+        is_none = (value is None)
+        length = 0 if is_none else len(value)
+        Serializer.write_variable(self.buffer, length)  # write_nonnegative
+        if is_none:
+            return
+        for k, v in value.items():
+            self.write(metaprop.details[0], k)
+            self.write(metaprop.details[1], v)
 
     @staticmethod
     def write_variable(buffer, value):
@@ -184,9 +239,9 @@ class Serializer:
                 break
 
     len_funcs = [ None, len_bool, len_byte, len_int8, len_int16, len_int32, len_int64, len_float32, len_float64,
-        len_string ]
+        len_string, len_datetime, len_bytes, len_cell, len_list, len_map ]
     writers = [ None, write_bool, write_byte, write_int8, write_int16, write_int32, write_int64, write_float32, write_float64,
-        write_string, write_datetime ]
+        write_string, write_datetime, write_bytes, write_cell, write_list, write_map ]
 
     def __init__(self, buffer=None):
         self.buffer = buffer
@@ -194,13 +249,13 @@ class Serializer:
             self.buffer = bytearray()
 
     @staticmethod
-    def get_length(type_index, value):
-        len_func = Serializer.len_funcs[type_index]
-        return len_func.__func__(value)
+    def get_length(metaprop, value):
+        len_func = Serializer.len_funcs[metaprop.type_index]
+        return len_func.__func__(metaprop, value)
 
-    def write(self, prop, value):
-        writer = Serializer.writers[prop[1]]
-        writer.__func__(self.buffer, prop[0], value)
+    def write(self, metaprop, value):
+        writer = Serializer.writers[metaprop.type_index]
+        writer(self, metaprop, value)
 
     @staticmethod
     def get_length_nonnegative(value):

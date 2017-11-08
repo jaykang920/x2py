@@ -5,7 +5,9 @@ from .fingerprint import Fingerprint
 from .serializer import Serializer
 from .util.hash import Hash
 
-class PropType:
+class MetaProperty:
+    """ Represents runtime traits of a cell property. """
+
     BOOL = 1
     BYTE = 2
     INT8 = 3
@@ -16,22 +18,28 @@ class PropType:
     FLOAT64 = 8
     STRING = 9
     DATETIME = 10
-    CELL = 11
-    BYTES = 12
+    BYTES = 11
+    CELL = 12
     LIST = 13
     MAP = 14
     OBJECT = 15
+
+    def __init__(self, name, type_index, factory_method=None, details=None):
+        self.name = name
+        self.type_index = type_index
+        self.factory_method = factory_method
+        self.details = details  # list of child MetaProperty objects
 
 class Cell(object):
     """ Common base class for all custom types. """
 
     class Tag:
-        def __init__(self, base, props):
+        def __init__(self, base, metaprops):
             self.base = base
-            self.props = props
+            self.metaprops = metaprops
             self.offset = 0
             if base is not None:
-                self.offset = base.offset + len(base.props)
+                self.offset = base.offset + len(base.metaprops)
 
     tag = Tag(None, [])
 
@@ -49,13 +57,13 @@ class Cell(object):
     def _desc(self, tag, prop_descs):
         if tag.base is not None:
             self._desc(tag.base, prop_descs)
-        if len(tag.props) == 0:
+        if len(tag.metaprops) == 0:
             return
-        for index, prop in enumerate(tag.props):
+        for index, prop in enumerate(tag.metaprops):
             value = self.values[tag.offset + index]
-            if prop[1] == 9:
+            if prop.type_index == 9:
                 value = '"' + value + '"'
-            prop_descs.append('"{}": {}'.format(prop[0], value))
+            prop_descs.append('"{}": {}'.format(prop.name, value))
 
     def deserialize(self, deserializer):
         self.fingerprint.deserialize(deserializer)
@@ -64,10 +72,10 @@ class Cell(object):
     def _deserialize(self, tag, deserializer):
         if tag.base is not None:
             self._deserialize(tag.base, deserializer)
-        if len(tag.props) == 0:
+        if len(tag.metaprops) == 0:
             return
         base = tag.offset
-        for index, prop in enumerate(tag.props):
+        for index, prop in enumerate(tag.metaprops):
             if self.fingerprint.get(base + index):
                 self.values[base + index] = deserializer.read(prop)
 
@@ -80,12 +88,12 @@ class Cell(object):
         length = 0
         if tag.base is not None:
             length += self._get_length(tag.base)
-        if len(tag.props) == 0:
+        if len(tag.metaprops) == 0:
             return length
         base = tag.offset
-        for index, prop in enumerate(tag.props):
+        for index, prop in enumerate(tag.metaprops):
             if self.fingerprint.get(base + index):
-                length += Serializer.get_length(prop[1], self.values[base + index])
+                length += Serializer.get_length(prop, self.values[base + index])
         return length
 
     def type_tag(self):
@@ -102,10 +110,10 @@ class Cell(object):
         if tag.base is not None:
             if not self._equals(tag.base, other):
                 return False
-        if len(tag.props) == 0:
+        if len(tag.metaprops) == 0:
             return True
         base = tag.offset
-        for index, prop in enumerate(tag.props):
+        for index, prop in enumerate(tag.metaprops):
             if self.values[base + index] != other.values[base + index]:
                 return False
         return True
@@ -121,10 +129,10 @@ class Cell(object):
         if tag.base is not None:
             if not self._equivalent(tag.base, other):
                 return False
-        if len(tag.props) == 0:
+        if len(tag.metaprops) == 0:
             return True
         base = tag.offset
-        for index, prop in enumerate(tag.props):
+        for index, prop in enumerate(tag.metaprops):
             if other.fingerprint.get(base + index):
                 if self.values[base + index] != other.values[base + index]:
                     return False
@@ -138,10 +146,10 @@ class Cell(object):
     def _hash_code(self, tag, h, fingerprint):
         if tag.base is not None:
             self._hash_code(tag.base, h, fingerprint)
-        if len(tag.props) == 0:
+        if len(tag.metaprops) == 0:
             return
         base = tag.offset
-        for index, prop in enumerate(tag.props):
+        for index, prop in enumerate(tag.metaprops):
             if fingerprint.get(base + index):
                 h.update(base + index)                     # property index
                 h.update(hash(self.values[base + index]))  # property value
@@ -153,10 +161,10 @@ class Cell(object):
     def _serialize(self, tag, serializer):
         if tag.base is not None:
             self._serialize(tag.base, serializer)
-        if len(tag.props) == 0:
+        if len(tag.metaprops) == 0:
             return
         base = tag.offset
-        for index, prop in enumerate(tag.props):
+        for index, prop in enumerate(tag.metaprops):
             if self.fingerprint.get(base + index):
                 serializer.write(prop, self.values[base + index])
 

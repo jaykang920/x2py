@@ -117,7 +117,7 @@ class Fingerprint:
 
         i = count = 0
         while i < 4 and count < self.length_in_bytes:
-            Serializer.write_byte(serializer.buffer, None, (self.block >> (i << 3)) & 0x0ff)
+            serializer.write_byte(None, (self.block >> (i << 3)) & 0x0ff)
             i += 1
             count += 1
 
@@ -127,7 +127,7 @@ class Fingerprint:
         for block in self.blocks:
             i = 0
             while i < 4 and count < self.length_in_bytes:
-                Serializer.write_byte(serializer.buffer, None, (block >> (i << 3)) & 0x0ff)
+                serializer.write_byte(None, (block >> (i << 3)) & 0x0ff)
                 i += 1
                 count += 1
 

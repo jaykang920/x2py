@@ -8,14 +8,14 @@ class Event(Cell):
     """ Common base class for all events. """
 
     class Tag(Cell.Tag):
-        def __init__(self, base, props, type_id):
-            super().__init__(base, props)
+        def __init__(self, base, metaprops, type_id):
+            super().__init__(base, metaprops)
             self.type_id = type_id
 
     tag = Tag(None, [], 0)
 
     def __init__(self, length=0):
-        super().__init__(len(Event.tag.props) + length)
+        super().__init__(len(Event.tag.metaprops) + length)
 
     def desc(self):
         prop_descs = []

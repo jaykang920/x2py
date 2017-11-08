@@ -82,7 +82,7 @@ class Python3Formatter(Formatter):
         o.write("\n")
         if not context.unit.is_builtin:
             #o.write("import x2py\n")
-            o.write("from x2py.cell import Cell\n")
+            o.write("from x2py.cell import MetaProperty, Cell\n")
             o.write("from x2py.event import Event\n")
             o.write("\n")
 
@@ -126,11 +126,10 @@ class Python3FormatterContext(FormatterContext):
 
         tag_initializer_name = '_init_' + to_snake_case(definition.name) + '_tag'
         self._out(0, "def {}():\n".format(tag_initializer_name))
-        self._out(1, "props = []\n")
+        self._out(1, "metaprops = []\n")
         for prop in definition.properties:
-            self._out(1, "props.append(('{}', {}))\n".format(prop.name,
-                Types.get_type_index(prop.typespec.typestr)))
-        self._out(1, "return {}.Tag({}, props".format(tag_type, base_tag))
+            self._out(1, "metaprops.append({})\n".format(prop.typespec.metaprop(prop.name)))
+        self._out(1, "return {}.Tag({}, metaprops".format(tag_type, base_tag))
         if definition.is_event:
             self.out.write(",\n")
             if '.' in definition.id:
@@ -206,7 +205,7 @@ class Python3FormatterContext(FormatterContext):
 
     def _format_constructor(self, definition):
         self._out(1, "def __init__(self, length=0):\n")
-        self._out(2, "super().__init__(len({}.tag.props) + length)\n".format(definition.name))
+        self._out(2, "super().__init__(len({}.tag.metaprops) + length)\n".format(definition.name))
         self._out(2, "base = {0}.tag.offset\n".format(definition.name))
 
         if definition.has_properties():
@@ -228,7 +227,7 @@ class Python3FormatterContext(FormatterContext):
             self._out(1, "@{}.setter\n".format(prop.native_name))
             self._out(1, "def {}(self, value):\n".format(prop.native_name))
             self._out(2, "self._set_property({}.tag.offset + {}, value,\n".format(definition.name, index))
-            self._out(3, "{}.tag.props[{}][1])\n".format(definition.name, index))
+            self._out(3, "{}.tag.metaprops[{}].type_index)\n".format(definition.name, index))
 
     def _format_methods(self, definition):
         self._format_type(definition)

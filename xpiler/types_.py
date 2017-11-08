@@ -6,6 +6,26 @@ class TypeSpec:
         self.typestr = typestr
         self.details = details  # list(TypeSpec)
 
+    def metaprop(self, name):
+        tokens = []
+        tokens.append('MetaProperty(')
+        if name is not None:
+            tokens.append("'{}'".format(name))
+        else:
+            tokens.append('None')
+        tokens.append(", {}".format(Types.get_type_index(self.typestr)))
+        if not Types.is_builtin(self.typestr):
+            tokens.append(", factory_method={}", self.typestr)
+        if self.details is not None and len(self.details) != 0:
+            tokens.append(', details=[ ')
+            for index, detail in enumerate(self.details):
+                if index:
+                    tokens.append(', ')
+                tokens.append(detail.metaprop(None))
+            tokens.append(' ]')
+        tokens.append(')')
+        return ''.join(tokens)
+
     def __str__(self):
         tokens = [ self.type ]
         if self.details is not None and len(self.details) != 0:

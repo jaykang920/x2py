@@ -13,6 +13,11 @@
       <property name="Bar" type="string"/>
     </cell>
 
+    <cell name="MyCell3" base="MyCell2">
+      <property name="List" type="list(int32)"/>
+      <property name="Map" type="map(int32, string)"/>
+    </cell>
+
     <event name="MyEvent1" id="1">
       <property name="Foo" type="string"/>
     </event>

@@ -10,15 +10,15 @@ class BuiltinEventType:
     TIMEOUT_EVENT = -4
 
 def _init_my_cell_tag():
-    props = []
-    props.append(('Foo', 9))
-    return Cell.Tag(None, props)
+    metaprops = []
+    metaprops.append(MetaProperty('Foo', 9))
+    return Cell.Tag(None, metaprops)
 
 class MyCell(Cell):
     tag = _init_my_cell_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyCell.tag.props) + length)
+        super().__init__(len(MyCell.tag.metaprops) + length)
         base = MyCell.tag.offset
         self.values[base + 0] = ""
 
@@ -28,7 +28,7 @@ class MyCell(Cell):
     @foo.setter
     def foo(self, value):
         self._set_property(MyCell.tag.offset + 0, value,
-            MyCell.tag.props[0][1])
+            MyCell.tag.metaprops[0].type_index)
 
     def type_id(self):
         return MyCell.tag.type_id
@@ -37,15 +37,15 @@ class MyCell(Cell):
         return MyCell.tag
 
 def _init_heartbeat_event_tag():
-    props = []
-    return Event.Tag(Event.tag, props,
+    metaprops = []
+    return Event.Tag(Event.tag, metaprops,
         BuiltinEventType.HEARTBEAT_EVENT)
 
 class HeartbeatEvent(Event):
     tag = _init_heartbeat_event_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(HeartbeatEvent.tag.props) + length)
+        super().__init__(len(HeartbeatEvent.tag.metaprops) + length)
         base = HeartbeatEvent.tag.offset
         pass
 
@@ -56,15 +56,15 @@ class HeartbeatEvent(Event):
         return HeartbeatEvent.tag
 
 def _init_flow_start_tag():
-    props = []
-    return Event.Tag(Event.tag, props,
+    metaprops = []
+    return Event.Tag(Event.tag, metaprops,
         BuiltinEventType.FLOW_START)
 
 class FlowStart(Event):
     tag = _init_flow_start_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(FlowStart.tag.props) + length)
+        super().__init__(len(FlowStart.tag.metaprops) + length)
         base = FlowStart.tag.offset
         pass
 
@@ -75,15 +75,15 @@ class FlowStart(Event):
         return FlowStart.tag
 
 def _init_flow_stop_tag():
-    props = []
-    return Event.Tag(Event.tag, props,
+    metaprops = []
+    return Event.Tag(Event.tag, metaprops,
         BuiltinEventType.FLOW_STOP)
 
 class FlowStop(Event):
     tag = _init_flow_stop_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(FlowStop.tag.props) + length)
+        super().__init__(len(FlowStop.tag.metaprops) + length)
         base = FlowStop.tag.offset
         pass
 
@@ -94,18 +94,18 @@ class FlowStop(Event):
         return FlowStop.tag
 
 def _init_timeout_event_tag():
-    props = []
-    props.append(('Key', 15))
-    props.append(('IntParam', 5))
-    props.append(('Test', 13))
-    return Event.Tag(Event.tag, props,
+    metaprops = []
+    metaprops.append(MetaProperty('Key', 15))
+    metaprops.append(MetaProperty('IntParam', 5))
+    metaprops.append(MetaProperty('Test', 13, details=[ MetaProperty(None, 13, details=[ MetaProperty(None, 14, details=[ MetaProperty(None, 5), MetaProperty(None, 9) ]) ]) ]))
+    return Event.Tag(Event.tag, metaprops,
         BuiltinEventType.TIMEOUT_EVENT)
 
 class TimeoutEvent(Event):
     tag = _init_timeout_event_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(TimeoutEvent.tag.props) + length)
+        super().__init__(len(TimeoutEvent.tag.metaprops) + length)
         base = TimeoutEvent.tag.offset
         self.values[base + 0] = None
         self.values[base + 1] = 0
@@ -117,7 +117,7 @@ class TimeoutEvent(Event):
     @key.setter
     def key(self, value):
         self._set_property(TimeoutEvent.tag.offset + 0, value,
-            TimeoutEvent.tag.props[0][1])
+            TimeoutEvent.tag.metaprops[0].type_index)
 
     @property
     def int_param(self):
@@ -125,7 +125,7 @@ class TimeoutEvent(Event):
     @int_param.setter
     def int_param(self, value):
         self._set_property(TimeoutEvent.tag.offset + 1, value,
-            TimeoutEvent.tag.props[1][1])
+            TimeoutEvent.tag.metaprops[1].type_index)
 
     @property
     def test(self):
@@ -133,7 +133,7 @@ class TimeoutEvent(Event):
     @test.setter
     def test(self, value):
         self._set_property(TimeoutEvent.tag.offset + 2, value,
-            TimeoutEvent.tag.props[2][1])
+            TimeoutEvent.tag.metaprops[2].type_index)
 
     def type_id(self):
         return TimeoutEvent.tag.type_id

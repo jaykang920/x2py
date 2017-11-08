@@ -13,7 +13,8 @@
       <property name="Bar" type="string"/>
     </cell>
 
-    <cell name="MyCell3" base="MyCell2">
+    <cell name="MyCell3">
+      <property name="Cell" type="MyCell1"/>
       <property name="List" type="list(int32)"/>
       <property name="Map" type="map(int32, string)"/>
     </cell>

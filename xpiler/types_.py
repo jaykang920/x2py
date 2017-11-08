@@ -15,7 +15,7 @@ class TypeSpec:
             tokens.append('None')
         tokens.append(", {}".format(Types.get_type_index(self.typestr)))
         if not Types.is_builtin(self.typestr):
-            tokens.append(", factory_method={}", self.typestr)
+            tokens.append(", factory_method={}".format(self.typestr))
         if self.details is not None and len(self.details) != 0:
             tokens.append(', details=[ ')
             for index, detail in enumerate(self.details):

@@ -63,11 +63,12 @@ class MyCell2(MyCell1):
 
 def _init_my_cell3_tag():
     metaprops = []
+    metaprops.append(MetaProperty('Cell', 11, factory_method=MyCell1))
     metaprops.append(MetaProperty('List', 13, details=[ MetaProperty(None, 5) ]))
     metaprops.append(MetaProperty('Map', 14, details=[ MetaProperty(None, 5), MetaProperty(None, 9) ]))
-    return Cell.Tag(MyCell2.tag, metaprops)
+    return Cell.Tag(None, metaprops)
 
-class MyCell3(MyCell2):
+class MyCell3(Cell):
     tag = _init_my_cell3_tag()
 
     def __init__(self, length=0):
@@ -75,22 +76,31 @@ class MyCell3(MyCell2):
         base = MyCell3.tag.offset
         self.values[base + 0] = None
         self.values[base + 1] = None
+        self.values[base + 2] = None
 
     @property
-    def list(self):
+    def cell(self):
         return self.values[MyCell3.tag.offset + 0]
-    @list.setter
-    def list(self, value):
+    @cell.setter
+    def cell(self, value):
         self._set_property(MyCell3.tag.offset + 0, value,
             MyCell3.tag.metaprops[0].type_index)
 
     @property
-    def map(self):
+    def list(self):
         return self.values[MyCell3.tag.offset + 1]
-    @map.setter
-    def map(self, value):
+    @list.setter
+    def list(self, value):
         self._set_property(MyCell3.tag.offset + 1, value,
             MyCell3.tag.metaprops[1].type_index)
+
+    @property
+    def map(self):
+        return self.values[MyCell3.tag.offset + 2]
+    @map.setter
+    def map(self, value):
+        self._set_property(MyCell3.tag.offset + 2, value,
+            MyCell3.tag.metaprops[2].type_index)
 
     def type_id(self):
         return MyCell3.tag.type_id

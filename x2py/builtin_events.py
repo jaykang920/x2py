@@ -12,7 +12,7 @@ class BuiltinEventType:
 def _init_my_cell_tag():
     metaprops = []
     metaprops.append(MetaProperty('Foo', 9))
-    return Cell.Tag(None, metaprops)
+    return Cell.Tag(None, 'MyCell', metaprops)
 
 class MyCell(Cell):
     tag = _init_my_cell_tag()
@@ -38,7 +38,7 @@ class MyCell(Cell):
 
 def _init_heartbeat_event_tag():
     metaprops = []
-    return Event.Tag(Event.tag, metaprops,
+    return Event.Tag(Event.tag, 'HeartbeatEvent', metaprops,
         BuiltinEventType.HEARTBEAT_EVENT)
 
 class HeartbeatEvent(Event):
@@ -57,7 +57,7 @@ class HeartbeatEvent(Event):
 
 def _init_flow_start_tag():
     metaprops = []
-    return Event.Tag(Event.tag, metaprops,
+    return Event.Tag(Event.tag, 'FlowStart', metaprops,
         BuiltinEventType.FLOW_START)
 
 class FlowStart(Event):
@@ -76,7 +76,7 @@ class FlowStart(Event):
 
 def _init_flow_stop_tag():
     metaprops = []
-    return Event.Tag(Event.tag, metaprops,
+    return Event.Tag(Event.tag, 'FlowStop', metaprops,
         BuiltinEventType.FLOW_STOP)
 
 class FlowStop(Event):
@@ -98,7 +98,7 @@ def _init_timeout_event_tag():
     metaprops.append(MetaProperty('Key', 15))
     metaprops.append(MetaProperty('IntParam', 5))
     metaprops.append(MetaProperty('Test', 13, details=[ MetaProperty(None, 13, details=[ MetaProperty(None, 14, details=[ MetaProperty(None, 5), MetaProperty(None, 9) ]) ]) ]))
-    return Event.Tag(Event.tag, metaprops,
+    return Event.Tag(Event.tag, 'TimeoutEvent', metaprops,
         BuiltinEventType.TIMEOUT_EVENT)
 
 class TimeoutEvent(Event):

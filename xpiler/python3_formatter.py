@@ -129,7 +129,7 @@ class Python3FormatterContext(FormatterContext):
         self._out(1, "metaprops = []\n")
         for prop in definition.properties:
             self._out(1, "metaprops.append({})\n".format(prop.typespec.metaprop(prop.name)))
-        self._out(1, "return {}.Tag({}, metaprops".format(tag_type, base_tag))
+        self._out(1, "return {}.Tag({}, '{}', metaprops".format(tag_type, base_tag, definition.name))
         if definition.is_event:
             self.out.write(",\n")
             if '.' in definition.id:

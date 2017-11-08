@@ -85,7 +85,7 @@ class Deserializer:
             return None
         temp = self.buffer[self.pos:self.pos + length]
         self.pos += length
-        value = metaprop.factory_method()
+        value = metaprop.runtime_type()
         value.deserialize(Deserializer(temp))
         return value
 

@@ -69,8 +69,15 @@ class Serializer:
 
     @staticmethod
     def len_cell(metaprop, value):
-        is_none = (value is None)
-        length = 0 if is_none else value.get_length()
+        not_none = (value is not None)
+        partial = not_none and metaprop.runtime_type != type(value)
+        if not_none:
+            if partial:
+                length = value.get_length(metaprop.runtime_type)
+            else:
+                length = value.get_length()
+        else:
+            length = 0
         return Serializer.get_length_nonnegative(length) + length
 
     @staticmethod
@@ -201,12 +208,21 @@ class Serializer:
         self.buffer += value
 
     def write_cell(self, metaprop, value):
-        is_none = (value is None)
-        length = 0 if is_none else value.get_length()
+        not_none = (value is not None)
+        partial = not_none and metaprop.runtime_type != type(value)
+        if not_none:
+            if partial:
+                length = value.get_length(metaprop.runtime_type)
+            else:
+                length = value.get_length()
+        else:
+            length = 0
         Serializer.write_variable(self.buffer, length)  # write_nonnegative
-        if is_none:
-            return
-        value.serialize(self)
+        if not_none:
+            if partial:
+                value.serialize(self, metaprop.runtime_type)
+            else:
+                value.serialize(self)
 
     def write_list(self, metaprop, value):
         is_none = (value is None)

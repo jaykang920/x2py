@@ -10,7 +10,7 @@ class MyConsts:
 def _init_my_cell1_tag():
     metaprops = []
     metaprops.append(MetaProperty('Foo', 5))
-    return Cell.Tag(None, metaprops)
+    return Cell.Tag(None, 'MyCell1', metaprops)
 
 class MyCell1(Cell):
     tag = _init_my_cell1_tag()
@@ -37,7 +37,7 @@ class MyCell1(Cell):
 def _init_my_cell2_tag():
     metaprops = []
     metaprops.append(MetaProperty('Bar', 9))
-    return Cell.Tag(MyCell1.tag, metaprops)
+    return Cell.Tag(MyCell1.tag, 'MyCell2', metaprops)
 
 class MyCell2(MyCell1):
     tag = _init_my_cell2_tag()
@@ -63,10 +63,10 @@ class MyCell2(MyCell1):
 
 def _init_my_cell3_tag():
     metaprops = []
-    metaprops.append(MetaProperty('Cell', 11, factory_method=MyCell1))
+    metaprops.append(MetaProperty('Cell', 11, runtime_type=MyCell1))
     metaprops.append(MetaProperty('List', 13, details=[ MetaProperty(None, 5) ]))
     metaprops.append(MetaProperty('Map', 14, details=[ MetaProperty(None, 5), MetaProperty(None, 9) ]))
-    return Cell.Tag(None, metaprops)
+    return Cell.Tag(None, 'MyCell3', metaprops)
 
 class MyCell3(Cell):
     tag = _init_my_cell3_tag()
@@ -111,7 +111,7 @@ class MyCell3(Cell):
 def _init_my_event1_tag():
     metaprops = []
     metaprops.append(MetaProperty('Foo', 9))
-    return Event.Tag(Event.tag, metaprops,
+    return Event.Tag(Event.tag, 'MyEvent1', metaprops,
         1)
 
 class MyEvent1(Event):
@@ -139,7 +139,7 @@ class MyEvent1(Event):
 def _init_my_event2_tag():
     metaprops = []
     metaprops.append(MetaProperty('Bar', 9))
-    return Event.Tag(MyEvent1.tag, metaprops,
+    return Event.Tag(MyEvent1.tag, 'MyEvent2', metaprops,
         2)
 
 class MyEvent2(MyEvent1):

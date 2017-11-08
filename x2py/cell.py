@@ -24,24 +24,25 @@ class MetaProperty:
     MAP = 14
     OBJECT = 15
 
-    def __init__(self, name, type_index, factory_method=None, details=None):
+    def __init__(self, name, type_index, runtime_type=None, details=None):
         self.name = name
         self.type_index = type_index
-        self.factory_method = factory_method
+        self.runtime_type = runtime_type
         self.details = details  # list of child MetaProperty objects
 
 class Cell(object):
     """ Common base class for all custom types. """
 
     class Tag:
-        def __init__(self, base, metaprops):
+        def __init__(self, base, type_name, metaprops):
             self.base = base
+            self.type_name = type_name
             self.metaprops = metaprops
             self.offset = 0
             if base is not None:
                 self.offset = base.offset + len(base.metaprops)
 
-    tag = Tag(None, [])
+    tag = Tag(None, 'Cell', [])
 
     def __init__(self, length):
         self.fingerprint = Fingerprint(length)
@@ -49,9 +50,10 @@ class Cell(object):
 
     def desc(self):
         prop_descs = []
-        self._desc(self.type_tag(), prop_descs)
+        tag = self.type_tag()
+        self._desc(tag, prop_descs)
         result = ', '.join(prop_descs)
-        result = "{} {{ {} }}".format(type(self).__name__, result)
+        result = "{} {{ {} }}".format(tag.type_name, result)
         return result
 
     def _desc(self, tag, prop_descs):
@@ -79,22 +81,28 @@ class Cell(object):
             if self.fingerprint.get(base + index):
                 self.values[base + index] = deserializer.read(prop)
 
-    def get_length(self):
-        length = self.fingerprint.get_length()
-        length += self._get_length(self.type_tag())
-        return length
+    def get_length(self, target_type=None):
+        result = self.fingerprint.get_length()
+        length, _ = self._get_length(self.type_tag(), target_type, True)
+        result += length
+        return result
 
-    def _get_length(self, tag):
-        length = 0
+    def _get_length(self, tag, target_type, flag):
+        result = 0
         if tag.base is not None:
-            length += self._get_length(tag.base)
+            length, flag = self._get_length(tag.base, target_type, flag)
+            result += length
+            if not flag:
+                return result, flag
         if len(tag.metaprops) == 0:
-            return length
+            return result, flag
         base = tag.offset
         for index, prop in enumerate(tag.metaprops):
             if self.fingerprint.get(base + index):
-                length += Serializer.get_length(prop, self.values[base + index])
-        return length
+                result += Serializer.get_length(prop, self.values[base + index])
+        if (target_type is not None) and (target_type.__name__ == tag.type_name):
+            flag = False
+        return result, flag
 
     def type_tag(self):
         return Cell.tag
@@ -154,22 +162,26 @@ class Cell(object):
                 h.update(base + index)                     # property index
                 h.update(hash(self.values[base + index]))  # property value
 
-    def serialize(self, serializer):
+    def serialize(self, serializer, target_type=None):
         self.fingerprint.serialize(serializer)
-        self._serialize(self.type_tag(), serializer)
+        self._serialize(self.type_tag(), serializer, target_type, True)
 
-    def _serialize(self, tag, serializer):
+    def _serialize(self, tag, serializer, target_type, flag):
         if tag.base is not None:
-            self._serialize(tag.base, serializer)
+            flag = self._serialize(tag.base, serializer, target_type, flag)
+            if not flag:
+                return flag
         if len(tag.metaprops) == 0:
-            return
+            return flag
         base = tag.offset
         for index, prop in enumerate(tag.metaprops):
             if self.fingerprint.get(base + index):
                 serializer.write(prop, self.values[base + index])
+        if (target_type is not None) and (target_type.__name__ == tag.type_name):
+            flag = False
+        return flag
 
     def _set_property(self, index, value, type_index):
-        print("type_index", type_index)
         self.fingerprint.touch(index)
         self.values[index] = value
 

@@ -6,7 +6,7 @@ from x2py.event import Event
 def _init_hello_req_tag():
     metaprops = []
     metaprops.append(MetaProperty('Name', 9))
-    return Event.Tag(Event.tag, metaprops,
+    return Event.Tag(Event.tag, 'HelloReq', metaprops,
         1)
 
 class HelloReq(Event):
@@ -34,7 +34,7 @@ class HelloReq(Event):
 def _init_hello_resp_tag():
     metaprops = []
     metaprops.append(MetaProperty('Message', 9))
-    return Event.Tag(Event.tag, metaprops,
+    return Event.Tag(Event.tag, 'HelloResp', metaprops,
         2)
 
 class HelloResp(Event):
@@ -62,7 +62,7 @@ class HelloResp(Event):
 def _init_num_req_tag():
     metaprops = []
     metaprops.append(MetaProperty('Value', 5))
-    return Event.Tag(Event.tag, metaprops,
+    return Event.Tag(Event.tag, 'NumReq', metaprops,
         3)
 
 class NumReq(Event):
@@ -90,7 +90,7 @@ class NumReq(Event):
 def _init_num_resp_tag():
     metaprops = []
     metaprops.append(MetaProperty('Result', 5))
-    return Event.Tag(Event.tag, metaprops,
+    return Event.Tag(Event.tag, 'NumResp', metaprops,
         4)
 
 class NumResp(Event):

@@ -135,14 +135,42 @@ def test_cell():
     s = Serializer(buffer)
     d = Deserializer(buffer)
 
+    metaprop = MetaProperty(None, MetaProperty.CELL, runtime_type=MyCell1)
+
     test_value = MyCell1()
     test_value.foo = 1
-    s.write_cell(None, test_value)
+    s.write_cell(metaprop, test_value)
 
-    print(buffer)
-
-    value = d.read_cell(MetaProperty(None, MetaProperty.CELL, factory_method=MyCell1))
+    value = d.read_cell(metaprop)
     assert value == test_value
+
+def test_partial_serialization():
+    s = Serializer(bytearray())
+    d = Deserializer(s.buffer)
+
+    c1 = MyCell1()
+    c1.foo = 1
+    c2 = MyCell2()
+    c2.foo = 1
+    c2.bar = 'bar'
+
+    metaprop1 = MetaProperty(None, MetaProperty.CELL, runtime_type=type(c1))
+    metaprop2 = MetaProperty(None, MetaProperty.CELL, runtime_type=type(c2))
+
+    l2 = Serializer.len_cell(metaprop2, c2)
+    s.write_cell(metaprop2, c2)
+    assert l2 == len(s.buffer)
+    v2 = d.read_cell(metaprop2)
+    assert c2 == v2
+
+    d.buffer = s.buffer = bytearray()
+    d.pos = 0
+    l1 = Serializer.len_cell(metaprop1, c2)
+    s.write_cell(metaprop1, c2)
+    assert l1 == len(s.buffer)
+    assert l1 < l2
+    v1 = d.read_cell(metaprop1)
+    assert c1 == v1
 
 def test_list():
     buffer = bytearray()

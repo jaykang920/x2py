@@ -5,5 +5,4 @@ import sys
 
 from xpiler.main import Main
 
-if __name__ == "__main__":
-    Main.main(sys.argv)
+Main.main(sys.argv)

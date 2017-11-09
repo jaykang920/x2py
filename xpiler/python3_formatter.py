@@ -5,8 +5,8 @@ import keyword
 import os
 import re
 
-from formatter import *
-from types_ import Types
+from xpiler.formatter import *
+from xpiler.types_ import Types
 
 EXTENSION = ".py"
 TAB = "    "

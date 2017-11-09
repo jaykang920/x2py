@@ -4,9 +4,9 @@
 import sys
 import xml.etree.ElementTree as etree
 
-from xpiler.definition import *
-from xpiler.handler import Handler
-from xpiler.types_ import *
+from .definition import *
+from .handler import Handler
+from .types_ import *
 
 class XmlHandler(Handler):
     def handle(self, path):

@@ -4,7 +4,7 @@
 import os
 import sys
 
-from xpiler.options import Options
+from .options import Options
 
 def _init_handlers():
     result = {}

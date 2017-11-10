@@ -255,9 +255,9 @@ class Serializer:
                 break
 
     len_funcs = [ None, len_bool, len_byte, len_int8, len_int16, len_int32, len_int64, len_float32, len_float64,
-        len_string, len_datetime, len_bytes, len_cell, len_list, len_map ]
+        len_string, len_datetime, len_bytes, len_cell, len_list, len_map, None ]
     writers = [ None, write_bool, write_byte, write_int8, write_int16, write_int32, write_int64, write_float32, write_float64,
-        write_string, write_datetime, write_bytes, write_cell, write_list, write_map ]
+        write_string, write_datetime, write_bytes, write_cell, write_list, write_map, None ]
 
     def __init__(self, buffer=None):
         self.buffer = buffer

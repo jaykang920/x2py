@@ -134,7 +134,7 @@ class Deserializer:
             raise EOFError()
 
     readers = [ None, read_bool, read_byte, read_int8, read_int16, read_int32, read_int64, read_float32, read_float64,
-        read_string, read_datetime, read_bytes, read_cell, read_list, read_map ]
+        read_string, read_datetime, read_bytes, read_cell, read_list, read_map, None ]
 
     def __init__(self, buffer=None):
         self.buffer = buffer

@@ -39,9 +39,10 @@ with Hub.Flows():
         if message in ('quit', 'exit'):
             break
         else:
-            e = HelloReq()
-            e.name = message
-            Hub.post(e)
+            e = HelloReq().setattrs(
+                name=message
+            )
+            e.post()
             print(e)
 
 Hub.instance.detach_all()

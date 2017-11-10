@@ -8,15 +8,15 @@ class MyConsts:
     MY_CONST2 = 2
 
 def _init_my_cell1_tag():
-    metaprops = []
-    metaprops.append(MetaProperty('Foo', 5))
-    return Cell.Tag(None, 'MyCell1', metaprops)
+    props = []
+    props.append(MetaProperty('Foo', 5))
+    return Cell.Tag(None, 'MyCell1', props)
 
 class MyCell1(Cell):
     tag = _init_my_cell1_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyCell1.tag.metaprops) + length)
+        super().__init__(len(MyCell1.tag.props) + length)
         base = MyCell1.tag.offset
         self.values[base + 0] = 0
 
@@ -26,7 +26,7 @@ class MyCell1(Cell):
     @foo.setter
     def foo(self, value):
         self._set_property(MyCell1.tag.offset + 0, value,
-            MyCell1.tag.metaprops[0].type_index)
+            MyCell1.tag.props[0].type_index)
 
     def type_id(self):
         return MyCell1.tag.type_id
@@ -35,15 +35,15 @@ class MyCell1(Cell):
         return MyCell1.tag
 
 def _init_my_cell2_tag():
-    metaprops = []
-    metaprops.append(MetaProperty('Bar', 9))
-    return Cell.Tag(MyCell1.tag, 'MyCell2', metaprops)
+    props = []
+    props.append(MetaProperty('Bar', 9))
+    return Cell.Tag(MyCell1.tag, 'MyCell2', props)
 
 class MyCell2(MyCell1):
     tag = _init_my_cell2_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyCell2.tag.metaprops) + length)
+        super().__init__(len(MyCell2.tag.props) + length)
         base = MyCell2.tag.offset
         self.values[base + 0] = ""
 
@@ -53,7 +53,7 @@ class MyCell2(MyCell1):
     @bar.setter
     def bar(self, value):
         self._set_property(MyCell2.tag.offset + 0, value,
-            MyCell2.tag.metaprops[0].type_index)
+            MyCell2.tag.props[0].type_index)
 
     def type_id(self):
         return MyCell2.tag.type_id
@@ -62,17 +62,17 @@ class MyCell2(MyCell1):
         return MyCell2.tag
 
 def _init_my_cell3_tag():
-    metaprops = []
-    metaprops.append(MetaProperty('Cell', 11, runtime_type=MyCell1))
-    metaprops.append(MetaProperty('List', 13, details=[ MetaProperty(None, 5) ]))
-    metaprops.append(MetaProperty('Map', 14, details=[ MetaProperty(None, 5), MetaProperty(None, 9) ]))
-    return Cell.Tag(None, 'MyCell3', metaprops)
+    props = []
+    props.append(MetaProperty('Cell', 11, runtime_type=MyCell1))
+    props.append(MetaProperty('List', 13, details=[ MetaProperty(None, 5) ]))
+    props.append(MetaProperty('Map', 14, details=[ MetaProperty(None, 5), MetaProperty(None, 9) ]))
+    return Cell.Tag(None, 'MyCell3', props)
 
 class MyCell3(Cell):
     tag = _init_my_cell3_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyCell3.tag.metaprops) + length)
+        super().__init__(len(MyCell3.tag.props) + length)
         base = MyCell3.tag.offset
         self.values[base + 0] = None
         self.values[base + 1] = None
@@ -84,7 +84,7 @@ class MyCell3(Cell):
     @cell.setter
     def cell(self, value):
         self._set_property(MyCell3.tag.offset + 0, value,
-            MyCell3.tag.metaprops[0].type_index)
+            MyCell3.tag.props[0].type_index)
 
     @property
     def list(self):
@@ -92,7 +92,7 @@ class MyCell3(Cell):
     @list.setter
     def list(self, value):
         self._set_property(MyCell3.tag.offset + 1, value,
-            MyCell3.tag.metaprops[1].type_index)
+            MyCell3.tag.props[1].type_index)
 
     @property
     def map(self):
@@ -100,7 +100,7 @@ class MyCell3(Cell):
     @map.setter
     def map(self, value):
         self._set_property(MyCell3.tag.offset + 2, value,
-            MyCell3.tag.metaprops[2].type_index)
+            MyCell3.tag.props[2].type_index)
 
     def type_id(self):
         return MyCell3.tag.type_id
@@ -109,16 +109,16 @@ class MyCell3(Cell):
         return MyCell3.tag
 
 def _init_my_event1_tag():
-    metaprops = []
-    metaprops.append(MetaProperty('Foo', 9))
-    return Event.Tag(Event.tag, 'MyEvent1', metaprops,
+    props = []
+    props.append(MetaProperty('Foo', 9))
+    return Event.Tag(Event.tag, 'MyEvent1', props,
         1)
 
 class MyEvent1(Event):
     tag = _init_my_event1_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyEvent1.tag.metaprops) + length)
+        super().__init__(len(MyEvent1.tag.props) + length)
         base = MyEvent1.tag.offset
         self.values[base + 0] = ""
 
@@ -128,7 +128,7 @@ class MyEvent1(Event):
     @foo.setter
     def foo(self, value):
         self._set_property(MyEvent1.tag.offset + 0, value,
-            MyEvent1.tag.metaprops[0].type_index)
+            MyEvent1.tag.props[0].type_index)
 
     def type_id(self):
         return MyEvent1.tag.type_id
@@ -137,16 +137,16 @@ class MyEvent1(Event):
         return MyEvent1.tag
 
 def _init_my_event2_tag():
-    metaprops = []
-    metaprops.append(MetaProperty('Bar', 9))
-    return Event.Tag(MyEvent1.tag, 'MyEvent2', metaprops,
+    props = []
+    props.append(MetaProperty('Bar', 9))
+    return Event.Tag(MyEvent1.tag, 'MyEvent2', props,
         2)
 
 class MyEvent2(MyEvent1):
     tag = _init_my_event2_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyEvent2.tag.metaprops) + length)
+        super().__init__(len(MyEvent2.tag.props) + length)
         base = MyEvent2.tag.offset
         self.values[base + 0] = ""
 
@@ -156,7 +156,7 @@ class MyEvent2(MyEvent1):
     @bar.setter
     def bar(self, value):
         self._set_property(MyEvent2.tag.offset + 0, value,
-            MyEvent2.tag.metaprops[0].type_index)
+            MyEvent2.tag.props[0].type_index)
 
     def type_id(self):
         return MyEvent2.tag.type_id

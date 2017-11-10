@@ -8,14 +8,14 @@ class Event(Cell):
     """ Common base class for all events. """
 
     class Tag(Cell.Tag):
-        def __init__(self, base, type_name, metaprops, type_id):
-            super().__init__(base, type_name, metaprops)
+        def __init__(self, base, type_name, props, type_id):
+            super().__init__(base, type_name, props)
             self.type_id = type_id
 
     tag = Tag(None, 'Event', [], 0)
 
     def __init__(self, length=0):
-        super().__init__(len(Event.tag.metaprops) + length)
+        super().__init__(len(Event.tag.props) + length)
 
     def desc(self):
         prop_descs = []
@@ -24,6 +24,11 @@ class Event(Cell):
         result = ', '.join(prop_descs)
         result = "{} {} {{ {} }}".format(tag.type_name, tag.type_id, result)
         return result
+
+    def post(self):
+        """ Posts up this event to the hub. """
+        from .hub import Hub
+        Hub.post(self)
 
     def type_id(self):
         return Event.tag.type_id

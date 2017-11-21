@@ -97,7 +97,7 @@ def test_nonnegative():
 def test_string():
     for s in ['abcd', '한글']:
         encoded = s.encode('utf-8')
-        assert Serializer.len_utf8(s) == len(encoded)
+        assert Serializer.length_utf8(s) == len(encoded)
 
         buffer = bytearray()
         serializer = Serializer(buffer)
@@ -157,7 +157,7 @@ def test_partial_serialization():
     metaprop1 = MetaProperty(None, MetaProperty.CELL, runtime_type=type(c1))
     metaprop2 = MetaProperty(None, MetaProperty.CELL, runtime_type=type(c2))
 
-    l2 = Serializer.len_cell(metaprop2, c2)
+    l2 = Serializer.length_cell(metaprop2, c2)
     s.write_cell(metaprop2, c2)
     assert l2 == len(s.buffer)
     v2 = d.read_cell(metaprop2)
@@ -165,7 +165,7 @@ def test_partial_serialization():
 
     d.buffer = s.buffer = bytearray()
     d.pos = 0
-    l1 = Serializer.len_cell(metaprop1, c2)
+    l1 = Serializer.length_cell(metaprop1, c2)
     s.write_cell(metaprop1, c2)
     assert l1 == len(s.buffer)
     assert l1 < l2

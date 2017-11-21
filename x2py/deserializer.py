@@ -109,6 +109,42 @@ class Deserializer:
             result[key] = value
         return result
 
+    # Reader function table
+    readers = [
+        None,
+        read_bool,
+        read_byte,
+        read_int8,
+        read_int16,
+        read_int32,
+        read_int64,
+        read_float32,
+        read_float64,
+        read_string,
+        read_datetime,
+        read_bytes,
+        read_cell,
+        read_list,
+        read_map,
+        None  # none for object type
+    ]
+
+    def __init__(self, buffer=None):
+        self.buffer = buffer
+        if self.buffer is None:
+            self.buffer = bytearray()
+        self.pos = 0
+
+    def read(self, metaprop):
+        reader = Deserializer.readers[metaprop.type_index]
+        return reader(self, metaprop)
+
+    def read_nonnegative(self):
+        value, num_bytes = Deserializer.read_variable32(self)
+        if value < 0:
+            raise ValueError()
+        return value, num_bytes
+
     def read_variable32(self):
         return self._read_variable(5)
 
@@ -132,22 +168,3 @@ class Deserializer:
     def check_length(self, num_bytes):
         if (self.pos + num_bytes) > len(self.buffer):
             raise EOFError()
-
-    readers = [ None, read_bool, read_byte, read_int8, read_int16, read_int32, read_int64, read_float32, read_float64,
-        read_string, read_datetime, read_bytes, read_cell, read_list, read_map, None ]
-
-    def __init__(self, buffer=None):
-        self.buffer = buffer
-        if self.buffer is None:
-            self.buffer = bytearray()
-        self.pos = 0
-
-    def read(self, metaprop):
-        reader = Deserializer.readers[metaprop.type_index]
-        return reader(self, metaprop)
-
-    def read_nonnegative(self):
-        value, num_bytes = Deserializer.read_variable32(self)
-        if value < 0:
-            raise ValueError()
-        return value, num_bytes

@@ -8,33 +8,7 @@ class BuiltinEventType:
     FLOW_START = -2
     FLOW_STOP = -3
     TIMEOUT_EVENT = -4
-
-def _init_my_cell_tag():
-    props = []
-    props.append(MetaProperty('Foo', 9))
-    return Cell.Tag(None, 'MyCell', props)
-
-class MyCell(Cell):
-    tag = _init_my_cell_tag()
-
-    def __init__(self, length=0):
-        super().__init__(len(MyCell.tag.props) + length)
-        base = MyCell.tag.offset
-        self.values[base + 0] = ""
-
-    @property
-    def foo(self):
-        return self.values[MyCell.tag.offset + 0]
-    @foo.setter
-    def foo(self, value):
-        self._set_property(MyCell.tag.offset + 0, value,
-            MyCell.tag.props[0].type_index)
-
-    def type_id(self):
-        return MyCell.tag.type_id
-
-    def type_tag(self):
-        return MyCell.tag
+    PERIODIC_EVENT = -5
 
 def _init_heartbeat_event_tag():
     props = []
@@ -97,7 +71,6 @@ def _init_timeout_event_tag():
     props = []
     props.append(MetaProperty('Key', 15))
     props.append(MetaProperty('IntParam', 5))
-    props.append(MetaProperty('Test', 13, details=[ MetaProperty(None, 13, details=[ MetaProperty(None, 14, details=[ MetaProperty(None, 5), MetaProperty(None, 9) ]) ]) ]))
     return Event.Tag(Event.tag, 'TimeoutEvent', props,
         BuiltinEventType.TIMEOUT_EVENT)
 
@@ -109,7 +82,6 @@ class TimeoutEvent(Event):
         base = TimeoutEvent.tag.offset
         self.values[base + 0] = None
         self.values[base + 1] = 0
-        self.values[base + 2] = None
 
     @property
     def key(self):
@@ -127,16 +99,46 @@ class TimeoutEvent(Event):
         self._set_property(TimeoutEvent.tag.offset + 1, value,
             TimeoutEvent.tag.props[1].type_index)
 
-    @property
-    def test(self):
-        return self.values[TimeoutEvent.tag.offset + 2]
-    @test.setter
-    def test(self, value):
-        self._set_property(TimeoutEvent.tag.offset + 2, value,
-            TimeoutEvent.tag.props[2].type_index)
-
     def type_id(self):
         return TimeoutEvent.tag.type_id
 
     def type_tag(self):
         return TimeoutEvent.tag
+
+def _init_periodic_event_tag():
+    props = []
+    props.append(MetaProperty('Key', 15))
+    props.append(MetaProperty('IntParam', 5))
+    return Event.Tag(Event.tag, 'PeriodicEvent', props,
+        BuiltinEventType.PERIODIC_EVENT)
+
+class PeriodicEvent(Event):
+    tag = _init_periodic_event_tag()
+
+    def __init__(self, length=0):
+        super().__init__(len(PeriodicEvent.tag.props) + length)
+        base = PeriodicEvent.tag.offset
+        self.values[base + 0] = None
+        self.values[base + 1] = 0
+
+    @property
+    def key(self):
+        return self.values[PeriodicEvent.tag.offset + 0]
+    @key.setter
+    def key(self, value):
+        self._set_property(PeriodicEvent.tag.offset + 0, value,
+            PeriodicEvent.tag.props[0].type_index)
+
+    @property
+    def int_param(self):
+        return self.values[PeriodicEvent.tag.offset + 1]
+    @int_param.setter
+    def int_param(self, value):
+        self._set_property(PeriodicEvent.tag.offset + 1, value,
+            PeriodicEvent.tag.props[1].type_index)
+
+    def type_id(self):
+        return PeriodicEvent.tag.type_id
+
+    def type_tag(self):
+        return PeriodicEvent.tag

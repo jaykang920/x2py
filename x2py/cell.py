@@ -1,6 +1,8 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+import datetime
+
 from .fingerprint import Fingerprint
 from .serializer import Serializer
 from .util.hash import Hash
@@ -187,10 +189,6 @@ class Cell(object):
             setattr(self, key, value)
         return self
 
-    def _set_property(self, index, value, type_index):
-        self.fingerprint.touch(index)
-        self.values[index] = value
-
     def __eq__(self, other):
         return other.equals(self)
 
@@ -199,3 +197,162 @@ class Cell(object):
 
     def __str__(self):
         return self.desc()
+
+    # Property type checkers
+
+    @staticmethod
+    def is_bool(value):
+        if value == True or value == False:
+            return True, value
+        else:
+            return False, value
+
+    @staticmethod
+    def is_byte(value):
+        if not isinstance(value, int):
+            try:
+                value = int(value)
+            except:
+                return False, value
+        if value < 0 or (2**8 - 1) < value:
+            return False, value
+        return True, value
+
+    @staticmethod
+    def is_int8(value):
+        if not isinstance(value, int):
+            try:
+                value = int(value)
+            except:
+                return False, value
+        if value < -(2**7) or (2**7 - 1) < value:
+            return False, value
+        return True, value
+
+    @staticmethod
+    def is_int16(value):
+        if not isinstance(value, int):
+            try:
+                value = int(value)
+            except:
+                return False, value
+        if value < -(2**15) or (2**15 - 1) < value:
+            return False, value
+        return True, value
+
+    @staticmethod
+    def is_int32(value):
+        if not isinstance(value, int):
+            try:
+                value = int(value)
+            except:
+                return False, value
+        if value < -(2**31) or (2**31 - 1) < value:
+            return False, value
+        return True, value
+
+    @staticmethod
+    def is_int64(value):
+        if not isinstance(value, int):
+            try:
+                value = int(value)
+            except:
+                return False, value
+        if value < -(2**63) or (2**63 - 1) < value:
+            return False, value
+        return True, value
+
+    @staticmethod
+    def is_float32(value):
+        if not isinstance(value, float):
+            try:
+                value = float(value)
+            except:
+                return False, value
+        return True, value
+
+    @staticmethod
+    def is_float64(value):
+        if not isinstance(value, float):
+            try:
+                value = float(value)
+            except:
+                return False, value
+        return True, value
+
+    @staticmethod
+    def is_string(value):
+        if not isinstance(value, str):
+            try:
+                value = str(value)
+            except:
+                return False, value
+        return True, value
+
+    @staticmethod
+    def is_datetime(value):
+        if not isinstance(value, datetime.datetime):
+            try:
+                value = datetime.datetime(value)
+            except:
+                return False, value
+        return True, value
+
+    @staticmethod
+    def is_bytes(value):
+        if not isinstance(value, bytes):
+            try:
+                value = bytes(value)
+            except:
+                return False, value
+        return True, value
+
+    @staticmethod
+    def is_cell(value):
+        if not isinstance(value, Cell):
+            return False, value
+        return True, value
+
+    @staticmethod
+    def is_list(value):
+        if not isinstance(value, list):
+            return False, value
+        return True, value
+
+    @staticmethod
+    def is_map(value):
+        if not isinstance(value, dict):
+            return False, value
+        return True, value
+
+    @staticmethod
+    def is_object(value):
+        return True, value
+
+    # Property type checker function table
+    checkers = [
+        None,
+        is_bool,
+        is_byte,
+        is_int8,
+        is_int16,
+        is_int32,
+        is_int64,
+        is_float32,
+        is_float64,
+        is_string,
+        is_datetime,
+        is_bytes,
+        is_cell,
+        is_list,
+        is_map,
+        is_object
+    ]
+
+    def _set_property(self, index, value, type_index):
+        checker = Cell.checkers[type_index]
+        valid, value = checker.__func__(value)
+        if not valid:
+            raise ValueError()
+        self.fingerprint.touch(index)
+        self.values[index] = value

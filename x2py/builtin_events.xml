@@ -11,13 +11,10 @@
       <const name="FlowStop">-3</const>
 
       <const name="TimeoutEvent">-4</const>
+      <const name="PeriodicEvent">-5</const>
 
       <!-- -10 to -99 : reserved for links -->
     </consts>
-
-    <cell name="MyCell">
-      <property name="Foo" type="string"/>
-    </cell>
 
     <!-- x2 subsystem heartbeat event. -->
     <event name="HeartbeatEvent" id="BuiltinEventType.HeartbeatEvent"/>
@@ -33,7 +30,13 @@
       <property name="Key" type="object"/>
       <!-- Optional integer parameter -->
       <property name="IntParam" type="int32"/>
-      <property name="Test" type=" list(list( map(int32 ,string )) ) "/>
+    </event>
+    <!-- A local periodically recurring event. -->
+    <event name="PeriodicEvent" id="BuiltinEventType.PeriodicEvent" local="true">
+      <!-- Event key object. -->
+      <property name="Key" type="object"/>
+      <!-- Optional integer parameter -->
+      <property name="IntParam" type="int32"/>
     </event>
   </definitions>
 </x2>

@@ -40,7 +40,7 @@ class Serializer:
     def length_int32(metaprop, value):
         return Serializer.len_variable32(value)
 
-    def write_int32(self, prop_name, value):
+    def write_int32(self, metaprop, value):
         value = (value << 1) ^ (value >> 31)
         Serializer.write_variable(self.buffer, value)
 
@@ -48,7 +48,7 @@ class Serializer:
     def length_int64(metaprop, value):
         return Serializer.len_variable64(value)
 
-    def write_int64(self, prop_name, value):
+    def write_int64(self, metaprop, value):
         value = (value << 1) ^ (value >> 63)
         Serializer.write_variable(self.buffer, value)
 

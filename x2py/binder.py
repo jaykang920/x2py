@@ -128,9 +128,9 @@ class Binder:
 
                             handlers = self.map.get(event_proxy)
                             if handlers is not None:
-                                print("found for {} {} {}", type_id, event, slot.block)
+                                print("found for", type_id, event, slot.block)
                                 handler_chain += handlers
                             else:
-                                print("found nothing for {} {} {}", type_id, event, slot.block)
+                                print("found nothing for", type_id, event, slot.block)
                 tag = tag.base
 

@@ -1,6 +1,9 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+import sys
+import traceback
+
 from threading import local
 
 from .binder import Binder
@@ -68,8 +71,9 @@ class Flow:
         for handler in handler_chain:
             try:
                 handler(event)
-            except BaseException as ex:
+            except Exception as ex:
                 Trace.error("flow: dispatch {}".format(ex))
+                traceback.print_exc(file=sys.stderr)
 
         handler_chain.clear()
 

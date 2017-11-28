@@ -20,10 +20,9 @@ class MyHubCase(Hub.Case):
 class MyCase(Case):
     def setup(self):
         super().setup()
-        self.bind(NumReq(), self.on_num_req)
+        self.bind(HelloReq(), self.on_hello_req)
 
-    def on_num_req(self, e):
-        #print("hello, {}".format(e.name))
+    def on_hello_req(self, e):
         pass
 
 
@@ -33,8 +32,10 @@ class MyClient(TcpClient):
 
     def setup(self):
         super().setup()
-        Flow.bind(NumReq(), self.send)
+        Flow.bind(HelloReq(), self.send)
         self.connect('127.0.0.1', 8888)
+
+EventFactory.register(2, HelloResp)
 
 (
 Hub.instance
@@ -48,8 +49,8 @@ with Hub.Flows():
         if message in ('quit', 'exit'):
             break
         else:
-            e = NumReq()
-            e.value = 1
+            e = HelloReq()
+            e.name = message
             Hub.post(e)
 
 Hub.instance.detach_all()

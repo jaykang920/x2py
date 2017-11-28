@@ -20,25 +20,26 @@ class MyHubCase(Hub.Case):
 class MyCase(Case):
     def setup(self):
         super().setup()
-        self.bind(NumReq(), self.on_num_req)
-    def on_num_req(self, e):
-        #print("hello, {}".format(e.name))
-        pass
-
+        self.bind(HelloReq(), self.on_hello_req)
+    def on_hello_req(self, e):
+        HelloResp().in_response_of(e).setattrs(
+            message = "hello, {}".format(e.name)
+        ).post()
 
 class MyServer(TcpServer):
     def __init__(self):
         super().__init__("MyServer")
     def setup(self):
         super().setup()
+        self.bind(HelloResp(), self.send)
         self.listen('0.0.0.0', 8888)
 
-EventFactory.register(3, NumReq)
+EventFactory.register(1, HelloReq)
 
 (
 Hub.instance
     .insert(0, MyHubCase())
-    .attach(SingleThreadFlow().add(MyServer()))
+    .attach(SingleThreadFlow().add(MyCase()).add(MyServer()))
 )
 
 with Hub.Flows():

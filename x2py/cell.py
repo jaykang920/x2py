@@ -64,6 +64,8 @@ class Cell(object):
         if len(tag.props) == 0:
             return
         for index, prop in enumerate(tag.props):
+            #if prop.name.startswith('_'):
+            #    continue
             value = self.values[tag.offset + index]
             if prop.type_index == 9:
                 value = '"' + value + '"'
@@ -80,6 +82,8 @@ class Cell(object):
             return
         base = tag.offset
         for index, prop in enumerate(tag.props):
+            if prop.name.startswith('_'):
+                continue
             if self.fingerprint.get(base + index):
                 self.values[base + index] = deserializer.read(prop)
 
@@ -100,6 +104,8 @@ class Cell(object):
             return result, flag
         base = tag.offset
         for index, prop in enumerate(tag.props):
+            if prop.name.startswith('_'):
+                continue
             if self.fingerprint.get(base + index):
                 result += Serializer.get_length(prop, self.values[base + index])
         if (target_type is not None) and (target_type.__name__ == tag.type_name):
@@ -177,6 +183,8 @@ class Cell(object):
             return flag
         base = tag.offset
         for index, prop in enumerate(tag.props):
+            if prop.name.startswith('_'):
+                continue
             if self.fingerprint.get(base + index):
                 serializer.write(prop, self.values[base + index])
         if (target_type is not None) and (target_type.__name__ == tag.type_name):
@@ -184,7 +192,7 @@ class Cell(object):
         return flag
 
     def setattrs(self, **kwargs):
-        """ Sets multiple attributes at once. """
+        """Sets multiple attributes of this cell object at once."""
         for key, value in kwargs.items():
             setattr(self, key, value)
         return self

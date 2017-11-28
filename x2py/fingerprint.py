@@ -46,8 +46,11 @@ class Fingerprint:
 
     def get(self, index):
         """ Gets the bit value at the specified index. """
-        if index < 0 or self.length <= index:
+        if index < 0:
             raise ValueError()
+        # Doesn't throw on over-indexing
+        if index >= self.length:
+            return False
 
         if index < 32:
             return ((self.block & (1 << (index & 0x1f))) != 0)

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<x2 namespace="x2net" builtin="true">
+  <references>
+    <file target="..cell"/>
+    <file target="..event"/>
+  </references>
+  <definitions>
+    <consts name="LinkEventType">
+      <const name="LinkSessionConnected">-10</const>
+      <const name="LinkSessionDisconnected">-11</const>
+
+      <const name="HandshakeReq">-12</const>
+      <const name="HandshakeResp">-13</const>
+      <const name="HandshakeAck">-14</const>
+    </consts>
+
+    <event name="LinkSessionConnected" id="LinkEventType.LinkSessionConnected" local="true">
+      <property name="LinkName" type="string"/>
+      <property name="Result" type="bool"/>
+      <property name="Context" type="object"/>
+    </event>
+    <event name="LinkSessionDisconnected" id="LinkEventType.LinkSessionDisconnected" local="true">
+      <property name="LinkName" type="string"/>
+      <property name="Handle" type="int32"/>
+      <property name="Context" type="object"/>
+    </event>
+
+    <event name="HandshakeReq" id="LinkEventType.HandshakeReq">
+      <property name="Data" type="bytes"/>
+    </event>
+    <event name="HandshakeResp" id="LinkEventType.HandshakeResp">
+      <property name="Data" type="bytes"/>
+    </event>
+    <event name="HandshakeAck" id="LinkEventType.HandshakeAck">
+      <property name="Result" type="bool"/>
+    </event>
+  </definitions>
+</x2>

@@ -4,16 +4,20 @@
 import asyncio
 from threading import Thread
 
-from .tcp_session import TcpSession
-from ...link import Link
 from ...util.trace import Trace
 
-class TcpClient(Link):
+from ..client_link import ClientLink
+
+from .tcp_session import TcpSession
+
+class TcpClient(ClientLink):
     def __init__(self, name):
         super().__init__(name)
         self.loop = asyncio.new_event_loop()
         self.thread = Thread(target=self.loop.run_forever)
         self.session = None
+        self.remote_host = ''
+        self.remote_port = 0
 
     def cleanup(self):
         self.loop.call_soon_threadsafe(self.loop.stop)
@@ -25,25 +29,26 @@ class TcpClient(Link):
         super().cleanup()
 
     def connect(self, host, port):
+        self.remote_host = host
+        self.remote_port = port
         Trace.info("connecting to {}:{}", host, port)
         factory = self.loop.create_connection(self, host, port)
         transport, protocol = self.loop.run_until_complete(factory)
 
         self.thread.start()
 
-    def on_connection_made(self, protocol, transport):
-        self.session = protocol
-        socket = transport.get_extra_info('peername')
-        Trace.info("connected to {}:{}", socket[0], socket[1])
+    def _on_connect(self, result, context):
+        super()._on_connect(result, context)
+        if result:
+            peername = context.transport.get_extra_info('peername')
+            Trace.info("connected to {}:{}", peername[0], peername[1])
+        else:
+            Trace.error("error connecting to {}:{}", self.remote_host, self.remote_port)
 
-    def on_connection_lost(self, protocol, transport):
-        self.session = None
-        socket = transport.get_extra_info('peername')
-        Trace.info("disconnected from {}:{}", socket[0], socket[1])
-
-    def send(self, event):
-        if self.session is not None:
-            self.session.send(event)
+    def _on_disconnect(self, handle, context):
+        super()._on_disconnect(handle, context)
+        peername = context.transport.get_extra_info('peername')
+        Trace.info("disconnected from {}:{}", peername[0], peername[1])
 
     # protocol factory
     def __call__(self):

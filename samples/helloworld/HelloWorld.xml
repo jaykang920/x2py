@@ -7,11 +7,5 @@
     <event name="HelloResp" id="2">
       <property name="Message" type="string"/>
     </event>
-    <event name="NumReq" id="3">
-      <property name="Value" type="int32"/>
-    </event>
-    <event name="NumResp" id="4">
-      <property name="Result" type="int32"/>
-    </event>
   </definitions>
 </x2>

@@ -4,11 +4,13 @@
 import asyncio
 from threading import Thread
 
-from .tcp_session import TcpSession
-from ...link import Link
 from ...util.trace import Trace
 
-class TcpServer(Link):
+from ..server_link import ServerLink
+
+from .tcp_session import TcpSession
+
+class TcpServer(ServerLink):
     def __init__(self, name):
         super().__init__(name)
         self.loop = asyncio.new_event_loop()
@@ -35,15 +37,17 @@ class TcpServer(Link):
 
         self.thread.start()
 
-    def on_connection_made(self, protocol, transport):
-        peername = transport.get_extra_info('peername')
-        Trace.info("accepted from {}:{}", peername[0], peername[1])
+    def _on_connect(self, result, context):
+        super()._on_connect(result, context)
+        if result:
+            peername = context.transport.get_extra_info('peername')
+            Trace.info("accepted from {}:{}", peername[0], peername[1])
 
-    def on_connection_lost(self, protocol, transport):
-        peername = transport.get_extra_info('peername')
+    def _on_disconnect(self, handle, context):
+        super()._on_disconnect(handle, context)
+        peername = context.transport.get_extra_info('peername')
         Trace.info("disconnected from {}:{}", peername[0], peername[1])
 
     # protocol factory
     def __call__(self):
         return TcpSession(self)
-

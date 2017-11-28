@@ -1,7 +1,7 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-from .cell import Cell
+from .cell import MetaProperty, Cell
 from .util.hash import hash_update
 
 class Event(Cell):
@@ -12,10 +12,22 @@ class Event(Cell):
             super().__init__(base, type_name, props)
             self.type_id = type_id
 
-    tag = Tag(None, 'Event', [], 0)
+    tag = Tag(None, 'Event', [
+            MetaProperty('_Handle', MetaProperty.INT32)
+        ], 0)
 
     def __init__(self, length=0):
         super().__init__(len(Event.tag.props) + length)
+        base = Event.tag.offset
+        self.values[base + 0] = 0
+
+    @property
+    def _handle(self):
+        return self.values[Event.tag.offset + 0]
+    @_handle.setter
+    def _handle(self, value):
+        self._set_property(Event.tag.offset + 0, value,
+            Event.tag.props[0].type_index)
 
     def desc(self):
         prop_descs = []
@@ -24,6 +36,10 @@ class Event(Cell):
         result = ', '.join(prop_descs)
         result = "{} {} {{ {} }}".format(tag.type_name, tag.type_id, result)
         return result
+
+    def in_response_of(self, request):
+        self._handle = request._handle
+        return self
 
     def post(self):
         """ Posts up this event to the hub. """

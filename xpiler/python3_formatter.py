@@ -157,10 +157,21 @@ class Python3FormatterContext(FormatterContext):
             self._out(1, "{0} = {1}\n".format(to_SCREAMING_SNAKE_CASE(constant.name), constant.value))
 
     def format_reference(self, reference):
-        tokens = reference.target.split('/')
+        prefix = '.'
+        target = reference.target
+
+        if (target.startswith('.')):  # if relative
+            # ./ => .
+            # ../ => ..
+            # ../../ => ...
+            prefix += '.' * target.count('../')
+            target = target[target.rfind('./') + 2:]
+
+        tokens = target.split('/')
         tokens[-1] = to_snake_case(tokens[-1])
         target = '.'.join(tokens)
-        self._out(0, "from {} import *\n".format(target))
+
+        self._out(0, "from {} import *\n".format(prefix + target))
 
     def _preprocess_properties(self, definition):
         index = 0

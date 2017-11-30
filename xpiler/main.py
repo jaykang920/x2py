@@ -47,7 +47,7 @@ class Main:
             self._process_file(path)
         else:
             print(path + " doesn't exist.", file=sys.stderr)
-            self.error = true
+            self.error = True
 
     def _process_dir(self, path):
         print("Directory " + os.path.abspath(path))

@@ -153,25 +153,18 @@ class Python3FormatterContext(FormatterContext):
                 constant.value = '"' + constant.value + '"'
 
         self._out(0, "class {}:\n".format(definition.name))
-        for constant in definition.constants:
-            self._out(1, "{0} = {1}\n".format(to_SCREAMING_SNAKE_CASE(constant.name), constant.value))
+        if definition.constants:
+            for constant in definition.constants:
+                self._out(1, "{0} = {1}\n".format(
+                    to_SCREAMING_SNAKE_CASE(constant.name), constant.value))
+        else:
+            self._out(1, "pass\n")
 
     def format_reference(self, reference):
-        prefix = '.'
-        target = reference.target
-
-        if (target.startswith('.')):  # if relative
-            # ./ => .
-            # ../ => ..
-            # ../../ => ...
-            prefix += '.' * target.count('../')
-            target = target[target.rfind('./') + 2:]
-
-        tokens = target.split('/')
+        tokens = reference.target.split('/')
         tokens[-1] = to_snake_case(tokens[-1])
         target = '.'.join(tokens)
-
-        self._out(0, "from {} import *\n".format(prefix + target))
+        self._out(0, "from {} import *\n".format(target))
 
     def _preprocess_properties(self, definition):
         index = 0

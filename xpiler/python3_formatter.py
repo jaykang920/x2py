@@ -71,7 +71,7 @@ class Python3Formatter(Formatter):
             f.flush()
 
     def is_up_to_date(self, path, out_dir):
-        basename = os.path.basename(path).splitext()[0]
+        basename = os.path.splitext(os.path.basename(path))[0]
         target = os.path.join(out_dir, basename + EXTENSION)
         return (os.path.exists(target) and
             os.path.getmtime(target) >= os.path.getmtime(path))

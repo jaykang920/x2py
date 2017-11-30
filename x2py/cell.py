@@ -64,8 +64,8 @@ class Cell(object):
         if len(tag.props) == 0:
             return
         for index, prop in enumerate(tag.props):
-            #if prop.name.startswith('_'):
-            #    continue
+            if prop.name.startswith('_'):
+                continue
             value = self.values[tag.offset + index]
             if prop.type_index == 9:
                 value = '"' + value + '"'

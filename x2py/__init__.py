@@ -1,10 +1,3 @@
-import sys
-
-sys.path.append('..')
-from version import version
-
-__version__ = version
-
 from .builtin_events import *
 from .case import Case
 from .event import Event

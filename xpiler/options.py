@@ -9,7 +9,7 @@ DEFAULT_SPEC = "py"
 class Options:
     def __init__(self):
         self.forced = False
-        self.out_dir = "."
+        self.out_dir = None
         self.recursive = False
         self.spec = DEFAULT_SPEC
 

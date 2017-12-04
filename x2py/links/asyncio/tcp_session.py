@@ -16,9 +16,15 @@ class TcpSession(LinkSession, asyncio.Protocol):
         self.transport = None
         self.rx_buffer = bytearray()
 
+    def cleanup(self):
+        super().cleanup()
+
     def connection_made(self, transport):
         self.transport = transport
-        self.link.on_connect(True, self)
+        if self.link.buffer_transform is None:
+            self.link.on_connect(True, self)
+        else:
+            self.link.init_handshake(self)
 
     def connection_lost(self, transport):
         self.link.on_disconnect(self.handle, self)
@@ -28,9 +34,8 @@ class TcpSession(LinkSession, asyncio.Protocol):
         Trace.trace("{} received {}", self.link.name, data)
         self.on_receive(data)
 
-    def build_header(self, buffer):
+    def build_header(self, buffer, transformed):
         length = len(buffer)
-        transformed = False
         header = 1 if transformed else 0
         header = header | (length << 1)
 

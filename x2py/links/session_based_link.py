@@ -23,6 +23,15 @@ class SessionBasedLink(Link):
         super().__init__(name)
         self.rwlock = ReadWriteLock()
 
+    def init_handshake(self, session):
+        buffer_transform = self.buffer_transform.clone()
+        session.buffer_transform = buffer_transform
+
+        session.send(HandshakeReq().setattrs(
+            _transform = False,
+            data = buffer_transform.init_handshake()
+        ))
+
     def on_connect(self, result, context):
         Trace.info("{} connected {} {}", self.name, result, context)
 

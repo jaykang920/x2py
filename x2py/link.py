@@ -11,7 +11,7 @@ class Link(Case):
 
     def __init__(self, name):
         super().__init__()
-        # buffer transform
+        self.buffer_transform = None
         with Link._lock:
             if name in Link.names:
                 raise ValueError("link name '{}' is already in use".format(name))
@@ -23,7 +23,10 @@ class Link(Case):
         return self._name
 
     def cleanup(self):
-        # buffer transform
+        if self.buffer_transform is not None:
+            self.buffer_transform.cleanup()
+            self.buffer_transform = None
+
         with Link._lock:
             if self.name in Link.names:
                 Link.names.remove(self.name)

@@ -290,11 +290,12 @@ class Cell(object):
 
     @staticmethod
     def is_string(value):
-        if not isinstance(value, str):
-            try:
-                value = str(value)
-            except:
-                return False, value
+        if value is not None:  # allow None
+            if not isinstance(value, str):
+                try:
+                    value = str(value)
+                except:
+                    return False, value
         return True, value
 
     @staticmethod
@@ -308,29 +309,33 @@ class Cell(object):
 
     @staticmethod
     def is_bytes(value):
-        if not isinstance(value, bytes):
-            try:
-                value = bytes(value)
-            except:
-                return False, value
+        if value is not None:  # allow None
+            if not isinstance(value, bytes):
+                try:
+                    value = bytes(value)
+                except:
+                    return False, value
         return True, value
 
     @staticmethod
     def is_cell(value):
-        if not isinstance(value, Cell):
-            return False, value
+        if value is not None:  # allow None
+            if not isinstance(value, Cell):
+                return False, value
         return True, value
 
     @staticmethod
     def is_list(value):
-        if not isinstance(value, list):
-            return False, value
+        if value is not None:  # allow None
+            if not isinstance(value, list):
+                return False, value
         return True, value
 
     @staticmethod
     def is_map(value):
-        if not isinstance(value, dict):
-            return False, value
+        if value is not None:  # allow None
+            if not isinstance(value, dict):
+                return False, value
         return True, value
 
     @staticmethod
@@ -362,5 +367,6 @@ class Cell(object):
         valid, value = checker.__func__(value)
         if not valid:
             raise ValueError()
-        self.fingerprint.touch(index)
+        if value is not None:
+            self.fingerprint.touch(index)
         self.values[index] = value

@@ -13,11 +13,23 @@ def test_inverse():
     t1 = Inverse()
     t2 = Inverse()
 
+    chal1 = t1.init_handshake()
+    chal2 = t2.init_handshake()
+
+    resp1 = t1.handshake(chal2)
+    resp2 = t2.handshake(chal1)
+
+    r1 = t1.fini_handshake(resp2)
+    r2 = t2.fini_handshake(resp1)
+
+    assert r1 == True, r2 == True
+
     b = bytearray('abcdef', 'utf-8')
 
     len1 = t1.transform(b, len(b))
     len2 = t2.inverse_transform(b, len1)
     assert b == b'abcdef'
+
 
     s1 = BufferTransformStack()
     s1.add(Inverse())

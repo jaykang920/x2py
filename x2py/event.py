@@ -18,6 +18,7 @@ class Event(Cell):
 
     def __init__(self, length=0):
         super().__init__(len(Event.tag.props) + length)
+        self._transform = True
         base = Event.tag.offset
         self.values[base + 0] = 0
 

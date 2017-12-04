@@ -53,7 +53,8 @@ class BufferTransformStack(BufferTransform):
             self.transforms.append(transform)
 
     def remove(self, transform):
-        self.transforms.remove(transform)
+        if transform in self.transforms:
+            self.transforms.remove(transform)
 
     def cleanup(self):
         for transform in self.transforms:

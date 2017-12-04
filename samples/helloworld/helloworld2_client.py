@@ -6,6 +6,8 @@ import sys
 sys.path.append('../..')
 from x2py import *
 
+from x2py.transforms.inverse import Inverse
+
 from hello_world import *
 
 def trace_handler(level, message):
@@ -29,6 +31,7 @@ class MyCase(Case):
 class MyClient(TcpClient):
     def __init__(self):
         super().__init__("MyClient")
+        self.buffer_transform = Inverse()
 
     def setup(self):
         super().setup()

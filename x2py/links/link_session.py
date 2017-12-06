@@ -48,7 +48,7 @@ class LinkSession:
             if self.buffer_transform is not None:
                 if self.rx_transform_ready and transformed:
                     try:
-                        self.buffer_transform.inverse_transform(buffer, length)
+                        buffer = self.buffer_transform.inverse_transform(buffer)
                     except Exception as ex:
                         Trace.error("{} inverse transform error {}", self.link.name, ex)
                         continue
@@ -109,16 +109,16 @@ class LinkSession:
         serializer = Serializer()
         serializer.write_int32(None, event.type_id())
         event.serialize(serializer)
+        buffer = serializer.buffer
 
         transformed = False
         if self.buffer_transform is not None:
             if self.tx_transform_ready and event._transform:
-                length = len(serializer.buffer)
-                self.buffer_transform.transform(serializer.buffer, length)
+                buffer = self.buffer_transform.transform(buffer)
                 transformed = True
 
-        header_buffer = self.build_header(serializer.buffer, transformed)
+        header_buffer = self.build_header(buffer, transformed)
 
-        data = bytes(header_buffer + serializer.buffer)
+        data = bytes(header_buffer + buffer)
 
         self._send(data)

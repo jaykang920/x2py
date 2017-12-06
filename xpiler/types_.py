@@ -58,7 +58,7 @@ def _init_types():
     result["string"] = TypeProperty(True, False, False, 9)
     result["datetime"] = TypeProperty(True, False, False, 10)
     # Collection types
-    result["bytes"] = TypeProperty(False, True, False, 12)
+    result["bytes"] = TypeProperty(False, True, False, 11)
     result["list"] = TypeProperty(False, True, True, 13)
     result["map"] = TypeProperty(False, True, True, 14)
     # Non-serializable

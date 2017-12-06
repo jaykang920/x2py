@@ -26,9 +26,9 @@ def test_inverse():
 
     b = bytearray('abcdef', 'utf-8')
 
-    len1 = t1.transform(b, len(b))
-    len2 = t2.inverse_transform(b, len1)
-    assert b == b'abcdef'
+    r1 = t1.transform(b)
+    r2 = t2.inverse_transform(r1)
+    assert r2 == b'abcdef'
 
 
     s1 = BufferTransformStack()
@@ -48,6 +48,6 @@ def test_inverse():
 
     assert r1 == True, r2 == True
 
-    len1 = s1.transform(b, len(b))
-    len2 = s2.inverse_transform(b, len1)
-    assert b == b'abcdef'
+    r1 = s1.transform(b)
+    r2 = s2.inverse_transform(r1)
+    assert r2 == b'abcdef'

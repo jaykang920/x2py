@@ -108,7 +108,7 @@ class LinkSessionDisconnected(Event):
 
 def _init_handshake_req_tag():
     props = []
-    props.append(MetaProperty('Data', 12))
+    props.append(MetaProperty('Data', 11))
     return Event.Tag(Event.tag, 'HandshakeReq', props,
         LinkEventType.HANDSHAKE_REQ)
 
@@ -136,7 +136,7 @@ class HandshakeReq(Event):
 
 def _init_handshake_resp_tag():
     props = []
-    props.append(MetaProperty('Data', 12))
+    props.append(MetaProperty('Data', 11))
     return Event.Tag(Event.tag, 'HandshakeResp', props,
         LinkEventType.HANDSHAKE_RESP)
 

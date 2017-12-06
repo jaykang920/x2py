@@ -6,6 +6,7 @@ import sys
 sys.path.append('../..')
 from x2py import *
 
+from x2py.transforms.block_cipher import BlockCipher
 from x2py.transforms.inverse import Inverse
 
 from hello_world import *
@@ -31,7 +32,7 @@ class MyCase(Case):
 class MyClient(TcpClient):
     def __init__(self):
         super().__init__("MyClient")
-        self.buffer_transform = Inverse()
+        self.buffer_transform = BlockCipher()
 
     def setup(self):
         super().setup()

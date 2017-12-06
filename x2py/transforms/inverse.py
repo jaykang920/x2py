@@ -22,11 +22,13 @@ class Inverse(BufferTransform):
     def fini_handshake(self, response):
         return True
 
-    def transform(self, buffer, length):
-        for i, b in enumerate(buffer):
-            buffer[i] = (~b & 0x0ff)
-        return length
-    def inverse_transform(self, buffer, length):
-        for i, b in enumerate(buffer):
-            buffer[i] = (~b & 0x0ff)
-        return length
+    def transform(self, buffer):
+        result = bytearray()
+        for b in buffer:
+            result.append(~b & 0x0ff)
+        return result
+    def inverse_transform(self, buffer):
+        result = bytearray()
+        for b in buffer:
+            result.append(~b & 0x0ff)
+        return result

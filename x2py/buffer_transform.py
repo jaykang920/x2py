@@ -29,11 +29,11 @@ class BufferTransform(ABC):
         pass
 
     @abstractmethod
-    def transform(self, buffer, length):
+    def transform(self, buffer):
         """ Transform the specified trailing byte(s) of the buffer. """
         pass
     @abstractmethod
-    def inverse_transform(self, buffer, length):
+    def inverse_transform(self, buffer):
         """ Inverse transform the specified leading byte(s) of the buffer. """
         pass
 
@@ -100,12 +100,12 @@ class BufferTransformStack(BufferTransform):
                 offset += block_length
         return True
 
-    def transform(self, buffer, length):
+    def transform(self, buffer):
         for transform in self.transforms:
-            length = transform.transform(buffer, length)
-        return length
+            buffer = transform.transform(buffer)
+        return buffer
 
-    def inverse_transform(self, buffer, length):
+    def inverse_transform(self, buffer):
         for transform in reversed(self.transforms):
-            length = transform.inverse_transform(buffer, length)
-        return length
+            buffer = transform.inverse_transform(buffer)
+        return buffer

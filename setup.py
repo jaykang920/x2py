@@ -15,6 +15,7 @@ setup(
         'x2py.flows',
         'x2py.links',
         'x2py.links.asyncio',
+        'x2py.transforms',
         'x2py.util',
         'xpiler',
     ],

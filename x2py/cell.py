@@ -83,7 +83,8 @@ class Cell(object):
         base = tag.offset
         for index, prop in enumerate(tag.props):
             if prop.name.startswith('_'):
-                continue
+                if prop.name == '_Handle':
+                    continue
             if self.fingerprint.get(base + index):
                 self.values[base + index] = deserializer.read(prop)
 
@@ -105,7 +106,8 @@ class Cell(object):
         base = tag.offset
         for index, prop in enumerate(tag.props):
             if prop.name.startswith('_'):
-                continue
+                if prop.name == '_Handle':
+                    continue
             if self.fingerprint.get(base + index):
                 result += Serializer.get_length(prop, self.values[base + index])
         if (target_type is not None) and (target_type.__name__ == tag.type_name):
@@ -184,7 +186,8 @@ class Cell(object):
         base = tag.offset
         for index, prop in enumerate(tag.props):
             if prop.name.startswith('_'):
-                continue
+                if prop.name == '_Handle':
+                    continue
             if self.fingerprint.get(base + index):
                 serializer.write(prop, self.values[base + index])
         if (target_type is not None) and (target_type.__name__ == tag.type_name):

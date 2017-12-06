@@ -6,7 +6,7 @@ from ..util.trace import Trace
 
 # pycrypto
 from Crypto import Random
-from Crypto.Cipher import AES
+from Crypto.Cipher import AES, PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
 class BlockCipher(BufferTransform):
@@ -33,7 +33,6 @@ class BlockCipher(BufferTransform):
             settings.block_size = 128
             settings.key_size = 256
             settings.rsa_key_size = 1024
-            settings.mode = AES.MODE_CBC
             # In a real-world client/server production, each peer should use a
             # different RSA key pair.
             settings.rsa_my_private_key = '''
@@ -90,7 +89,7 @@ ue>
         n = self.key_size_in_bytes
         key = challenge[:n]
         iv = challenge[n:n + self.block_size_in_bytes]
-        self.encryptor = AES.new(key, self.settings.mode, iv)
+        self.encryptor = AES.new(key, AES.MODE_CBC, iv)
         self.encryption_key = key
         self.encryption_iv = iv
 
@@ -106,7 +105,7 @@ ue>
         n = self.key_size_in_bytes
         key = decrypted[:n]
         iv = decrypted[n:n + self.block_size_in_bytes]
-        self.decryptor = AES.new(key, self.settings.mode, iv)
+        self.decryptor = AES.new(key, AES.MODE_CBC, iv)
         self.decryption_key = key
         self.decryption_iv = iv
 
@@ -145,15 +144,13 @@ ue>
 
     @staticmethod
     def _rsa_decrypt(rsa, ciphertext):
-        """ Hack around Crypto.PublicKey.RSA.RSAKey._decrypt """
-        plaintext = int(rsa._decrypt(int.from_bytes(ciphertext, 'big')))
-        return plaintext.to_bytes((plaintext.bit_length() + 7) >> 3, 'big')
+        cipher = PKCS1_v1_5.new(rsa)
+        return cipher.decrypt(ciphertext, None)
 
     @staticmethod
     def _rsa_encrypt(rsa, plaintext):
-        """ Hack around Crypto.PublicKey.RSA.RSAKey._encrypt """
-        ciphertext = rsa._encrypt(int.from_bytes(plaintext, 'big'))
-        return ciphertext.to_bytes((ciphertext.bit_length() + 7) >> 3, 'big')
+        cipher = PKCS1_v1_5.new(rsa)
+        return cipher.encrypt(plaintext)
 
     @staticmethod
     def _xml2rsa(xml):

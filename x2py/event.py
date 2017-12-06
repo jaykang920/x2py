@@ -13,7 +13,8 @@ class Event(Cell):
             self.type_id = type_id
 
     tag = Tag(None, 'Event', [
-            MetaProperty('_Handle', MetaProperty.INT32)
+            MetaProperty('_Handle', MetaProperty.INT32),
+            MetaProperty('_WaitHandle', MetaProperty.INT32)
         ], 0)
 
     def __init__(self, length=0):
@@ -21,6 +22,7 @@ class Event(Cell):
         self._transform = True
         base = Event.tag.offset
         self.values[base + 0] = 0
+        self.values[base + 1] = 0
 
     @property
     def _handle(self):
@@ -29,6 +31,14 @@ class Event(Cell):
     def _handle(self, value):
         self._set_property(Event.tag.offset + 0, value,
             Event.tag.props[0].type_index)
+
+    @property
+    def _wait_handle(self):
+        return self.values[Event.tag.offset + 1]
+    @_wait_handle.setter
+    def _wait_handle(self, value):
+        self._set_property(Event.tag.offset + 1, value,
+            Event.tag.props[1].type_index)
 
     def desc(self):
         prop_descs = []

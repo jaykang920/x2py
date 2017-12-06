@@ -65,6 +65,8 @@ class LinkSession:
                 continue
             event.deserialize(deserializer)
 
+            Trace.debug("{} received {}", self.link.name, event)
+
             if self._process(event):
                 continue
 
@@ -79,7 +81,7 @@ class LinkSession:
             try:
                 response = self.buffer_transform.handshake(event.data)
             except Exception as ex:
-                Trace.error("{} error handshaking {}", link.name, ex)
+                Trace.error("{} error handshaking {}", self.link.name, ex)
             self.send(HandshakeResp().setattrs(
                 _transform = False,
                 data = response
@@ -89,7 +91,7 @@ class LinkSession:
             try:
                 result = self.buffer_transform.fini_handshake(event.data)
             except Exception as ex:
-                Trace.error("{} error finishing handshake {}", link.name, ex)
+                Trace.error("{} error finishing handshake {}", self.link.name, ex)
             if result:
                 self.rx_transform_ready = True
             self.send(HandshakeAck().setattrs(

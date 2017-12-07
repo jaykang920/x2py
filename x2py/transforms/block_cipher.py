@@ -18,12 +18,8 @@ class BlockCipher(BufferTransform):
             self.block_size = None
             self.key_size = None
             self.rsa_key_size = None
-
-            self.mode = None
-            self.padding = None
-
-            self.rsa_my_private_key = None
-            self.rsa_peer_public_key = None
+            self.my_private_key = None
+            self.peer_public_key = None
 
     def __init__(self, settings=None):
         if settings is not None:
@@ -35,7 +31,7 @@ class BlockCipher(BufferTransform):
             settings.rsa_key_size = 1024
             # In a real-world client/server production, each peer should use a
             # different RSA key pair.
-            settings.rsa_my_private_key = '''
+            settings.my_private_key = '''
 <RSAKeyValue><Modulus>xtU+mTT9tOES5vLZeSAEvuWaa+FX4jUtH5iVFGSULCaBR6TtQ2TYUz1Jnt
 rUhA26OQBIcVzlMyarM8XVhZqk5RJDP64VFz3m+VMmghAgJLUPKDORmIPlc18FuaTsZjxoIwfuVojrDH
 /12BoEHHmwb3CVq6dHGsxRLUKG0DYBWQk=</Modulus><Exponent>AQAB</Exponent><P>+3iHfNfD
@@ -49,7 +45,7 @@ Q><D>CBEw2AB5ZrRXEv25axusdZ5VNJlQ+oGT0htbuRcXl+78Ac8kPT7DNCVhbkuMocr4ykVDqy3MstW
 XzqLxNdl/ZSV9KvP6u5bcDQQeC9KbKQ5PpzGoGmMJNsVtXC0voOA3sYx9P+vVtEqhxn9eAKPOPqX9wRo
 9rMW9UZRtDcLiUj0=</D></RSAKeyValue>
 '''
-            settings.rsa_peer_public_key = '''
+            settings.peer_public_key = '''
 <RSAKeyValue><Modulus>xtU+mTT9tOES5vLZeSAEvuWaa+FX4jUtH5iVFGSULCaBR6TtQ2TYUz1Jnt
 rUhA26OQBIcVzlMyarM8XVhZqk5RJDP64VFz3m+VMmghAgJLUPKDORmIPlc18FuaTsZjxoIwfuVojrDH
 /12BoEHHmwb3CVq6dHGsxRLUKG0DYBWQk=</Modulus><Exponent>AQAB</Exponent></RSAKeyVal
@@ -93,13 +89,13 @@ ue>
         self.encryption_key = key
         self.encryption_iv = iv
 
-        rsa = BlockCipher._xml2rsa(self.settings.rsa_peer_public_key)
+        rsa = BlockCipher._xml2rsa(self.settings.peer_public_key)
         encrypted = BlockCipher._rsa_encrypt(rsa, challenge)
         Trace.trace("encrypted challenge: {}", encrypted)
         return encrypted
 
     def handshake(self, challenge):
-        rsa = BlockCipher._xml2rsa(self.settings.rsa_my_private_key)
+        rsa = BlockCipher._xml2rsa(self.settings.my_private_key)
         decrypted = BlockCipher._rsa_decrypt(rsa, challenge)
 
         n = self.key_size_in_bytes
@@ -109,14 +105,14 @@ ue>
         self.decryption_key = key
         self.decryption_iv = iv
 
-        rsa = BlockCipher._xml2rsa(self.settings.rsa_peer_public_key)
+        rsa = BlockCipher._xml2rsa(self.settings.peer_public_key)
         encrypted = BlockCipher._rsa_encrypt(rsa, decrypted)
         return encrypted
 
     def fini_handshake(self, response):
         expected = self.encryption_key + self.encryption_iv
 
-        rsa = BlockCipher._xml2rsa(self.settings.rsa_my_private_key)
+        rsa = BlockCipher._xml2rsa(self.settings.my_private_key)
         decrypted = BlockCipher._rsa_decrypt(rsa, response)
 
         return (decrypted == expected)

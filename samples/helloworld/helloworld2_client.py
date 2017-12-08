@@ -31,7 +31,7 @@ class MyClient(TcpClient):
         self.bind(HelloReq(), self.send)
         self.connect('127.0.0.1', 8888)
 
-EventFactory.register(2, HelloResp)
+EventFactory.register_type(HelloResp)
 
 (
 Hub.instance

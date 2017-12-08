@@ -33,7 +33,7 @@ class MyServer(TcpServer):
         self.bind(HelloResp(), self.send)
         self.listen('0.0.0.0', 8888)
 
-EventFactory.register(1, HelloReq)
+EventFactory.register_type(HelloReq)
 
 (
 Hub.instance

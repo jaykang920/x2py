@@ -1,6 +1,10 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+import inspect
+import sys
+import types
+
 from .event import Event
 from .util.trace import Trace
 
@@ -17,4 +21,28 @@ class EventFactory:
 
     @staticmethod
     def register(type_id, factory_method):
+        if type_id == 0:
+            return
+        existing = EventFactory.map.get(type_id)
+        if existing and existing != factory_method:
+            raise ValueError()
         EventFactory.map[type_id] = factory_method
+
+    @staticmethod
+    def register_type(t):
+        EventFactory.register(t.tag.type_id, t)
+
+    @staticmethod
+    def register_module(module, base_class=Event):
+        predicate = lambda t: inspect.isclass(t) and issubclass(t, base_class)
+        members = inspect.getmembers(module, predicate)
+        for name, t in members:
+            EventFactory.register_type(t)
+
+    @staticmethod
+    def register_package(module, base_class=Event):
+        EventFactory.register_module(module, base_class)
+        for name in dir(module):
+            attr = getattr(module, name)
+            if type(attr) == types.ModuleType:
+                EventFactory.register_package(attr, base_class)

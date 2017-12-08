@@ -58,8 +58,6 @@ class Flow:
         return self
 
     def dispatch(self, event):
-        print("dispatching {}".format(event))
-
         event_proxy = Flow.thread_local.event_proxy
         handler_chain = Flow.thread_local.handler_chain
 

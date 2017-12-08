@@ -9,11 +9,11 @@ from .event import Event
 from .util.trace import Trace
 
 class EventFactory:
-    map = {}
+    _map = {}
 
     @staticmethod
     def create(type_id):
-        factory_method = EventFactory.map.get(type_id)
+        factory_method = EventFactory._map.get(type_id)
         if (factory_method is None):
             Trace.warn("unknown event type id {}", type_id)
             return None
@@ -21,12 +21,14 @@ class EventFactory:
 
     @staticmethod
     def register(type_id, factory_method):
-        if type_id == 0:
+        if type_id == 0:  # ignore the root event
             return
-        existing = EventFactory.map.get(type_id)
-        if existing and existing != factory_method:
-            raise ValueError()
-        EventFactory.map[type_id] = factory_method
+        existing = EventFactory._map.get(type_id)
+        if existing:
+            if existing != factory_method:
+                raise ValueError("event type id {} conflicted".format(type_id))
+            return
+        EventFactory._map[type_id] = factory_method
 
     @staticmethod
     def register_type(t):

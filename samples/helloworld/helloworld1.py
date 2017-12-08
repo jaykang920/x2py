@@ -8,30 +8,24 @@ from x2py import *
 
 from hello_world import *
 
-def trace_handler(level, message):
-    print("x2 {} {}".format(level.name, message))
-
 Trace.level = TraceLevel.ALL
-Trace.handler = trace_handler
-
-class MyHubCase(Hub.Case):
-    pass
+Trace.handler = lambda level, message: \
+    print("x2 {} {}".format(level.name, message))
 
 class MyCase(Case):
     def setup(self):
-        super().setup()
         self.bind(HelloReq(), self.on_hello_req)
+        self.bind(HelloResp(), self.on_hello_resp)
 
-    def on_hello_req(self, e):
-        print("hello, {}".format(e.name))
+    def on_hello_req(self, req):
+        HelloResp().in_response_of(req).setattrs(
+            message = "hello, {}".format(req.name)
+        ).post()
 
-(
-Hub.instance
-    .insert(0, MyHubCase())
-    .attach(SingleThreadFlow().add(MyCase()))
-    .attach(MultiThreadFlow("MyFlow"))
-    .attach(ThreadlessFlow("MyThreadlessFlow"))
-)
+    def on_hello_resp(self, resp):
+        print(resp.message)
+
+Hub.instance.attach(SingleThreadFlow().add(MyCase()))
 
 with Hub.Flows():
     while True:
@@ -39,10 +33,6 @@ with Hub.Flows():
         if message in ('quit', 'exit'):
             break
         else:
-            e = HelloReq().setattrs(
+            HelloReq().setattrs(
                 name=message
-            )
-            e.post()
-            print(e)
-
-Hub.instance.detach_all()
+            ).post()

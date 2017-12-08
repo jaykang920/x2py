@@ -11,22 +11,17 @@ from x2py.transforms.inverse import Inverse
 
 from hello_world import *
 
-def trace_handler(level, message):
-    print("x2 {} {}".format(level.name, message))
-
 Trace.level = TraceLevel.ALL
-Trace.handler = trace_handler
-
-class MyHubCase(Hub.Case):
-    pass
+Trace.handler = lambda level, message: \
+    print("x2 {} {}".format(level.name, message))
 
 class MyCase(Case):
     def setup(self):
-        super().setup()
         self.bind(HelloReq(), self.on_hello_req)
-    def on_hello_req(self, e):
-        HelloResp().in_response_of(e).setattrs(
-            message = "hello, {}".format(e.name)
+
+    def on_hello_req(self, req):
+        HelloResp().in_response_of(req).setattrs(
+            message = "hello, {}".format(req.name)
         ).post()
 
 class MyServer(TcpServer):
@@ -35,7 +30,6 @@ class MyServer(TcpServer):
         self.buffer_transform = BlockCipher()
 
     def setup(self):
-        super().setup()
         self.bind(HelloResp(), self.send)
         self.listen('0.0.0.0', 8888)
 
@@ -43,8 +37,9 @@ EventFactory.register(1, HelloReq)
 
 (
 Hub.instance
-    .insert(0, MyHubCase())
-    .attach(SingleThreadFlow().add(MyCase()).add(MyServer()))
+    .attach(SingleThreadFlow()
+        .add(MyCase())
+        .add(MyServer()))
 )
 
 with Hub.Flows():
@@ -54,5 +49,3 @@ with Hub.Flows():
             break
         else:
             pass
-
-Hub.instance.detach_all()

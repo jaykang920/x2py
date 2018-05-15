@@ -8,7 +8,7 @@ import types
 from .event import Event
 from .util.trace import Trace
 
-class EventFactory:
+class EventFactory(object):
     _map = {}
 
     @staticmethod

@@ -6,7 +6,7 @@ from threading import Condition, Lock
 
 from .event import Event
 
-class EventQueue:
+class EventQueue(object):
     """ The blocking event queue implementation. """
 
     def __init__(self):

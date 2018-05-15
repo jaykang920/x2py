@@ -66,7 +66,7 @@ class Case(EventSink):
         """ Called internally when this case is cleaned up. """
         self.teardown()
 
-class CaseStack:
+class CaseStack(object):
     """ Handles a group of cases. """
 
     def __init__(self):

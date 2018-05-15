@@ -5,7 +5,7 @@
 
 from threading import RLock, Semaphore
 
-class WriteLock:
+class WriteLock(object):
     def __init__(self, rwlock):
         self.rwlock = rwlock
 
@@ -16,7 +16,7 @@ class WriteLock:
     def __exit__(self, type, value, traceback):
         self.rwlock.wlock_release()
 
-class ReadLock:
+class ReadLock(object):
     def __init__(self, rwlock):
         self.rwlock = rwlock
         self.upgraded = False
@@ -36,7 +36,7 @@ class ReadLock:
         else:
             self.rwlock.rlock_release()
 
-class ReadWriteLock:
+class ReadWriteLock(object):
     """ Reader-writer lock with preference to writers. """
 
     def __init__(self):

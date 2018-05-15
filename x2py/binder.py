@@ -28,10 +28,10 @@ class Slot(Fingerprint):
     def remove_ref(self):
         return self.ref_count.decrement()
 
-class Binder:
+class Binder(object):
     """ Manages evnet-handler bindings. """
 
-    class _Filter:
+    class _Filter(object):
         def __init__(self):
             self.map = {}
 

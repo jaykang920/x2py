@@ -16,7 +16,7 @@ def _init():
     result.current = None
     return result
 
-class Flow:
+class Flow(object):
     """ Represents a logically independent execution flow. """
     thread_local = _init()
 

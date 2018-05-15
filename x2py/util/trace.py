@@ -12,7 +12,7 @@ class TraceLevel(IntEnum):
     ERROR = 5
     NONE = 6
 
-class Trace:
+class Trace(object):
     """ Represents the tracing helper class. """
 
     handler = None

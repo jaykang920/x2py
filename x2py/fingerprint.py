@@ -8,7 +8,7 @@ from .deserializer import Deserializer
 from .serializer import Serializer
 from .util.hash import HASH_SEED, hash_update
 
-class Fingerprint:
+class Fingerprint(object):
     """ Manages a fixed-length compact array of bit values.
         (zero-based indexing) """
 

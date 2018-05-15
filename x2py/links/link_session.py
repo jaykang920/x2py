@@ -9,7 +9,7 @@ from ..util.trace import Trace
 
 from .link_events import *
 
-class LinkSession:
+class LinkSession(object):
     """Abstract base class for concrete link sessions."""
 
     def __init__(self, link):  # link: SessionBasedLink

@@ -4,7 +4,7 @@
 import datetime
 import struct
 
-class Serializer:
+class Serializer(object):
     @staticmethod
     def length_bool(metaprop, value):
         return 1

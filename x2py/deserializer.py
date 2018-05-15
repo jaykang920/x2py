@@ -4,7 +4,7 @@
 import datetime
 import struct
 
-class Deserializer:
+class Deserializer(object):
     def read_bool(self, metaprop):
         self.check_length(1)
         b = self.buffer[self.pos]

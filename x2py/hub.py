@@ -6,10 +6,10 @@ from .flow import Flow
 from .util.rwlock import ReadLock, WriteLock, ReadWriteLock
 from .util.trace import Trace
 
-class Hub:
+class Hub(object):
     """ Represents the singleton event distribution bus. """
 
-    class _Hub:
+    class _Hub(object):
         def __init__(self):
             self.cases = []  # list of hub cases
             self.flows = []  # list of all the flows attached to this hub
@@ -146,7 +146,7 @@ class Hub:
 
         Trace.info("stopped")
 
-    class Case:
+    class Case(object):
         """ Represents a hub-scope case that is initialized and terminated
             along with startup/shutdown of the hub. """
 
@@ -158,7 +158,7 @@ class Hub:
             """ Overridden by subclasses to build a cleanup chain. """
             pass
 
-    class Flows:
+    class Flows(object):
         """ Represents the set of attached flows for convenient cleanup. """
 
         def startup(self): Hub.startup()

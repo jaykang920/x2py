@@ -4,7 +4,7 @@
 from array import array
 from threading import Lock
 
-class RangedIntPool:
+class RangedIntPool(object):
     def __init__(self, min_value, max_value, advancing=False):
         self._min_value = min_value
         self._max_value = max_value

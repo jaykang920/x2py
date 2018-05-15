@@ -72,7 +72,7 @@ class Event(Cell):
     def __hash__(self):
         return self.hash_code_for(self.fingerprint, self.type_id())
 
-class EventProxy:
+class EventProxy(object):
     """ Supports dictionary search by equivalence. """
 
     def __init__(self):

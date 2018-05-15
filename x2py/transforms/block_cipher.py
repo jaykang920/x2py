@@ -13,7 +13,7 @@ class BlockCipher(BufferTransform):
     """ A simple example of BufferTransform that performs block encryption and
         decryption based on the keys exchanged by an asymmetric algorithm. """
 
-    class Settings:
+    class Settings(object):
         def __init__(self):
             self.block_size = None
             self.key_size = None

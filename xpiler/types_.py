@@ -1,7 +1,7 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-class TypeSpec:
+class TypeSpec(object):
     def __init__(self, typestr, details):
         self.typestr = typestr
         self.details = details  # list(TypeSpec)
@@ -37,7 +37,7 @@ class TypeSpec:
             tokens.append(')')
         return ''.join(tokens)
 
-class TypeProperty:
+class TypeProperty(object):
     def __init__(self, is_primitive, is_collection, detail_required, index):
         self.is_primitive = is_primitive
         self.is_collection = is_collection
@@ -65,7 +65,7 @@ def _init_types():
     result["object"] = TypeProperty(False, False, False, 15)
     return result
 
-class Types:
+class Types(object):
     map = _init_types()
 
     @staticmethod

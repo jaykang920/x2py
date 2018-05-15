@@ -19,7 +19,7 @@ class HeartbeatEvent(Event):
     tag = _init_heartbeat_event_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(HeartbeatEvent.tag.props) + length)
+        super(HeartbeatEvent, self).__init__(len(HeartbeatEvent.tag.props) + length)
         base = HeartbeatEvent.tag.offset
         pass
 
@@ -38,7 +38,7 @@ class FlowStart(Event):
     tag = _init_flow_start_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(FlowStart.tag.props) + length)
+        super(FlowStart, self).__init__(len(FlowStart.tag.props) + length)
         base = FlowStart.tag.offset
         pass
 
@@ -57,7 +57,7 @@ class FlowStop(Event):
     tag = _init_flow_stop_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(FlowStop.tag.props) + length)
+        super(FlowStop, self).__init__(len(FlowStop.tag.props) + length)
         base = FlowStop.tag.offset
         pass
 
@@ -78,7 +78,7 @@ class TimeoutEvent(Event):
     tag = _init_timeout_event_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(TimeoutEvent.tag.props) + length)
+        super(TimeoutEvent, self).__init__(len(TimeoutEvent.tag.props) + length)
         base = TimeoutEvent.tag.offset
         self.values[base + 0] = None
         self.values[base + 1] = 0
@@ -116,7 +116,7 @@ class PeriodicEvent(Event):
     tag = _init_periodic_event_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(PeriodicEvent.tag.props) + length)
+        super(PeriodicEvent, self).__init__(len(PeriodicEvent.tag.props) + length)
         base = PeriodicEvent.tag.offset
         self.values[base + 0] = None
         self.values[base + 1] = 0

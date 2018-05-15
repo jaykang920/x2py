@@ -1,6 +1,8 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+from __future__ import print_function
+
 import sys
 
 sys.path.append('../..')

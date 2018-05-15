@@ -1,12 +1,14 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+from __future__ import print_function
+
 import getopt
 import sys
 
 DEFAULT_SPEC = "py"
 
-class Options:
+class Options(object):
     def __init__(self):
         self.forced = False
         self.out_dir = None

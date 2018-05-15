@@ -13,7 +13,7 @@ class HelloReq(Event):
     tag = _init_hello_req_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(HelloReq.tag.props) + length)
+        super(HelloReq, self).__init__(len(HelloReq.tag.props) + length)
         base = HelloReq.tag.offset
         self.values[base + 0] = ""
 
@@ -41,7 +41,7 @@ class HelloResp(Event):
     tag = _init_hello_resp_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(HelloResp.tag.props) + length)
+        super(HelloResp, self).__init__(len(HelloResp.tag.props) + length)
         base = HelloResp.tag.offset
         self.values[base + 0] = ""
 

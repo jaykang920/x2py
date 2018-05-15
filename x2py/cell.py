@@ -7,7 +7,7 @@ from .fingerprint import Fingerprint
 from .serializer import Serializer
 from .util.hash import Hash
 
-class MetaProperty:
+class MetaProperty(object):
     """ Represents runtime traits of a cell property. """
 
     BOOL = 1
@@ -35,7 +35,7 @@ class MetaProperty:
 class Cell(object):
     """ Common base class for all custom types. """
 
-    class Tag:
+    class Tag(object):
         def __init__(self, base, type_name, props):
             self.base = base
             self.type_name = type_name

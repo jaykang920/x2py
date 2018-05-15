@@ -22,7 +22,7 @@ class LinkSessionConnected(Event):
     tag = _init_link_session_connected_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(LinkSessionConnected.tag.props) + length)
+        super(LinkSessionConnected, self).__init__(len(LinkSessionConnected.tag.props) + length)
         base = LinkSessionConnected.tag.offset
         self.values[base + 0] = ""
         self.values[base + 1] = False
@@ -70,7 +70,7 @@ class LinkSessionDisconnected(Event):
     tag = _init_link_session_disconnected_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(LinkSessionDisconnected.tag.props) + length)
+        super(LinkSessionDisconnected, self).__init__(len(LinkSessionDisconnected.tag.props) + length)
         base = LinkSessionDisconnected.tag.offset
         self.values[base + 0] = ""
         self.values[base + 1] = 0
@@ -116,7 +116,7 @@ class HandshakeReq(Event):
     tag = _init_handshake_req_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(HandshakeReq.tag.props) + length)
+        super(HandshakeReq, self).__init__(len(HandshakeReq.tag.props) + length)
         base = HandshakeReq.tag.offset
         self.values[base + 0] = None
 
@@ -144,7 +144,7 @@ class HandshakeResp(Event):
     tag = _init_handshake_resp_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(HandshakeResp.tag.props) + length)
+        super(HandshakeResp, self).__init__(len(HandshakeResp.tag.props) + length)
         base = HandshakeResp.tag.offset
         self.values[base + 0] = None
 
@@ -172,7 +172,7 @@ class HandshakeAck(Event):
     tag = _init_handshake_ack_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(HandshakeAck.tag.props) + length)
+        super(HandshakeAck, self).__init__(len(HandshakeAck.tag.props) + length)
         base = HandshakeAck.tag.offset
         self.values[base + 0] = False
 

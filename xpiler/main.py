@@ -1,24 +1,26 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+from __future__ import print_function
+
 import os
 import sys
 
-from .options import Options
+from options import Options
 
 def _init_handlers():
     result = {}
-    from xpiler.xml_handler import XmlHandler
+    from xml_handler import XmlHandler
     result['.xml'] = XmlHandler()
     return result
 
 def _init_formatters():
     result = {}
-    from xpiler.python3_formatter import Python3Formatter
+    from python3_formatter import Python3Formatter
     result['py'] = Python3Formatter()
     return result
 
-class Main:
+class Main(object):
     handlers = _init_handlers()
     formatters = _init_formatters()
     options = Options()
@@ -29,7 +31,7 @@ class Main:
         self.error = False
 
     @staticmethod
-    def main(argv):
+    def run(argv):
         args = Main.options.parse(argv[1:])
         if len(args) < 1:
             print("error: at least one input path is required", file=sys.stderr)

@@ -1,12 +1,14 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+from __future__ import print_function
+
 import keyword
 import os
 import re
 
-from .formatter import *
-from .types_ import Types
+from formatter import *
+from types_ import Types
 
 EXTENSION = ".py"
 TAB = "    "
@@ -209,7 +211,7 @@ class Python3FormatterContext(FormatterContext):
 
     def _format_constructor(self, definition):
         self._out(1, "def __init__(self, length=0):\n")
-        self._out(2, "super().__init__(len({}.tag.props) + length)\n".format(definition.name))
+        self._out(2, "super({0}, self).__init__(len({0}.tag.props) + length)\n".format(definition.name))
         self._out(2, "base = {0}.tag.offset\n".format(definition.name))
 
         if definition.has_properties():

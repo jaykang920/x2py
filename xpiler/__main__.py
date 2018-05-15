@@ -3,7 +3,7 @@
 
 import sys
 
-from .main import Main
+from main import Main
 
 if __name__ == "__main__":
-    Main.main(sys.argv)
+    Main.run(sys.argv)

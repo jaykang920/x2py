@@ -5,4 +5,4 @@ import sys
 
 from xpiler.main import Main
 
-Main.main(sys.argv)
+Main.run(sys.argv)

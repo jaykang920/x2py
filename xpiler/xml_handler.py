@@ -1,12 +1,14 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+from __future__ import print_function
+
 import sys
 import xml.etree.ElementTree as etree
 
-from .definition import *
-from .handler import Handler
-from .types_ import *
+from definition import *
+from handler import Handler
+from types_ import *
 
 class XmlHandler(Handler):
     def handle(self, path):

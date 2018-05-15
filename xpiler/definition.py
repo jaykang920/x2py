@@ -1,7 +1,7 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-class Unit:
+class Unit(object):
     """ Represents a single definition unit. """
 
     def __init__(self):
@@ -11,35 +11,35 @@ class Unit:
         self.definitions = []
         self.is_builtin = False
 
-class Reference:
+class Reference(object):
     def __init__(self, target=""):
         self.target = target
 
     def format(self, context):
         context.format_reference(self)
 
-class Definition:
+class Definition(object):
     def __init__(self, name=""):
         self.name = name
 
     def format(self, context):
         raise NotImplementedError()
 
-class Constant:
+class Constant(object):
     def __init__(self, name="", value=""):
         self.name = name
         self.value = value
 
 class Consts(Definition):
     def __init__(self, name, type):
-        super().__init__(name)
+        super(Consts, self).__init__(name)
         self.type = type
         self.constants = []
 
     def format(self, context):
         context.format_consts(self)
 
-class Property:
+class Property(object):
     def __init__(self, name="", default_value=""):
         self.index = 0
         self.name = name
@@ -48,7 +48,7 @@ class Property:
 
 class Cell(Definition):
     def __init__(self):
-        super().__init__()
+        super(Cell, self).__init__()
         self.base = ""
         self.base_class = ""
         self.is_event = False
@@ -63,6 +63,6 @@ class Cell(Definition):
 
 class Event(Cell):
     def __init__(self):
-        super().__init__()
+        super(Event, self).__init__()
         self.id = ""
         self.is_event = True

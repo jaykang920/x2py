@@ -1,7 +1,7 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-class Formatter:
+class Formatter(object):
     def desc(self):
         raise NotImplementedError()
 
@@ -11,7 +11,7 @@ class Formatter:
     def is_up_to_date(self, path, out_dir):
         raise NotImplementedError()
 
-class FormatterContext:
+class FormatterContext(object):
     def format_cell(self, definition):
         raise NotImplementedError()
 

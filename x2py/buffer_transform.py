@@ -1,7 +1,9 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
+
+ABC = ABCMeta('ABC', (object,), {})
 
 class BufferTransform(ABC):
     """ Defines methods to be implemented by concrete buffer transforms. """

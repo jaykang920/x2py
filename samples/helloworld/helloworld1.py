@@ -12,7 +12,7 @@ from hello_world import *
 
 Trace.level = TraceLevel.ALL
 Trace.handler = lambda level, message: \
-    print("x2 {} {}".format(level.name, message))
+    print("x2 {} {}".format(TraceLevel.name(level), message))
 
 class MyCase(Case):
     def setup(self):

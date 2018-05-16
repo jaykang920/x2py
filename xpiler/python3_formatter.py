@@ -154,7 +154,7 @@ class Python3FormatterContext(FormatterContext):
             for constant in definition.constants:
                 constant.value = '"' + constant.value + '"'
 
-        self._out(0, "class {}:\n".format(definition.name))
+        self._out(0, "class {}(obejct):\n".format(definition.name))
         if definition.constants:
             for constant in definition.constants:
                 self._out(1, "{0} = {1}\n".format(

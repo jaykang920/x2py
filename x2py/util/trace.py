@@ -1,9 +1,7 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-from enum import IntEnum
-
-class TraceLevel(IntEnum):
+class TraceLevel(object):
     ALL = 0
     TRACE = 1
     DEBUG = 2
@@ -11,6 +9,12 @@ class TraceLevel(IntEnum):
     WARNING = 4
     ERROR = 5
     NONE = 6
+
+    rmap = { 0: 'ALL', 1: 'TRACE', 2: 'DEBUG', 3: 'INFO', 4: 'WARNING', 5: 'ERROR', 6: 'NONE' }
+
+    @staticmethod
+    def name(value):
+        return TraceLevel.rmap[value]
 
 class Trace(object):
     """ Represents the tracing helper class. """

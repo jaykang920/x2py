@@ -3,7 +3,7 @@
 from .cell import *
 from .event import *
 
-class BuiltinEventType:
+class BuiltinEventType(object):
     HEARTBEAT_EVENT = -1
     FLOW_START = -2
     FLOW_STOP = -3

@@ -11,7 +11,7 @@ from ..util.trace import Trace
 
 class MultiThreadFlow(EventBasedFlow):
     def __init__(self, name=None, num_threads=2):
-        super().__init__(name)
+        super(MultiThreadFlow, self).__init__(name)
         self.threads = []
         self.num_threads = num_threads
 
@@ -42,7 +42,7 @@ class MultiThreadFlow(EventBasedFlow):
 
             for thread in self.threads:
                 thread.join()
-            self.threads.clear()
+            del self.threads[:]
 
             self.cases.teardown_with(self)
             self._teardown()

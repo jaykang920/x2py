@@ -8,7 +8,7 @@ class Case(EventSink):
     """ Represents a set of application logic. """
 
     def __init__(self):
-        super().__init__()
+        super(Case, self).__init__()
 
     def setup_with(self, flow):
         """ Initializes this case with the specified holding flow. """

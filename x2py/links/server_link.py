@@ -5,11 +5,11 @@ from .session_based_link import SessionBasedLink
 
 class ServerLink(SessionBasedLink):
     def __init__(self, name):
-        super().__init__(name)
+        super(ServerLink, self).__init__(name)
         self.sessions = {}
 
     def cleanup(self):
-        super().cleanup()
+        super(ServerLink, self).cleanup()
 
     def send(self, event):
         handle = event._handle
@@ -21,14 +21,14 @@ class ServerLink(SessionBasedLink):
             session.send(event)
 
     def _on_connect(self, result, context):
-        super()._on_connect(result, context)
+        super(ServerLink, self)._on_connect(result, context)
         if result:
             session = context
             with self.rwlock.wlock():
                 self.sessions[session.handle] = session
 
     def _on_disconnect(self, handle, context):
-        super()._on_disconnect(handle, context)
+        super(ServerLink, self)._on_disconnect(handle, context)
         session = context
         with self.rwlock.wlock():
             self.sessions.pop(session.handle)

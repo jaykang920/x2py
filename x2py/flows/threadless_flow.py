@@ -8,7 +8,7 @@ from ..util.trace import Trace
 
 class ThreadlessFlow(EventBasedFlow):
     def __init__(self, name=None):
-        super().__init__(name)
+        super(ThreadlessFlow, self).__init__(name)
         self.running = False
 
     def start(self):

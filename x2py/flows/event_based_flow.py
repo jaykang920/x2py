@@ -11,7 +11,7 @@ class EventBasedFlow(Flow):
     """ Abstract base class for event-based (waiting) execution flows. """
 
     def __init__(self, name=None):
-        super().__init__(name)
+        super(EventBasedFlow, self).__init__(name)
         self.queue = EventQueue()
         self._lock = Lock()
 

@@ -12,7 +12,7 @@ from .tcp_session import TcpSession
 
 class TcpClient(ClientLink):
     def __init__(self, name):
-        super().__init__(name)
+        super(TcpClient, self).__init__(name)
         self.loop = asyncio.new_event_loop()
         self.thread = Thread(target=self.loop.run_forever)
         self.session = None
@@ -26,7 +26,7 @@ class TcpClient(ClientLink):
 
         self.loop.close()
 
-        super().cleanup()
+        super(TcpClient, self).cleanup()
 
     def connect(self, host, port):
         self.remote_host = host
@@ -38,7 +38,7 @@ class TcpClient(ClientLink):
         self.thread.start()
 
     def _on_connect(self, result, context):
-        super()._on_connect(result, context)
+        super(TcpClient, self)._on_connect(result, context)
         if result:
             peername = context.transport.get_extra_info('peername')
             Trace.info("connected to {}:{}", peername[0], peername[1])
@@ -46,7 +46,7 @@ class TcpClient(ClientLink):
             Trace.error("error connecting to {}:{}", self.remote_host, self.remote_port)
 
     def _on_disconnect(self, handle, context):
-        super()._on_disconnect(handle, context)
+        super(TcpClient, self)._on_disconnect(handle, context)
         peername = context.transport.get_extra_info('peername')
         Trace.info("disconnected from {}:{}", peername[0], peername[1])
 

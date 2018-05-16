@@ -10,7 +10,7 @@ class Link(Case):
     _lock = Lock()
 
     def __init__(self, name):
-        super().__init__()
+        super(Link, self).__init__()
         self.buffer_transform = None
         with Link._lock:
             if name in Link.names:
@@ -39,4 +39,4 @@ class Link(Case):
 
     def _teardown(self):
         self.close()
-        super()._teardown()
+        super(Link, self)._teardown()

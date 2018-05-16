@@ -10,7 +10,7 @@ from ..util.trace import Trace
 
 class SingleThreadFlow(EventBasedFlow):
     def __init__(self, name=None):
-        super().__init__(name)
+        super(SingleThreadFlow, self).__init__(name)
         self.thread = None
 
     def start(self):

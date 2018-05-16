@@ -14,8 +14,8 @@ from x2py.transforms.inverse import Inverse
 from hello_world import *
 
 Trace.level = TraceLevel.ALL
-Trace.handler = lambda level, message: \
-    print("x2 {} {}".format(TraceLevel.name(level), message))
+Trace.handler = staticmethod(lambda level, message: \
+    print("x2 {} {}".format(TraceLevel.name(level), message)))
 
 class MyCase(Case):
     def setup(self):
@@ -26,7 +26,7 @@ class MyCase(Case):
 
 class MyClient(TcpClient):
     def __init__(self):
-        super().__init__("MyClient")
+        super(MyClient, self).__init__("MyClient")
         self.buffer_transform = BlockCipher()
 
     def setup(self):

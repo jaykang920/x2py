@@ -62,7 +62,7 @@ class Flow(object):
         handler_chain = Flow.thread_local.handler_chain
 
         if len(handler_chain) != 0:
-            handler_chain.clear()
+            del handler_chain[:]
 
         self.binder.build_handler_chain(event, event_proxy, handler_chain)
 
@@ -73,7 +73,7 @@ class Flow(object):
                 Trace.error("flow: dispatch {}".format(ex))
                 traceback.print_exc(file=sys.stderr)
 
-        handler_chain.clear()
+        del handler_chain[:]
 
     def feed(self, event):
         raise NotImplementedError()

@@ -17,7 +17,7 @@ class TcpSession(LinkSession, asyncio.Protocol):
         self.rx_buffer = bytearray()
 
     def cleanup(self):
-        super().cleanup()
+        super(TcpSession, self).cleanup()
 
     def connection_made(self, transport):
         self.transport = transport

@@ -61,7 +61,7 @@ class BufferTransformStack(BufferTransform):
     def cleanup(self):
         for transform in self.transforms:
             transform.cleanup()
-        self.transforms.clear()
+        del self.transforms[:]
 
     def clone(self):
         return BufferTransformStack(self.transforms)

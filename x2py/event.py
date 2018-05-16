@@ -9,7 +9,7 @@ class Event(Cell):
 
     class Tag(Cell.Tag):
         def __init__(self, base, type_name, props, type_id):
-            super().__init__(base, type_name, props)
+            Cell.Tag.__init__(self, base, type_name, props)
             self.type_id = type_id
 
     tag = Tag(None, 'Event', [
@@ -18,7 +18,7 @@ class Event(Cell):
         ], 0)
 
     def __init__(self, length=0):
-        super().__init__(len(Event.tag.props) + length)
+        super(Event, self).__init__(len(Event.tag.props) + length)
         self._transform = True
         base = Event.tag.offset
         self.values[base + 0] = 0

@@ -3,7 +3,7 @@
 from ..cell import *
 from ..event import *
 
-class LinkEventType:
+class LinkEventType(object):
     LINK_SESSION_CONNECTED = -10
     LINK_SESSION_DISCONNECTED = -11
     HANDSHAKE_REQ = -12

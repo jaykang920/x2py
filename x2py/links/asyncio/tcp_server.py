@@ -12,7 +12,7 @@ from .tcp_session import TcpSession
 
 class TcpServer(ServerLink):
     def __init__(self, name):
-        super().__init__(name)
+        super(TcpServer, self).__init__(name)
         self.loop = asyncio.new_event_loop()
         self.server = None
         self.thread = Thread(target=self.loop.run_forever)
@@ -27,7 +27,7 @@ class TcpServer(ServerLink):
 
         #self.loop.close()
 
-        super().cleanup()
+        super(TcpServer, self).cleanup()
 
     def listen(self, host, port):
         factory = self.loop.create_server(self, host, port)
@@ -38,13 +38,13 @@ class TcpServer(ServerLink):
         self.thread.start()
 
     def _on_connect(self, result, context):
-        super()._on_connect(result, context)
+        super(TcpServer, self)._on_connect(result, context)
         if result:
             peername = context.transport.get_extra_info('peername')
             Trace.info("accepted from {}:{}", peername[0], peername[1])
 
     def _on_disconnect(self, handle, context):
-        super()._on_disconnect(handle, context)
+        super(TcpServer, self)._on_disconnect(handle, context)
         peername = context.transport.get_extra_info('peername')
         Trace.info("disconnected from {}:{}", peername[0], peername[1])
 

@@ -3,7 +3,7 @@
 from x2py.cell import MetaProperty, Cell
 from x2py.event import Event
 
-class MyConsts:
+class MyConsts(object):
     MY_CONST1 = 1
     MY_CONST2 = 2
 
@@ -16,7 +16,7 @@ class MyCell1(Cell):
     tag = _init_my_cell1_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyCell1.tag.props) + length)
+        super(MyCell1, self).__init__(len(MyCell1.tag.props) + length)
         base = MyCell1.tag.offset
         self.values[base + 0] = 0
 
@@ -43,7 +43,7 @@ class MyCell2(MyCell1):
     tag = _init_my_cell2_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyCell2.tag.props) + length)
+        super(MyCell2, self).__init__(len(MyCell2.tag.props) + length)
         base = MyCell2.tag.offset
         self.values[base + 0] = ""
 
@@ -72,7 +72,7 @@ class MyCell3(Cell):
     tag = _init_my_cell3_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyCell3.tag.props) + length)
+        super(MyCell3, self).__init__(len(MyCell3.tag.props) + length)
         base = MyCell3.tag.offset
         self.values[base + 0] = None
         self.values[base + 1] = None
@@ -118,7 +118,7 @@ class MyEvent1(Event):
     tag = _init_my_event1_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyEvent1.tag.props) + length)
+        super(MyEvent1, self).__init__(len(MyEvent1.tag.props) + length)
         base = MyEvent1.tag.offset
         self.values[base + 0] = ""
 
@@ -146,7 +146,7 @@ class MyEvent2(MyEvent1):
     tag = _init_my_event2_tag()
 
     def __init__(self, length=0):
-        super().__init__(len(MyEvent2.tag.props) + length)
+        super(MyEvent2, self).__init__(len(MyEvent2.tag.props) + length)
         base = MyEvent2.tag.offset
         self.values[base + 0] = ""
 

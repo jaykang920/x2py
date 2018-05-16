@@ -19,7 +19,7 @@ class Slot(Fingerprint):
     """ Extends Fingerprint to hold an additional reference count. """
 
     def __init__(self, fingerprint):
-        super().__init__(fingerprint)
+        super(Slot, self).__init__(fingerprint)
         self.ref_count = AtomicInt(1)
 
     def add_ref(self):

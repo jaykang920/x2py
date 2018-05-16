@@ -41,7 +41,7 @@ class EventSink(object):
             try:
                 for binding in self._bindings:
                     flow._unsubscribe(binding[0], binding[1])
-                self._bindings.clear()
+                del self._bindings[:]
 
                 self.flow = None
             except BaseException as ex:

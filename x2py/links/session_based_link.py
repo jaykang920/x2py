@@ -20,7 +20,7 @@ class SessionBasedLink(Link):
     handle_pool = _static_init()
 
     def __init__(self, name):
-        super().__init__(name)
+        super(SessionBasedLink, self).__init__(name)
         self.rwlock = ReadWriteLock()
 
     def init_handshake(self, session):
@@ -68,14 +68,14 @@ class SessionBasedLink(Link):
         pass
 
     def _setup(self):
-        super()._setup()
+        super(SessionBasedLink, self)._setup()
         self.bind(LinkSessionConnected().setattrs(link_name = self.name),
             self.on_link_session_connected)
         self.bind(LinkSessionDisconnected().setattrs(link_name = self.name),
             self.on_link_session_disconnected)
 
     def _teardown(self):
-        super()._teardown()
+        super(SessionBasedLink, self)._teardown()
         self.unbind(LinkSessionConnected().setattrs(link_name = self.name),
             self.on_link_session_connected)
         self.unbind(LinkSessionDisconnected().setattrs(link_name = self.name),

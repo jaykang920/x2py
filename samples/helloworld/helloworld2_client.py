@@ -8,6 +8,10 @@ import sys
 sys.path.append('../..')
 from x2py import *
 
+if sys.version_info.major >= 3:
+    from x2py.links.asyncio import TcpClient
+else:
+    from x2py.links.asyncore import TcpClient
 from x2py.transforms.block_cipher import BlockCipher
 from x2py.transforms.inverse import Inverse
 

@@ -19,6 +19,7 @@ class LinkSession(object):
         self.buffer_transform = None
         self.rx_transform_ready = False
         self.tx_transform_ready = False
+        self.rx_buffer = bytearray()
 
     def cleanup(self):
         if self.buffer_transform is not None:

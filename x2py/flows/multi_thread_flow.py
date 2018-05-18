@@ -31,8 +31,6 @@ class MultiThreadFlow(EventBasedFlow):
 
             self.queue.enqueue(FlowStart())
 
-        Trace.debug("started flow '{}'", self.name)
-
     def stop(self):
         with self._lock:
             if len(self.threads) == 0:
@@ -46,8 +44,6 @@ class MultiThreadFlow(EventBasedFlow):
 
             self.cases.teardown_with(self)
             self._teardown()
-
-        Trace.debug("stopped flow '{}'", self.name)
 
     def __call__(self):
         Flow.thread_local.current = self

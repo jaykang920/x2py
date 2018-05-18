@@ -8,26 +8,30 @@ class Deserializer(object):
     def read_bool(self, metaprop):
         self.check_length(1)
         b = self.buffer[self.pos]
+        if isinstance(b, str):
+            b = ord(b)
         self.pos += 1
         return True if b != 0 else False
 
     def read_byte(self, metaprop):
         self.check_length(1)
         b = self.buffer[self.pos]
+        if isinstance(b, str):
+            b = ord(b)
         self.pos += 1
         return b
 
     def read_int8(self, metaprop):
         self.check_length(1)
-        b = self.buffer[self.pos:self.pos + 1]
+        offset = self.pos
         self.pos += 1
-        return int.from_bytes(b, 'big', signed=True)
+        return struct.unpack_from('b', self.buffer, offset)[0]
 
     def read_int16(self, metaprop):
         self.check_length(2)
-        b = self.buffer[self.pos:self.pos + 2]
+        offset = self.pos
         self.pos += 2
-        return int.from_bytes(b, 'big', signed=True)
+        return struct.unpack_from('!h', self.buffer, offset)[0]
 
     def read_int32(self, metaprop):
         value, _ = self.read_variable32()
@@ -45,15 +49,15 @@ class Deserializer(object):
 
     def read_float32(self, metaprop):
         self.check_length(4)
-        b = self.buffer[self.pos:self.pos + 4]
+        offset = self.pos
         self.pos += 4
-        return struct.unpack('f', b)[0]
+        return struct.unpack_from('!f', self.buffer, offset)[0]
 
     def read_float64(self, metaprop):
         self.check_length(8)
-        b = self.buffer[self.pos:self.pos + 8]
+        offset = self.pos
         self.pos += 8
-        return struct.unpack('d', b)[0]
+        return struct.unpack_from('!d', self.buffer, offset)[0]
 
     def read_string(self, metaprop):
         length, _ = self.read_nonnegative()
@@ -65,9 +69,9 @@ class Deserializer(object):
 
     def read_datetime(self, metaprop):
         self.check_length(8)
-        b = self.buffer[self.pos:self.pos + 8]
+        offset = self.pos
         self.pos += 8
-        millisecs = int.from_bytes(b, 'big', signed=True)
+        millisecs = struct.unpack_from('!q', self.buffer, offset)[0]
         unix_epoch = datetime.datetime(1970, 1, 1)
         return unix_epoch + datetime.timedelta(milliseconds=millisecs)
 
@@ -157,6 +161,8 @@ class Deserializer(object):
         while i < max_bytes:
             self.check_length(1)
             b = self.buffer[self.pos]
+            if isinstance(b, str):
+                b = ord(b)
             self.pos += 1
             value = value | ((b & 0x7f) << shift)
             if (b & 0x80) == 0:

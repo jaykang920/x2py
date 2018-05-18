@@ -1,6 +1,8 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
+import codecs
+
 from ..buffer_transform import BufferTransform
 from ..util.trace import Trace
 
@@ -80,7 +82,7 @@ ue>
     def init_handshake(self):
         challenge_length = self.key_size_in_bytes + self.block_size_in_bytes
         challenge = Random.new().read(challenge_length)
-        Trace.trace("challenge: {}", challenge)
+        Trace.trace("challenge: {}", repr(challenge))
 
         n = self.key_size_in_bytes
         key = challenge[:n]
@@ -91,7 +93,7 @@ ue>
 
         rsa = BlockCipher._xml2rsa(self.settings.peer_public_key)
         encrypted = BlockCipher._rsa_encrypt(rsa, challenge)
-        Trace.trace("encrypted challenge: {}", encrypted)
+        Trace.trace("encrypted challenge: {}", repr(encrypted))
         return encrypted
 
     def handshake(self, challenge):
@@ -133,6 +135,8 @@ ue>
 
     def _unpad_pkcs7(self, buffer):
         val = buffer[-1]
+        if (isinstance(val, str)):
+            val = ord(val)
         if val > self.block_size_in_bytes:
             raise ValueError("Invalid PKCS#7 padding")
         length = len(buffer) - val
@@ -157,13 +161,13 @@ ue>
         if root.tag == 'RSAKeyValue':
             for node in root:
                 if node.tag == 'Modulus':
-                    n = int.from_bytes(base64.b64decode(node.text), 'big')
+                    n = int(codecs.encode(base64.b64decode(node.text), 'hex'), 16)
                 elif node.tag == 'Exponent':
-                    e = int.from_bytes(base64.b64decode(node.text), 'big')
+                    e = int(codecs.encode(base64.b64decode(node.text), 'hex'), 16)
                 elif node.tag == 'P':
-                    p = int.from_bytes(base64.b64decode(node.text), 'big')
+                    p = int(codecs.encode(base64.b64decode(node.text), 'hex'), 16)
                 elif node.tag == 'Q':
-                    q = int.from_bytes(base64.b64decode(node.text), 'big')
+                    q = int(codecs.encode(base64.b64decode(node.text), 'hex'), 16)
                 elif node.tag == 'DP':
                     pass
                 elif node.tag == 'DQ':
@@ -171,7 +175,7 @@ ue>
                 elif node.tag == 'InverseQ':
                     pass
                 elif node.tag == 'D':
-                    d = int.from_bytes(base64.b64decode(node.text), 'big')
+                    d = int(codecs.encode(base64.b64decode(node.text), 'hex'), 16)
                     has_private = True
             if has_private:
                 return RSA.construct((n, e, d, p, q))

@@ -1,9 +1,13 @@
 x2py
 ====
 
-Python 3 port of x2
+Python port of x2
 
 Requirements
 ------------
 
-Python 3.3 or newer
+Python 2.7+ or 3.3+
+
+### Modules
+
+* pycrypto (or pycryptodome) for x2py.transforms.block_cipher

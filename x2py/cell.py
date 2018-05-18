@@ -69,7 +69,7 @@ class Cell(object):
             value = self.values[tag.offset + index]
             if prop.type_index == 9:
                 value = '"' + value + '"'
-            prop_descs.append('"{}": {}'.format(prop.name, value))
+            prop_descs.append('"{}": {}'.format(prop.name, repr(value)))
 
     def deserialize(self, deserializer):
         self.fingerprint.deserialize(deserializer)

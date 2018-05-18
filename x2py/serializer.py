@@ -27,14 +27,14 @@ class Serializer(object):
         return 1
 
     def write_int8(self, metaprop, value):
-        self.buffer += value.to_bytes(1, 'big', signed=True)
+        self.buffer += struct.pack('b', value)
 
     @staticmethod
     def length_int16(metaprop, value):
         return 2
 
     def write_int16(self, metaprop, value):
-        self.buffer += value.to_bytes(2, 'big', signed=True)
+        self.buffer += struct.pack('!h', value)
 
     @staticmethod
     def length_int32(metaprop, value):
@@ -57,14 +57,14 @@ class Serializer(object):
         return 4
 
     def write_float32(self, metaprop, value):
-        self.buffer += struct.pack('f', value)
+        self.buffer += struct.pack('!f', value)
 
     @staticmethod
     def length_float64(metaprop, value):
         return 8
 
     def write_float64(self, metaprop, value):
-        self.buffer += struct.pack('d', value)
+        self.buffer += struct.pack('!d', value)
 
     @staticmethod
     def length_string(metaprop, value):
@@ -110,7 +110,7 @@ class Serializer(object):
     def write_datetime(self, metaprop, value):
         unix_epoch = datetime.datetime(1970, 1, 1)
         millisecs = int((value - unix_epoch).total_seconds() * 1000)
-        self.buffer += millisecs.to_bytes(8, 'big', signed=True)
+        self.buffer += struct.pack('!q', millisecs)
 
     @staticmethod
     def length_bytes(metaprop, value):

@@ -1,7 +1,8 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-import asyncio
+import asyncore
+import socket
 
 from ...deserializer import Deserializer
 from ...serializer import Serializer
@@ -9,29 +10,42 @@ from ...util.trace import Trace
 
 from ..link_session import LinkSession
 
-class TcpSession(LinkSession, asyncio.Protocol):
-    def __init__(self, link):
-        LinkSession.__init__(self, link)
-        asyncio.Protocol.__init__(self)
-        self.transport = None
+class TcpSession(LinkSession):
+    """ TCP/IP link session based on the asyncore module. """
+
+    class Dispatcher(asyncore.dispatcher_with_send):
+        def __init__(self, owner, sock, map):
+            asyncore.dispatcher_with_send.__init__(self, sock, map)
+            self.owner = owner
+        def handle_read(self):
+            self.owner.handle_read()
+
+    def __init__(self, link, sock):
+        super(TcpSession, self).__init__(link)
+        self.dispatcher = TcpSession.Dispatcher(self, sock, link.map)
+        self.socket = sock
+
+        sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, True)
 
     def cleanup(self):
         super(TcpSession, self).cleanup()
 
-    def connection_made(self, transport):
-        self.transport = transport
+    def handle_read(self):
+        data = self.dispatcher.recv(4096)
+        if not data:
+            self.connection_lost()
+            return
+        Trace.trace("{} received {}", self.link.name, repr(data))
+        self.on_receive(data)
+
+    def connection_made(self):
         if self.link.buffer_transform is None:
             self.link.on_connect(True, self)
         else:
             self.link.init_handshake(self)
 
-    def connection_lost(self, transport):
+    def connection_lost(self):
         self.link.on_disconnect(self.handle, self)
-        self.transport = None
-
-    def data_received(self, data):
-        Trace.trace("{} received {}", self.link.name, data)
-        self.on_receive(data)
 
     def build_header(self, buffer, transformed):
         length = len(buffer)
@@ -56,5 +70,5 @@ class TcpSession(LinkSession, asyncio.Protocol):
         return num_bytes, length, transformed
 
     def _send(self, data):
-        Trace.trace("{} sending {}", self.link.name, data)
-        self.transport.write(data)
+        Trace.trace("{} sending {}", self.link.name, repr(data))
+        self.dispatcher.send(data)

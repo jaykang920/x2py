@@ -26,8 +26,6 @@ class ThreadlessFlow(EventBasedFlow):
             self.running = True
             self.queue.enqueue(FlowStart())
 
-        Trace.debug("started flow '{}'", self.name)
-
     def stop(self):
         with self._lock:
             if not self.running:
@@ -42,8 +40,6 @@ class ThreadlessFlow(EventBasedFlow):
 
             self.cases.teardown_with(self)
             self._teardown()
-
-        Trace.debug("stopped flow '{}'", self.name)
 
     def dispatch(self):
         event = self.queue.dequeue()

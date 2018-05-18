@@ -102,6 +102,7 @@ class Hub(object):
             for flow in snapshot:
                 Trace.trace("hub: starting flow '{}'", flow.name)
                 flow.start()
+                Trace.debug("hub: started flow '{}'", flow.name)
 
         def stop_flows(self):
             with self.rwlock.rlock():
@@ -110,6 +111,7 @@ class Hub(object):
                 try:
                     Trace.trace("hub: stopping flow '{}'", flow.name)
                     flow.stop()
+                    Trace.debug("hub: stopped flow '{}'", flow.name)
                 except:
                     pass
 

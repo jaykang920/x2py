@@ -167,6 +167,9 @@ class Fingerprint(object):
                 i += 1
         return True
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __hash__(self):
         value = hash_update(HASH_SEED, self.length)
         value = hash_update(value, self.block)

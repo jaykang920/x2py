@@ -41,7 +41,7 @@ def test_functions():
     for i in range(3, 33):
         assert p1.acquire() == i
 
-    with pytest.raises(ResourceWarning):
+    with pytest.raises(MemoryError):
         p1.acquire()
 
     p2 = RangedIntPool(0, 32, True)
@@ -54,7 +54,7 @@ def test_functions():
 
     assert p2.acquire() == 0
 
-    with pytest.raises(ResourceWarning):
+    with pytest.raises(MemoryError):
         p1.acquire()
 
     p2.release(16)

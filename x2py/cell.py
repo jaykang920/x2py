@@ -203,6 +203,9 @@ class Cell(object):
     def __eq__(self, other):
         return other.equals(self)
 
+    def __ne__(self, other):
+        return not other.equals(self)
+
     def __hash__(self):
         return self.hash_code(self.fingerprint)
 

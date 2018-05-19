@@ -30,7 +30,7 @@ class RangedIntPool(object):
                     return self._min_value + index
                 i += 1
                 index += 1
-            raise ResourceWarning()
+            raise MemoryError()
 
     def claim(self, value):
         if value < self._min_value or self._max_value < value:

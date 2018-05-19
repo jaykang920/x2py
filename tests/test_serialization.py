@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
@@ -95,7 +97,11 @@ def test_nonnegative():
     assert(n == 2)
 
 def test_string():
-    for s in ['abcd', '한글']:
+    if sys.version_info.major >= 3:
+        strs = ['abcd', '한글']
+    else:
+        strs = ['abcd']
+    for s in strs:
         encoded = s.encode('utf-8')
         assert Serializer.length_utf8(s) == len(encoded)
 

@@ -2,6 +2,7 @@
 # See the file LICENSE for details.
 
 import asyncore
+import errno
 import socket
 from threading import Thread
 
@@ -20,6 +21,10 @@ class TcpClient(ClientLink):
             self.owner = owner
         def handle_connect(self):
             self.owner.handle_connect()
+        def handle_close(self):
+            self.owner.handle_close()
+        def handle_error(self):
+            self.owner.handle_error()
 
     def __init__(self, name):
         super(TcpClient, self).__init__(name)
@@ -29,6 +34,7 @@ class TcpClient(ClientLink):
         self.session = None
         self.remote_host = ''
         self.remote_port = 0
+        self.connecting = False
 
     def cleanup(self):
         asyncore.close_all(map=self.map)
@@ -38,6 +44,7 @@ class TcpClient(ClientLink):
         super(TcpClient, self).cleanup()
 
     def connect(self, host, port):
+        self.connecting = True
         self.remote_host = host
         self.remote_port = port
         Trace.info("connecting to {}:{}", host, port)
@@ -48,8 +55,19 @@ class TcpClient(ClientLink):
 
     def handle_connect(self):
         self.sesison = TcpSession(self, self.dispatcher.socket)
-        print 'Connected to %s' % repr(self.remote_host)
         self.sesison.connection_made()
+
+    def handle_close(self):
+        self.handle_error()
+        self.dispatcher.close()
+
+    def handle_error(self):
+        err = self.dispatcher.socket.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+        if self.connecting:
+            Trace.error("connect error {}", errno.errorcode[err])
+            self.connecting = False
+            return
+        Trace.error("error {}", errno.errorcode[err])
 
     def _loop(self):
         asyncore.loop(map=self.map)
@@ -59,10 +77,11 @@ class TcpClient(ClientLink):
         if result:
             peername = context.socket.getpeername()
             Trace.info("connected to {}:{}", peername[0], peername[1])
+            context.peername = peername
         else:
             Trace.error("error connecting to {}:{}", self.remote_host, self.remote_port)
 
     def _on_disconnect(self, handle, context):
         super(TcpClient, self)._on_disconnect(handle, context)
-        peername = context.socket.getpeername()
+        peername = context.peername
         Trace.info("disconnected from {}:{}", peername[0], peername[1])

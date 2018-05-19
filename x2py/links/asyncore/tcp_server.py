@@ -48,7 +48,6 @@ class TcpServer(ServerLink):
         pair = self.dispatcher.accept()
         if pair is not None:
             sock, addr = pair
-            print 'Incoming connection from %s' % repr(addr)
             session = TcpSession(self, sock)
             session.connection_made()
 
@@ -60,8 +59,9 @@ class TcpServer(ServerLink):
         if result:
             peername = context.socket.getpeername()
             Trace.info("accepted from {}:{}", peername[0], peername[1])
+            context.peername = peername
 
     def _on_disconnect(self, handle, context):
         super(TcpServer, self)._on_disconnect(handle, context)
-        peername = context.socket.getpeername()
+        peername = context.peername
         Trace.info("disconnected from {}:{}", peername[0], peername[1])

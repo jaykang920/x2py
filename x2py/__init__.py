@@ -1,6 +1,8 @@
-# Copyright (c) 2017 Jae-jun Kang
+# Copyright (c) 2017, 2018 Jae-jun Kang
 # See the file LICENSE for details.
 """Import core names of x2py."""
+
+__version__ = '0.3.1'
 
 from x2py.buffer_transform import BufferTransform
 from x2py.builtin_events import *

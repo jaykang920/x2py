@@ -1,10 +1,10 @@
 from setuptools import setup
 
-from version import version
+from x2py import __version__
 
 setup(
     name='x2py',
-    version=version,
+    version=__version__,
     description='Python port of x2',
     url='https://github.com/jaykang920/x2py',
     author='Jae-jun Kang',

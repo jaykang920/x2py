@@ -6,22 +6,19 @@ from __future__ import print_function
 import sys
 
 sys.path.append('../..')
-from x2py import *
 
-if sys.version_info.major >= 3:
-    from x2py.links.asyncio import TcpClient
-else:
-    from x2py.links.asyncore import TcpClient
+import x2py as x2
+
+from x2py.links import *
 from x2py.transforms.block_cipher import BlockCipher
-from x2py.transforms.inverse import Inverse
 
 from hello_world import *
 
-Trace.level = TraceLevel.ALL
-Trace.handler = staticmethod(lambda level, message: \
-    print("x2 {} {}".format(TraceLevel.name(level), message)))
+x2.Trace.level = x2.TraceLevel.ALL
+x2.Trace.handler = staticmethod(lambda level, message: \
+    print("x2 {} {}".format(x2.TraceLevel.name(level), message)))
 
-class MyCase(Case):
+class MyCase(x2.Case):
     def setup(self):
         self.bind(HelloResp(), self.on_hello_resp)
 
@@ -37,16 +34,16 @@ class MyClient(TcpClient):
         self.bind(HelloReq(), self.send)
         self.connect('127.0.0.1', 8888)
 
-EventFactory.register_type(HelloResp)
+x2.EventFactory.register_type(HelloResp)
 
 (
-Hub.instance
-    .attach(SingleThreadFlow()
+x2.Hub.instance
+    .attach(x2.SingleThreadFlow()
         .add(MyCase())
         .add(MyClient()))
 )
 
-with Hub.Flows():
+with x2.Hub.Flows():
     while True:
         message = sys.stdin.readline().strip()
         if message in ('quit', 'exit'):

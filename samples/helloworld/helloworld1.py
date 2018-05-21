@@ -6,15 +6,16 @@ from __future__ import print_function
 import sys
 
 sys.path.append('../..')
-from x2py import *
+
+import x2py as x2
 
 from hello_world import *
 
-Trace.level = TraceLevel.ALL
-Trace.handler = staticmethod(lambda level, message: \
-    print("x2 {} {}".format(TraceLevel.name(level), message)))
+x2.Trace.level = x2.TraceLevel.ALL
+x2.Trace.handler = staticmethod(lambda level, message: \
+    print("x2 {} {}".format(x2.TraceLevel.name(level), message)))
 
-class MyCase(Case):
+class MyCase(x2.Case):
     def setup(self):
         self.bind(HelloReq(), self.on_hello_req)
         self.bind(HelloResp(), self.on_hello_resp)
@@ -27,9 +28,13 @@ class MyCase(Case):
     def on_hello_resp(self, resp):
         print(resp.message)
 
-Hub.instance.attach(SingleThreadFlow().add(MyCase()))
+(
+x2.Hub.instance
+    .attach(x2.SingleThreadFlow()
+        .add(MyCase()))
+)
 
-with Hub.Flows():
+with x2.Hub.Flows():
     while True:
         message = sys.stdin.readline().strip()
         if message in ('quit', 'exit'):

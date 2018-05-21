@@ -1,13 +1,13 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-from ..deserializer import Deserializer
-from ..event_factory import EventFactory
-from ..hub import Hub
-from ..serializer import Serializer
-from ..util.trace import Trace
+from x2py.deserializer import Deserializer
+from x2py.event_factory import EventFactory
+from x2py.hub import Hub
+from x2py.serializer import Serializer
+from x2py.util.trace import Trace
 
-from .link_events import *
+from x2py.links.link_events import *
 
 class LinkSession(object):
     """Abstract base class for concrete link sessions."""

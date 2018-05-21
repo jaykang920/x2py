@@ -6,10 +6,10 @@ import traceback
 
 from threading import local
 
-from .binder import Binder
-from .builtin_events import *
-from .case import Case, CaseStack
-from .util.trace import Trace
+from x2py.binder import Binder
+from x2py.builtin_events import *
+from x2py.case import Case, CaseStack
+from x2py.util.trace import Trace
 
 def _init():
     result = local()
@@ -34,12 +34,12 @@ class Flow(object):
         Flow.thread_local.current.unsubscribe(event, handler)
 
     def attach(self):
-        from .hub import Hub
+        from x2py.hub import Hub
         Hub.instance.attach(self)
         return self
 
     def detach(self):
-        from .hub import Hub
+        from x2py.hub import Hub
         Hub.instance.detach(self)
         return self
 

@@ -3,10 +3,10 @@
 
 from bisect import bisect
 
-from .event import Event, EventProxy
-from .fingerprint import Fingerprint
-from .util.atomic import AtomicInt
-from .util.rwlock import ReadLock, WriteLock, ReadWriteLock
+from x2py.event import Event, EventProxy
+from x2py.fingerprint import Fingerprint
+from x2py.util.atomic import AtomicInt
+from x2py.util.rwlock import ReadLock, WriteLock, ReadWriteLock
 
 def binary_search(a, x):
     index = bisect(a, x)
@@ -81,7 +81,7 @@ class Binder(object):
                 self.filter.add(event.type_id(), event.fingerprint)
 
                 if hasattr(handler, '__self__'):
-                    from .event_sink import EventSink
+                    from x2py.event_sink import EventSink
                     target = handler.__self__
                     if isinstance(target, EventSink):
                         target._add_binding(token)
@@ -107,7 +107,7 @@ class Binder(object):
             self._unbind_(event, handler)
 
             if hasattr(handler, '__self__'):
-                from .event_sink import EventSink
+                from x2py.event_sink import EventSink
                 target = handler.__self__
                 if isinstance(target, EventSink):
                     target._remove_binding((event, handler))

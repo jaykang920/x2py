@@ -5,8 +5,8 @@ import inspect
 import sys
 import types
 
-from .event import Event
-from .util.trace import Trace
+from x2py.event import Event
+from x2py.util.trace import Trace
 
 class EventFactory(object):
     _map = {}

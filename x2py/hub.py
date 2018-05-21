@@ -1,10 +1,10 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-from .event import Event
-from .flow import Flow
-from .util.rwlock import ReadLock, WriteLock, ReadWriteLock
-from .util.trace import Trace
+from x2py.event import Event
+from x2py.flow import Flow
+from x2py.util.rwlock import ReadLock, WriteLock, ReadWriteLock
+from x2py.util.trace import Trace
 
 class Hub(object):
     """ Represents the singleton event distribution bus. """

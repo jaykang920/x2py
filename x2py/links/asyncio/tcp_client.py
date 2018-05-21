@@ -4,11 +4,9 @@
 import asyncio
 from threading import Thread
 
-from ...util.trace import Trace
-
-from ..client_link import ClientLink
-
-from .tcp_session import TcpSession
+from x2py.util.trace import Trace
+from x2py.links.client_link import ClientLink
+from x2py.links.asyncio.tcp_session import TcpSession
 
 class TcpClient(ClientLink):
     def __init__(self, name):

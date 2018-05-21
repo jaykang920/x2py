@@ -1,7 +1,7 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-from ..buffer_transform import BufferTransform
+from x2py.buffer_transform import BufferTransform
 
 class Inverse(BufferTransform):
     """ A trivial example of BufferTransform that just invert every bit. """

@@ -3,9 +3,9 @@
 
 from threading import Lock
 
-from ..event import Event
-from ..event_queue import EventQueue
-from ..flow import Flow
+from x2py.event import Event
+from x2py.event_queue import EventQueue
+from x2py.flow import Flow
 
 class EventBasedFlow(Flow):
     """ Abstract base class for event-based (waiting) execution flows. """

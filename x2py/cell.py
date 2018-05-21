@@ -3,9 +3,9 @@
 
 import datetime
 
-from .fingerprint import Fingerprint
-from .serializer import Serializer
-from .util.hash import Hash
+from x2py.fingerprint import Fingerprint
+from x2py.serializer import Serializer
+from x2py.util.hash import Hash
 
 class MetaProperty(object):
     """ Represents runtime traits of a cell property. """

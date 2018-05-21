@@ -1,13 +1,13 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-from ..event_factory import EventFactory
-from ..link import Link
-from ..util.ranged_int_pool import RangedIntPool
-from ..util.rwlock import ReadLock, WriteLock, ReadWriteLock
-from ..util.trace import Trace
+from x2py.event_factory import EventFactory
+from x2py.link import Link
+from x2py.util.ranged_int_pool import RangedIntPool
+from x2py.util.rwlock import ReadLock, WriteLock, ReadWriteLock
+from x2py.util.trace import Trace
 
-from .link_events import *
+from x2py.links.link_events import *
 
 def _static_init():
     EventFactory.register(LinkEventType.HANDSHAKE_REQ, HandshakeReq)

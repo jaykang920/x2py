@@ -1,8 +1,8 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-from .cell import MetaProperty, Cell
-from .util.hash import hash_update
+from x2py.cell import MetaProperty, Cell
+from x2py.util.hash import hash_update
 
 class Event(Cell):
     """ Common base class for all events. """
@@ -54,7 +54,7 @@ class Event(Cell):
 
     def post(self):
         """ Posts up this event to the hub. """
-        from .hub import Hub
+        from x2py.hub import Hub
         Hub.post(self)
 
     def type_id(self):

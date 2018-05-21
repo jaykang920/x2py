@@ -6,11 +6,9 @@ import errno
 import socket
 from threading import Thread
 
-from ...util.trace import Trace
-
-from ..client_link import ClientLink
-
-from .tcp_session import TcpSession
+from x2py.util.trace import Trace
+from x2py.links.client_link import ClientLink
+from x2py.links.asyncore.tcp_session import TcpSession
 
 class TcpClient(ClientLink):
     """ TCP/IP client link based on the asyncore module. """

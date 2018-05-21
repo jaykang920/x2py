@@ -3,8 +3,8 @@
 
 import codecs
 
-from ..buffer_transform import BufferTransform
-from ..util.trace import Trace
+from x2py.buffer_transform import BufferTransform
+from x2py.util.trace import Trace
 
 # pycrypto
 from Crypto import Random

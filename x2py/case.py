@@ -1,8 +1,8 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-from .event_sink import EventSink
-from .util.trace import Trace
+from x2py.event_sink import EventSink
+from x2py.util.trace import Trace
 
 class Case(EventSink):
     """ Represents a set of application logic. """
@@ -14,7 +14,7 @@ class Case(EventSink):
         """ Initializes this case with the specified holding flow. """
         self.flow = flow
 
-        from .flow import Flow
+        from x2py.flow import Flow
         backup = Flow.thread_local.current
         Flow.thread_local.current = flow
 
@@ -24,7 +24,7 @@ class Case(EventSink):
 
     def teardown_with(self, flow):
         """ Cleans up this case with the specified holding flow. """
-        from .flow import Flow
+        from x2py.flow import Flow
         backup = Flow.thread_local.current
         Flow.thread_local.current = flow
 

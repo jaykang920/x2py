@@ -3,7 +3,7 @@
 
 from threading import Lock
 
-from .case import Case
+from x2py.case import Case
 
 class Link(Case):
     names = set()

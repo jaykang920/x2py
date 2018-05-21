@@ -4,9 +4,9 @@
 from array import array
 from copy import copy
 
-from .deserializer import Deserializer
-from .serializer import Serializer
-from .util.hash import HASH_SEED, hash_update
+from x2py.deserializer import Deserializer
+from x2py.serializer import Serializer
+from x2py.util.hash import HASH_SEED, hash_update
 
 class Fingerprint(object):
     """ Manages a fixed-length compact array of bit values.

@@ -1,7 +1,7 @@
 # Copyright (c) 2017 Jae-jun Kang
 # See the file LICENSE for details.
 
-from .session_based_link import SessionBasedLink
+from x2py.links.session_based_link import SessionBasedLink
 
 class ServerLink(SessionBasedLink):
     def __init__(self, name):

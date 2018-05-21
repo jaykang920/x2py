@@ -4,7 +4,7 @@
 from collections import deque
 from threading import Condition, Lock
 
-from .event import Event
+from x2py.event import Event
 
 class EventQueue(object):
     """ The blocking event queue implementation. """

@@ -3,11 +3,11 @@
 
 from threading import Thread
 
-from .event_based_flow import EventBasedFlow
-from ..builtin_events import *
-from ..event import EventProxy
-from ..flow import Flow
-from ..util.trace import Trace
+from x2py.builtin_events import *
+from x2py.event import EventProxy
+from x2py.flow import Flow
+from x2py.flows.event_based_flow import EventBasedFlow
+from x2py.util.trace import Trace
 
 class MultiThreadFlow(EventBasedFlow):
     def __init__(self, name=None, num_threads=2):

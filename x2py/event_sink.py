@@ -4,7 +4,7 @@
 import weakref
 from threading import Lock
 
-from .util.trace import Trace
+from x2py.util.trace import Trace
 
 class EventSink(object):
     """ Cleanup helper base class for any event-consuming classes. """
@@ -13,7 +13,7 @@ class EventSink(object):
         self._bindings = []
         self._disposed = False
         self._flow = None
-        from .flow import Flow
+        from x2py.flow import Flow
         flow = Flow.thread_local.current
         if flow is not None:
             self._flow = weakref.ref(flow)

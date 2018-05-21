@@ -3,11 +3,10 @@
 
 import asyncio
 
-from ...deserializer import Deserializer
-from ...serializer import Serializer
-from ...util.trace import Trace
-
-from ..link_session import LinkSession
+from x2py.deserializer import Deserializer
+from x2py.serializer import Serializer
+from x2py.util.trace import Trace
+from x2py.links.link_session import LinkSession
 
 class TcpSession(LinkSession, asyncio.Protocol):
     def __init__(self, link):

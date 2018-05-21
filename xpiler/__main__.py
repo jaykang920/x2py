@@ -3,7 +3,7 @@
 
 import sys
 
-from main import Main
+from xpiler.main import Main
 
 if __name__ == "__main__":
     Main.run(sys.argv)

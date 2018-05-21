@@ -6,17 +6,17 @@ from __future__ import print_function
 import os
 import sys
 
-from options import Options
+from xpiler.options import Options
 
 def _init_handlers():
     result = {}
-    from xml_handler import XmlHandler
+    from xpiler.xml_handler import XmlHandler
     result['.xml'] = XmlHandler()
     return result
 
 def _init_formatters():
     result = {}
-    from python3_formatter import Python3Formatter
+    from xpiler.python3_formatter import Python3Formatter
     result['py'] = Python3Formatter()
     return result
 

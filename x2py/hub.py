@@ -122,49 +122,47 @@ class Hub(object):
 
     @staticmethod
     def post(event):
+        """Posts up the specified event to the hub."""
         Hub.instance.feed(event)
 
     @staticmethod
     def startup():
         """Starts all the flows attached to the hub."""
-
         Trace.debug("starting up")
-
         Hub.instance.setup()
-
         Hub.instance.start_flows()
-
         Trace.info("started")
 
     @staticmethod
     def shutdown():
         """Stops all the flows attached to the hub."""
-
         Trace.debug("shutting down")
-
         Hub.instance.stop_flows()
-
         Hub.instance.teardown()
-
         Trace.info("stopped")
 
     class Case(object):
         """Represents a hub-scope case that is initialized and terminated
-            along with startup/shutdown of the hub."""
+        along with startup/shutdown of the hub."""
 
         def setup(self):
-            """Overridden by subclasses to build a initialization chain."""
+            """Overridden by subclasses for initialization."""
             pass
 
         def teardown(self):
-            """Overridden by subclasses to build a cleanup chain."""
+            """Overridden by subclasses for clean-up."""
             pass
 
     class Flows(object):
         """Represents the set of attached flows for convenient cleanup."""
 
-        def startup(self): Hub.startup()
-        def shutdown(self): Hub.shutdown()
+        def startup(self):
+            """Starts all the attached flows."""
+            Hub.startup()
+
+        def shutdown(self):
+            """Stops all the attached flows."""
+            Hub.shutdown()
 
         def __enter__(self):
             self.startup()

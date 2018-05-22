@@ -94,7 +94,7 @@ class CaseStack(object):
             return
         self.activated = True
         for case in self.cases:
-            Trace.trace("casestack: setting up case '{}'", type(case).__name__)
+            Trace.trace("casestack: setting up case {}", type(case).__name__)
             case.setup_with(flow)
 
     def teardown_with(self, flow):
@@ -103,7 +103,7 @@ class CaseStack(object):
         self.activated = False
         for case in reversed(self.cases):
             try:
-                Trace.trace("casestack: tearing down case '{}'", type(case).__name__)
+                Trace.trace("casestack: tearing down case {}", type(case).__name__)
                 case.teardown_with(flow)
             except BaseException as ex:
                 Trace.error("{} {} teardown: {}", flow.name, type(case).__name__, ex)

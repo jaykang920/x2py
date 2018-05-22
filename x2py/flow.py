@@ -47,14 +47,14 @@ class Flow(object):
         if case is None or not isinstance(case, Case):
             raise TypeError()
         if self.cases.add(case):
-            Trace.debug("flow '{}': added case '{}'", self.name, type(case).__name__)
+            Trace.debug("flow {}: added case {}", self.name, type(case).__name__)
         return self
 
     def remove(self, case):
         if case is None or not isinstance(case, Case):
             raise TypeError()
         if self.cases.remove(case):
-            Trace.debug("flow '{}': removed case '{}'", self.name, type(case).__name__)
+            Trace.debug("flow {}: removed case {}", self.name, type(case).__name__)
         return self
 
     def dispatch(self, event):

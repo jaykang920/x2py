@@ -22,7 +22,7 @@ class Hub(object):
             with self.rwlock.wlock():
                 if case not in self.cases:
                     self.cases.append(case)
-                    Trace.debug("hub: added case '{}'", type(case).__name__)
+                    Trace.debug("hub: added case {}", type(case).__name__)
             return self
 
         def insert(self, index, case):
@@ -32,7 +32,7 @@ class Hub(object):
             with self.rwlock.wlock():
                 if case not in self.cases:
                     self.cases.insert(index, case)
-                    Trace.debug("hub: inserted case '{}' at index {}",
+                    Trace.debug("hub: inserted case {} at index {}",
                         type(case).__name__, index)
             return self
 
@@ -43,7 +43,7 @@ class Hub(object):
             with self.rwlock.wlock():
                 if case in self.cases:
                     self.cases.remove(case)
-                    Trace.debug("hub: removed case '{}'", type(case).__name__)
+                    Trace.debug("hub: removed case {}", type(case).__name__)
             return self
 
         def attach(self, flow):
@@ -53,7 +53,7 @@ class Hub(object):
             with self.rwlock.wlock():
                 if flow not in self.flows:
                     self.flows.append(flow)
-                    Trace.debug("hub: attached flow '{}'", flow.name)
+                    Trace.debug("hub: attached flow {}", flow.name)
             return self
 
         def detach(self, flow):
@@ -63,7 +63,7 @@ class Hub(object):
             with self.rwlock.wlock():
                 if flow in self.flows:
                     self.flows.remove(flow)
-                    Trace.debug("hub: detached flow '{}'", flow.name)
+                    Trace.debug("hub: detached flow {}", flow.name)
             return self
 
         def detach_all(self):
@@ -83,7 +83,7 @@ class Hub(object):
             with self.rwlock.rlock():
                 snapshot = self.cases[:]
             for case in snapshot:
-                Trace.trace("hub: setting up case '{}'", type(case).__name__)
+                Trace.trace("hub: setting up case {}", type(case).__name__)
                 case.setup()
 
         def teardown(self):
@@ -91,7 +91,7 @@ class Hub(object):
                 snapshot = self.cases[::-1]
             for case in snapshot:
                 try:
-                    Trace.trace("hub: tearing down case '{}'", type(case).__name__)
+                    Trace.trace("hub: tearing down case {}", type(case).__name__)
                     case.teardown()
                 except:
                     pass
@@ -100,18 +100,18 @@ class Hub(object):
             with self.rwlock.rlock():
                 snapshot = self.flows[:]
             for flow in snapshot:
-                Trace.trace("hub: starting flow '{}'", flow.name)
+                Trace.trace("hub: starting flow {}", flow.name)
                 flow.start()
-                Trace.debug("hub: started flow '{}'", flow.name)
+                Trace.debug("hub: started flow {}", flow.name)
 
         def stop_flows(self):
             with self.rwlock.rlock():
                 snapshot = self.flows[::-1]
             for flow in snapshot:
                 try:
-                    Trace.trace("hub: stopping flow '{}'", flow.name)
+                    Trace.trace("hub: stopping flow {}", flow.name)
                     flow.stop()
-                    Trace.debug("hub: stopped flow '{}'", flow.name)
+                    Trace.debug("hub: stopped flow {}", flow.name)
                 except:
                     pass
 

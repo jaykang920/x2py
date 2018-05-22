@@ -68,9 +68,9 @@ class Cell(object):
             if prop.name.startswith('_'):
                 continue
             value = self.values[tag.offset + index]
-            if prop.type_index == 9:
+            if prop.type_index == MetaProperty.STRING:
                 value = "'{}'".format(value.replace("'", "''"))
-            elif prop.type_index == 11:
+            elif prop.type_index == MetaProperty.BYTES:
                 value = repr(value)
             prop_descs.append('{}:{}'.format(prop.name, value))
 

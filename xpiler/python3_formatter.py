@@ -130,7 +130,7 @@ class Python3FormatterContext(FormatterContext):
         self._out(0, "def {}():\n".format(tag_initializer_name))
         self._out(1, "props = []\n")
         for prop in definition.properties:
-            self._out(1, "props.append({})\n".format(prop.typespec.metaprop(prop.name)))
+            self._out(1, "props.append({})\n".format(prop.typespec.metaprop(prop.native_name)))
         self._out(1, "return {}.Tag({}, '{}', props".format(tag_type, base_tag, definition.name))
         if definition.is_event:
             self.out.write(",\n")

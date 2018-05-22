@@ -5,7 +5,7 @@ from x2py.event import Event
 
 def _init_hello_req_tag():
     props = []
-    props.append(MetaProperty('Name', 9))
+    props.append(MetaProperty('name', 9))
     return Event.Tag(Event.tag, 'HelloReq', props,
         1)
 
@@ -33,7 +33,7 @@ class HelloReq(Event):
 
 def _init_hello_resp_tag():
     props = []
-    props.append(MetaProperty('Message', 9))
+    props.append(MetaProperty('message', 9))
     return Event.Tag(Event.tag, 'HelloResp', props,
         2)
 

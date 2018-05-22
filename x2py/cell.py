@@ -2,6 +2,7 @@
 # See the file LICENSE for details.
 
 import datetime
+import sys
 
 from x2py.fingerprint import Fingerprint
 from x2py.serializer import Serializer
@@ -68,8 +69,10 @@ class Cell(object):
                 continue
             value = self.values[tag.offset + index]
             if prop.type_index == 9:
-                value = '"' + value + '"'
-            prop_descs.append('"{}": {}'.format(prop.name, repr(value)))
+                value = "'{}'".format(value.replace("'", "''"))
+            elif prop.type_index == 11:
+                value = repr(value)
+            prop_descs.append('{}:{}'.format(prop.name, value))
 
     def deserialize(self, deserializer):
         self.fingerprint.deserialize(deserializer)

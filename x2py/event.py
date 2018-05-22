@@ -45,7 +45,7 @@ class Event(Cell):
         tag = self.type_tag()
         self._desc(tag, prop_descs)
         result = ', '.join(prop_descs)
-        result = "{} {} {{ {} }}".format(tag.type_name, tag.type_id, result)
+        result = "{} {} {{ {} }}".format(tag.type_id, tag.type_name, result)
         return result
 
     def in_response_of(self, request):

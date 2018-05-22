@@ -69,8 +69,8 @@ class FlowStop(Event):
 
 def _init_timeout_event_tag():
     props = []
-    props.append(MetaProperty('Key', 15))
-    props.append(MetaProperty('IntParam', 5))
+    props.append(MetaProperty('key', 15))
+    props.append(MetaProperty('int_param', 5))
     return Event.Tag(Event.tag, 'TimeoutEvent', props,
         BuiltinEventType.TIMEOUT_EVENT)
 
@@ -107,8 +107,8 @@ class TimeoutEvent(Event):
 
 def _init_periodic_event_tag():
     props = []
-    props.append(MetaProperty('Key', 15))
-    props.append(MetaProperty('IntParam', 5))
+    props.append(MetaProperty('key', 15))
+    props.append(MetaProperty('int_param', 5))
     return Event.Tag(Event.tag, 'PeriodicEvent', props,
         BuiltinEventType.PERIODIC_EVENT)
 

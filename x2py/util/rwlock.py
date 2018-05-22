@@ -37,7 +37,7 @@ class ReadLock(object):
             self.rwlock.rlock_release()
 
 class ReadWriteLock(object):
-    """ Reader-writer lock with preference to writers. """
+    """Reader-writer lock with preference to writers."""
 
     def __init__(self):
         self._lock = RLock()

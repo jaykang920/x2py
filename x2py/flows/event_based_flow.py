@@ -8,7 +8,7 @@ from x2py.event_queue import EventQueue
 from x2py.flow import Flow
 
 class EventBasedFlow(Flow):
-    """ Abstract base class for event-based (waiting) execution flows. """
+    """Abstract base class for event-based (waiting) execution flows."""
 
     def __init__(self, name=None):
         super(EventBasedFlow, self).__init__(name)

@@ -5,7 +5,7 @@ from x2py.cell import MetaProperty, Cell
 from x2py.util.hash import hash_update
 
 class Event(Cell):
-    """ Common base class for all events. """
+    """Common base class for all events."""
 
     class Tag(Cell.Tag):
         def __init__(self, base, type_name, props, type_id):
@@ -53,7 +53,7 @@ class Event(Cell):
         return self
 
     def post(self):
-        """ Posts up this event to the hub. """
+        """Posts up this event to the hub."""
         from x2py.hub import Hub
         Hub.post(self)
 
@@ -73,7 +73,7 @@ class Event(Cell):
         return self.hash_code_for(self.fingerprint, self.type_id())
 
 class EventProxy(object):
-    """ Supports dictionary search by equivalence. """
+    """Supports dictionary search by equivalence."""
 
     def __init__(self):
         self.event = None

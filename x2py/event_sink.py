@@ -7,7 +7,7 @@ from threading import Lock
 from x2py.util.trace import Trace
 
 class EventSink(object):
-    """ Cleanup helper base class for any event-consuming classes. """
+    """Cleanup helper base class for any event-consuming classes."""
 
     def __init__(self):
         self._bindings = []

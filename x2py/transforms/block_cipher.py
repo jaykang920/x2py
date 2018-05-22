@@ -12,8 +12,8 @@ from Crypto.Cipher import AES, PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
 class BlockCipher(BufferTransform):
-    """ A simple example of BufferTransform that performs block encryption and
-        decryption based on the keys exchanged by an asymmetric algorithm. """
+    """A simple example of BufferTransform that performs block encryption and
+        decryption based on the keys exchanged by an asymmetric algorithm."""
 
     class Settings(object):
         def __init__(self):

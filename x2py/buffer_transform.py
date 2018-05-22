@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod
 ABC = ABCMeta('ABC', (object,), {})
 
 class BufferTransform(ABC):
-    """ Defines methods to be implemented by concrete buffer transforms. """
+    """Defines methods to be implemented by concrete buffer transforms."""
 
     @abstractmethod
     def cleanup(self):
@@ -32,16 +32,16 @@ class BufferTransform(ABC):
 
     @abstractmethod
     def transform(self, buffer):
-        """ Transform the specified trailing byte(s) of the buffer. """
+        """Transform the specified trailing byte(s) of the buffer."""
         pass
     @abstractmethod
     def inverse_transform(self, buffer):
-        """ Inverse transform the specified leading byte(s) of the buffer. """
+        """Inverse transform the specified leading byte(s) of the buffer."""
         pass
 
 class BufferTransformStack(BufferTransform):
-    """ Represents a single collective buffer transform that is actually a
-        stacked set of child buffer transforms. """
+    """Represents a single collective buffer transform that is actually a
+        stacked set of child buffer transforms."""
 
     def __init__(self, transforms=None):
         self.transforms = []

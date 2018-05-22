@@ -10,7 +10,7 @@ from x2py.links.server_link import ServerLink
 from x2py.links.asyncore.tcp_session import TcpSession
 
 class TcpServer(ServerLink):
-    """ TCP/IP server link based on the asyncore module. """
+    """TCP/IP server link based on the asyncore module."""
 
     class Dispatcher(asyncore.dispatcher):
         def __init__(self, owner):

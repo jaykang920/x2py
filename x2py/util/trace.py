@@ -17,7 +17,7 @@ class TraceLevel(object):
         return TraceLevel.rmap[value]
 
 class Trace(object):
-    """ Represents the tracing helper class. """
+    """Represents the tracing helper class."""
 
     handler = None
     level = TraceLevel.INFO

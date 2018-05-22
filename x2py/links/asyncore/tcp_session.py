@@ -10,7 +10,7 @@ from x2py.util.trace import Trace
 from x2py.links.link_session import LinkSession
 
 class TcpSession(LinkSession):
-    """ TCP/IP link session based on the asyncore module. """
+    """TCP/IP link session based on the asyncore module."""
 
     class Dispatcher(asyncore.dispatcher_with_send):
         def __init__(self, owner, sock, map):

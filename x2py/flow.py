@@ -17,7 +17,7 @@ def _init():
     return result
 
 class Flow(object):
-    """ Represents a logically independent execution flow. """
+    """Represents a logically independent execution flow."""
     thread_local = _init()
 
     def __init__(self, name=None):
@@ -85,7 +85,7 @@ class Flow(object):
         pass
 
     def _setup(self):
-        """ Called internally when this flow starts up. """
+        """Called internally when this flow starts up."""
 
         self.subscribe(FlowStart(), self.on_start)
         self.subscribe(FlowStop(), self.on_stop)
@@ -93,7 +93,7 @@ class Flow(object):
         self.setup()
 
     def setup(self):
-        """ Overridden by subclasses to build a flow startup handler chain. """
+        """Overridden by subclasses to build a flow startup handler chain."""
         pass
 
     def start(self):
@@ -103,14 +103,14 @@ class Flow(object):
         raise NotImplementedError()
 
     def _teardown(self):
-        """ Called internally when this flow shuts down. """
+        """Called internally when this flow shuts down."""
         self.teardown()
 
         self.subscribe(FlowStop(), self.on_stop)
         self.subscribe(FlowStart(), self.on_start)
 
     def teardown(self):
-        """ Overridden by subclasses to build a flow shutdown handler chain. """
+        """Overridden by subclasses to build a flow shutdown handler chain."""
         pass
 
     def subscribe(self, event, handler):

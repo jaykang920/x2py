@@ -16,7 +16,7 @@ def binary_search(a, x):
         return ~index  # insertion point
 
 class Slot(Fingerprint):
-    """ Extends Fingerprint to hold an additional reference count. """
+    """Extends Fingerprint to hold an additional reference count."""
 
     def __init__(self, fingerprint):
         super(Slot, self).__init__(fingerprint)
@@ -29,7 +29,7 @@ class Slot(Fingerprint):
         return self.ref_count.decrement()
 
 class Binder(object):
-    """ Manages evnet-handler bindings. """
+    """Manages evnet-handler bindings."""
 
     class _Filter(object):
         def __init__(self):

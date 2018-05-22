@@ -9,7 +9,7 @@ from x2py.serializer import Serializer
 from x2py.util.hash import Hash
 
 class MetaProperty(object):
-    """ Represents runtime traits of a cell property. """
+    """Represents runtime traits of a cell property."""
 
     BOOL = 1
     BYTE = 2
@@ -34,7 +34,7 @@ class MetaProperty(object):
         self.details = details  # list of child MetaProperty objects
 
 class Cell(object):
-    """ Common base class for all custom types. """
+    """Common base class for all custom types."""
 
     class Tag(object):
         def __init__(self, base, type_name, props):

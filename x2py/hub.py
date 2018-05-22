@@ -7,7 +7,7 @@ from x2py.util.rwlock import ReadLock, WriteLock, ReadWriteLock
 from x2py.util.trace import Trace
 
 class Hub(object):
-    """ Represents the singleton event distribution bus. """
+    """Represents the singleton event distribution bus."""
 
     class _Hub(object):
         def __init__(self):
@@ -16,7 +16,7 @@ class Hub(object):
             self.rwlock = ReadWriteLock()
 
         def add(self, case):
-            """ Adds the specified hub case to the hub. """
+            """Adds the specified hub case to the hub."""
             if case is None or not isinstance(case, Hub.Case):
                 raise TypeError()
             with self.rwlock.wlock():
@@ -26,7 +26,7 @@ class Hub(object):
             return self
 
         def insert(self, index, case):
-            """ Inserts the specified hub case to the hub, at the specified index. """
+            """Inserts the specified hub case to the hub, at the specified index."""
             if case is None or not isinstance(case, Hub.Case):
                 raise TypeError()
             with self.rwlock.wlock():
@@ -37,7 +37,7 @@ class Hub(object):
             return self
 
         def remove(self, case):
-            """ Removes the specified hub case from the hub. """
+            """Removes the specified hub case from the hub."""
             if case is None or not isinstance(case, Hub.Case):
                 raise TypeError()
             with self.rwlock.wlock():
@@ -47,7 +47,7 @@ class Hub(object):
             return self
 
         def attach(self, flow):
-            """ Attaches the specified flow to the hub. """
+            """Attaches the specified flow to the hub."""
             if flow is None or not isinstance(flow, Flow):
                 raise TypeError()
             with self.rwlock.wlock():
@@ -57,7 +57,7 @@ class Hub(object):
             return self
 
         def detach(self, flow):
-            """ Detaches the specified flow from the hub. """
+            """Detaches the specified flow from the hub."""
             if flow is None or not isinstance(flow, Flow):
                 raise TypeError()
             with self.rwlock.wlock():
@@ -67,7 +67,7 @@ class Hub(object):
             return self
 
         def detach_all(self):
-            """ Detaches all the attached flows. """
+            """Detaches all the attached flows."""
             snapshot = self.flows[::-1]
             for flow in snapshot:
                 self.detach(flow)
@@ -126,7 +126,7 @@ class Hub(object):
 
     @staticmethod
     def startup():
-        """ Starts all the flows attached to the hub. """
+        """Starts all the flows attached to the hub."""
 
         Trace.debug("starting up")
 
@@ -138,7 +138,7 @@ class Hub(object):
 
     @staticmethod
     def shutdown():
-        """ Stops all the flows attached to the hub. """
+        """Stops all the flows attached to the hub."""
 
         Trace.debug("shutting down")
 
@@ -149,19 +149,19 @@ class Hub(object):
         Trace.info("stopped")
 
     class Case(object):
-        """ Represents a hub-scope case that is initialized and terminated
-            along with startup/shutdown of the hub. """
+        """Represents a hub-scope case that is initialized and terminated
+            along with startup/shutdown of the hub."""
 
         def setup(self):
-            """ Overridden by subclasses to build a initialization chain. """
+            """Overridden by subclasses to build a initialization chain."""
             pass
 
         def teardown(self):
-            """ Overridden by subclasses to build a cleanup chain. """
+            """Overridden by subclasses to build a cleanup chain."""
             pass
 
     class Flows(object):
-        """ Represents the set of attached flows for convenient cleanup. """
+        """Represents the set of attached flows for convenient cleanup."""
 
         def startup(self): Hub.startup()
         def shutdown(self): Hub.shutdown()

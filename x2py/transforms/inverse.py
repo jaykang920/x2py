@@ -4,7 +4,7 @@
 from x2py.buffer_transform import BufferTransform
 
 class Inverse(BufferTransform):
-    """ A trivial example of BufferTransform that just invert every bit. """
+    """A trivial example of BufferTransform that just invert every bit."""
 
     def cleanup(self):
         pass

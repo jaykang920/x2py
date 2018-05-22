@@ -5,13 +5,13 @@ from x2py.event_sink import EventSink
 from x2py.util.trace import Trace
 
 class Case(EventSink):
-    """ Represents a set of application logic. """
+    """Represents a set of application logic."""
 
     def __init__(self):
         super(Case, self).__init__()
 
     def setup_with(self, flow):
-        """ Initializes this case with the specified holding flow. """
+        """Initializes this case with the specified holding flow."""
         self.flow = flow
 
         from x2py.flow import Flow
@@ -23,7 +23,7 @@ class Case(EventSink):
         Flow.thread_local.current = backup
 
     def teardown_with(self, flow):
-        """ Cleans up this case with the specified holding flow. """
+        """Cleans up this case with the specified holding flow."""
         from x2py.flow import Flow
         backup = Flow.thread_local.current
         Flow.thread_local.current = flow
@@ -35,39 +35,39 @@ class Case(EventSink):
         self.cleanup()  # eventsink cleanup
 
     def start(self):
-        """ Called after the holding flow starts. """
+        """Called after the holding flow starts."""
         self.on_start()
 
     def stop(self):
-        """ Called before the holding flow stops. """
+        """Called before the holding flow stops."""
         self.on_stop()
 
     def setup(self):
-        """ Overridden by subclasses to build a initialization chain. """
+        """Overridden by subclasses to build a initialization chain."""
         pass
 
     def teardown(self):
-        """ Overridden by subclasses to build a cleanup chain. """
+        """Overridden by subclasses to build a cleanup chain."""
         pass
 
     def on_start(self):
-        """ Overridden by subclasses to build a flow startup handler chain. """
+        """Overridden by subclasses to build a flow startup handler chain."""
         pass
 
     def on_stop(self):
-        """ Overridden by subclasses to build a flow shutdown handler chain. """
+        """Overridden by subclasses to build a flow shutdown handler chain."""
         pass
 
     def _setup(self):
-        """ Called internally when this case is initialized. """
+        """Called internally when this case is initialized."""
         self.setup()
 
     def _teardown(self):
-        """ Called internally when this case is cleaned up. """
+        """Called internally when this case is cleaned up."""
         self.teardown()
 
 class CaseStack(object):
-    """ Handles a group of cases. """
+    """Handles a group of cases."""
 
     def __init__(self):
         self.cases = []

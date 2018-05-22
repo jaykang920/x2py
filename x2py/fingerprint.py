@@ -9,7 +9,7 @@ from x2py.serializer import Serializer
 from x2py.util.hash import HASH_SEED, hash_update
 
 class Fingerprint(object):
-    """ Manages a fixed-length compact array of bit values.
+    """Manages a fixed-length compact array of bit values.
         (zero-based indexing) """
 
     def __init__(self, arg):
@@ -45,7 +45,7 @@ class Fingerprint(object):
         return ((self.length - 1) >> 3) + 1
 
     def get(self, index):
-        """ Gets the bit value at the specified index. """
+        """Gets the bit value at the specified index."""
         if index < 0:
             raise ValueError()
         # Doesn't throw on over-indexing
@@ -59,7 +59,7 @@ class Fingerprint(object):
             return ((self.blocks[index >> 5] & (1 << (index & 0x1f))) != 0)
 
     def touch(self, index):
-        """ Sets the bit value at the specified index. """
+        """Sets the bit value at the specified index."""
         if index < 0:
             raise ValueError()
         # Allow over-indexing, returning False by default.
@@ -73,7 +73,7 @@ class Fingerprint(object):
             self.blocks[index >> 5] |= (1 << (index & 0x1f))
 
     def wipe(self, index):
-        """ Clears the bit value at the specified index. """
+        """Clears the bit value at the specified index."""
         if index < 0 or self.length <= index:
             raise ValueError()
 

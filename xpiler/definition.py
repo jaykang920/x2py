@@ -2,7 +2,7 @@
 # See the file LICENSE for details.
 
 class Unit(object):
-    """ Represents a single definition unit. """
+    """Represents a single definition unit."""
 
     def __init__(self):
         self.basename = ""

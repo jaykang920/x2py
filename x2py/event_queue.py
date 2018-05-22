@@ -7,7 +7,7 @@ from threading import Condition, Lock
 from x2py.event import Event
 
 class EventQueue(object):
-    """ The blocking event queue implementation. """
+    """The blocking event queue implementation."""
 
     def __init__(self):
         self._deque = deque()

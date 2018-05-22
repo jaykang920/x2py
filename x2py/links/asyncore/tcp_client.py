@@ -11,7 +11,7 @@ from x2py.links.client_link import ClientLink
 from x2py.links.asyncore.tcp_session import TcpSession
 
 class TcpClient(ClientLink):
-    """ TCP/IP client link based on the asyncore module. """
+    """TCP/IP client link based on the asyncore module."""
 
     class Dispatcher(asyncore.dispatcher):
         def __init__(self, owner):

@@ -6,6 +6,7 @@ from __future__ import print_function
 import os
 import sys
 
+from xpiler import __version__
 from xpiler.options import Options
 
 def _init_handlers():
@@ -32,6 +33,7 @@ class Main(object):
 
     @staticmethod
     def run(argv):
+        print("x2py.xpiler v{}".format(__version__))
         args = Main.options.parse(argv[1:])
         if len(args) < 1:
             print("error: at least one input path is required", file=sys.stderr)

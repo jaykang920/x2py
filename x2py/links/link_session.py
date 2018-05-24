@@ -59,8 +59,6 @@ class LinkSession(object):
 
             type_id = deserializer.read_int32(None)
 
-            Trace.debug("{} {}", length, type_id)
-
             event = EventFactory.create(type_id)
             if event is None:
                 continue

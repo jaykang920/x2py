@@ -84,13 +84,20 @@ class Deserializer(object):
         return value
 
     def read_cell(self, metaprop):
+        from x2py.event import Event
         length, _ = self.read_nonnegative()
         if length == 0:
             return None
         temp = self.buffer[self.pos:self.pos + length]
         self.pos += length
-        value = metaprop.runtime_type()
-        value.deserialize(Deserializer(temp))
+        is_event = issubclass(metaprop.runtime_type, Event)
+        if is_event:
+            type_id = self.read_int32(None)
+            value = EventFactory.create(type_id)
+        else:
+            value = metaprop.runtime_type()
+        if value is not None:
+            value.deserialize(Deserializer(temp))
         return value
 
     def read_list(self, metaprop):

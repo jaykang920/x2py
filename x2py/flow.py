@@ -41,6 +41,7 @@ class Flow(object):
     def detach(self):
         from x2py.hub import Hub
         Hub.instance.detach(self)
+
         return self
 
     def add(self, case):

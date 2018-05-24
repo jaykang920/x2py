@@ -2,6 +2,7 @@
 # See the file LICENSE for details.
 
 from x2py.builtin_events import *
+from x2py.event import EventProxy
 from x2py.flow import Flow
 from x2py.flows.event_based_flow import EventBasedFlow
 from x2py.util.trace import Trace

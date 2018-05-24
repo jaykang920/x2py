@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<x2 namespace="x2net" builtin="true">
-  <references>
-    <file target="..cell"/>
-    <file target="..event"/>
-  </references>
+<x2 namespace="x2py">
   <definitions>
     <consts name="LinkEventType">
       <const name="LinkSessionConnected">-10</const>

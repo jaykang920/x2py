@@ -127,33 +127,45 @@ class Serializer(object):
 
     @staticmethod
     def length_cell(metaprop, value):
-        not_none = (value is not None)
-        partial = not_none and metaprop.runtime_type != type(value)
-        if not_none:
-            if partial:
-                length = value.get_length(metaprop.runtime_type)
-            else:
-                length = value.get_length()
+        from x2py.event import Event
+        if value is None:
+            return 1
+        length = 0
+        partial = False
+        if isinstance(value, Event):
+            length = Serializer.length_int32(None, value.type_id())
+        elif metaprop.runtime_type != type(value):
+            partial = True
+        if partial:
+            length += value.get_length(metaprop.runtime_type)
         else:
-            length = 0
+            length += value.get_length()
         return Serializer.get_length_nonnegative(length) + length
 
     def write_cell(self, metaprop, value):
-        not_none = (value is not None)
-        partial = not_none and metaprop.runtime_type != type(value)
-        if not_none:
-            if partial:
-                length = value.get_length(metaprop.runtime_type)
-            else:
-                length = value.get_length()
+        from x2py.event import Event
+        if value is None:
+            Serializer.write_variable(self.buffer, 0)  # write_nonnegative
+            return
+        length = 0
+        partial = False
+        is_event = isinstance(value, Event)
+        if is_event:
+            type_id = value.type_id()
+            length = Serializer.length_int32(None, type_id)
+        elif metaprop.runtime_type != type(value):
+            partial = True
+        if partial:
+            length += value.get_length(metaprop.runtime_type)
         else:
-            length = 0
+            length += value.get_length()
         Serializer.write_variable(self.buffer, length)  # write_nonnegative
-        if not_none:
-            if partial:
-                value.serialize(self, metaprop.runtime_type)
-            else:
-                value.serialize(self)
+        if is_event:
+            self.write_int32(None, type_id)
+        if partial:
+            value.serialize(self, metaprop.runtime_type)
+        else:
+            value.serialize(self)
 
     @staticmethod
     def length_list(metaprop, value):

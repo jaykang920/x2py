@@ -28,7 +28,7 @@ class Slot(Fingerprint):
     def remove_ref(self):
         return self.ref_count.decrement()
 
-class Binder(object):
+class Binding(object):
     """Manages evnet-handler bindings."""
 
     class _Filter(object):
@@ -65,7 +65,7 @@ class Binder(object):
 
     def __init__(self):
         self.map = {}  # event => list of handlers
-        self.filter = Binder._Filter()
+        self.filter = Binding._Filter()
         self.rwlock = ReadWriteLock()
 
     def bind(self, event, handler):

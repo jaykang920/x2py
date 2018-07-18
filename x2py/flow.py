@@ -6,7 +6,7 @@ import traceback
 
 from threading import local
 
-from x2py.binder import Binder
+from x2py.binding import Binding
 from x2py.builtin_events import *
 from x2py.case import Case, CaseStack
 from x2py.util.trace import Trace
@@ -23,7 +23,7 @@ class Flow(object):
     def __init__(self, name=None):
         self.name = name if name is not None else type(self).__name__
         self.cases = CaseStack()
-        self.binder = Binder()
+        self.binding = Binding()
 
     @staticmethod
     def bind(event, handler):
@@ -65,7 +65,7 @@ class Flow(object):
         if len(handler_chain) != 0:
             del handler_chain[:]
 
-        self.binder.build_handler_chain(event, event_proxy, handler_chain)
+        self.binding.build_handler_chain(event, event_proxy, handler_chain)
 
         for handler in handler_chain:
             try:
@@ -115,10 +115,10 @@ class Flow(object):
         pass
 
     def subscribe(self, event, handler):
-        return self.binder.bind(event, handler)
+        return self.binding.bind(event, handler)
 
     def _unsubscribe(self, event, handler):
-        self.binder._unbind(event, handler)
+        self.binding._unbind(event, handler)
 
     def unsubscribe(self, event, handler):
-        self.binder.unbind(event, handler)
+        self.binding.unbind(event, handler)

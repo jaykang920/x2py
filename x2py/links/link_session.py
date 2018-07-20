@@ -59,7 +59,7 @@ class LinkSession(object):
 
             type_id = deserializer.read_int32(None)
 
-            event = EventFactory.create(type_id)
+            event = self.link.create_event(type_id)
             if event is None:
                 continue
             event.deserialize(deserializer)

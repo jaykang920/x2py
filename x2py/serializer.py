@@ -5,6 +5,8 @@ import datetime
 import struct
 
 class Serializer(object):
+    """Binary wire format serializer."""
+
     @staticmethod
     def length_bool(metaprop, value):
         return 1

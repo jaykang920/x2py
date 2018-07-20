@@ -4,13 +4,17 @@
 from threading import Lock
 
 from x2py.case import Case
+from x2py.event_factory import EventFactory
 
 class Link(Case):
+    """Common abstract base class for link cases."""
+
     names = set()
     _lock = Lock()
 
     def __init__(self, name):
         super(Link, self).__init__()
+        self.event_factory = EventFactory.new()
         self.buffer_transform = None
         with Link._lock:
             if name in Link.names:
@@ -33,6 +37,14 @@ class Link(Case):
 
     def close(self):
         self.cleanup()
+
+    def create_event(self, type_id):
+        # Try link-local event factory first.
+        result = self.event_factory.create(type_id)
+        if result:
+            return result
+        # If not fount, try the global event factory.
+        return EventFactory.create(type_id)
 
     def send(self, event):
         raise NotImplementedError()

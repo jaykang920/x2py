@@ -24,6 +24,9 @@ class XmlHandler(Handler):
             # Not a valid x2 document.
             return True, unit
 
+        return self._normalize(root)
+
+    def _normalize(self, root):
         unit = Unit()
         if 'namespace' in root.attrib:
             unit.namespace = root.attrib['namespace']

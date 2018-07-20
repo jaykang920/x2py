@@ -195,9 +195,9 @@ class Python3FormatterContext(FormatterContext):
         if Types.is_primitive(typestr):
             return Python3Formatter.native_types[typestr]
         else:
-            return self._format_collection_type(typespec)
+            return self._format_collective_type(typespec)
 
-    def _format_collection_type(self, typespec):
+    def _format_collective_type(self, typespec):
         tokens = [ typespec.typestr ]
         if typespec.details is not None:
             tokens.append('(')

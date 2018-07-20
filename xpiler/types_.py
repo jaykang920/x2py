@@ -38,9 +38,9 @@ class TypeSpec(object):
         return ''.join(tokens)
 
 class TypeProperty(object):
-    def __init__(self, is_primitive, is_collection, detail_required, index):
+    def __init__(self, is_primitive, is_collective, detail_required, index):
         self.is_primitive = is_primitive
-        self.is_collection = is_collection
+        self.is_collective = is_collective
         self.detail_required = detail_required
         self.index = index
 
@@ -57,7 +57,7 @@ def _init_types():
     result["float64"] = TypeProperty(True, False, False, 8)
     result["string"] = TypeProperty(True, False, False, 9)
     result["datetime"] = TypeProperty(True, False, False, 10)
-    # Collection types
+    # Collective types
     result["bytes"] = TypeProperty(False, True, False, 11)
     result["list"] = TypeProperty(False, True, True, 13)
     result["map"] = TypeProperty(False, True, True, 14)
@@ -78,9 +78,9 @@ class Types(object):
         return typestr in Types.map
 
     @staticmethod
-    def is_collection(typestr):
+    def is_collective(typestr):
         type_property = Types.map.get(typestr)
-        return type_property.is_collection if type_property is not None else False
+        return type_property.is_collective if type_property is not None else False
 
     @staticmethod
     def is_primitive(typestr):

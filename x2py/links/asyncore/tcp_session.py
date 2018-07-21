@@ -38,10 +38,7 @@ class TcpSession(LinkSession):
         self.on_receive(data)
 
     def connection_made(self):
-        if self.link.buffer_transform is None:
-            self.link.on_connect(True, self)
-        else:
-            self.link.init_handshake(self)
+        self.link.init_session(self)
 
     def connection_lost(self):
         self.link.on_disconnect(self.handle, self)

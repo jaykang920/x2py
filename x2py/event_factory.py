@@ -19,7 +19,6 @@ class EventFactory(object):
         def create(self, type_id):
             factory_method = self._map.get(type_id)
             if (factory_method is None):
-                Trace.warn("unknown event type id {}", type_id)
                 return None
             return factory_method()
 

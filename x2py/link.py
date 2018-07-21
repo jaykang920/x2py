@@ -15,7 +15,6 @@ class Link(Case):
     def __init__(self, name):
         super(Link, self).__init__()
         self.event_factory = EventFactory.new()
-        self.buffer_transform = None
         with Link._lock:
             if name in Link.names:
                 raise ValueError("link name '{}' is already in use".format(name))
@@ -27,10 +26,6 @@ class Link(Case):
         return self._name
 
     def cleanup(self):
-        if self.buffer_transform is not None:
-            self.buffer_transform.cleanup()
-            self.buffer_transform = None
-
         with Link._lock:
             if self.name in Link.names:
                 Link.names.remove(self.name)

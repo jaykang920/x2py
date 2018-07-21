@@ -10,6 +10,7 @@ sys.path.append('../..')
 import x2py as x2
 
 from x2py.links import *
+from x2py.links.strategies import *
 from x2py.transforms.block_cipher import BlockCipher
 
 from hello_world import *
@@ -28,7 +29,7 @@ class MyCase(x2.Case):
 class MyClient(TcpClient):
     def __init__(self):
         super(MyClient, self).__init__("MyClient")
-        self.buffer_transform = BlockCipher()
+        self.channel_strategy = BufferTransformStrategy(BlockCipher())
 
     def setup(self):
         self.bind(HelloReq(), self.send)

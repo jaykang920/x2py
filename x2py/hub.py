@@ -1,6 +1,7 @@
 # Copyright (c) 2017, 2018 Jae-jun Kang
 # See the file LICENSE for details.
 
+from x2py.builtin_events import HeartbeatEvent
 from x2py.event import Event
 from x2py.flow import Flow
 from x2py.util.rwlock import ReadLock, WriteLock, ReadWriteLock
@@ -116,6 +117,7 @@ class Hub(object):
                     pass
 
     instance = _Hub()
+    heartbeat_event = HeartbeatEvent().setattrs( _transform = False )
 
     def __init__(self):
         raise AssertionError()

@@ -2,6 +2,7 @@
 # See the file LICENSE for details.
 
 from x2py.event_factory import EventFactory
+from x2py.hub import Hub
 from x2py.link import Link
 from x2py.util.ranged_int_pool import RangedIntPool
 from x2py.util.rwlock import ReadLock, WriteLock, ReadWriteLock
@@ -22,15 +23,28 @@ class SessionBasedLink(Link):
     def __init__(self, name):
         super(SessionBasedLink, self).__init__(name)
         self.rwlock = ReadWriteLock()
+        self.channel_strategy = None
+        self.heartbeat_strategy = None
 
-    def init_handshake(self, session):
-        buffer_transform = self.buffer_transform.clone()
-        session.buffer_transform = buffer_transform
+    @property
+    def has_channel_strategy(self):
+        return (self.channel_strategy is not None)
 
-        session.send(HandshakeReq().setattrs(
-            _transform = False,
-            data = buffer_transform.init_handshake()
-        ))
+    @property
+    def has_heartbeat_strategy(self):
+        return (self.heartbeat_strategy is not None)
+
+    def init_session(self, session):
+        if self.has_channel_strategy:
+            self.channel_strategy.before_session_setup(session)
+        if self.has_heartbeat_strategy:
+            self.heartbeat_strategy.before_session_setup(session)
+
+        if self.has_channel_strategy:
+            self.channel_strategy.init_handshake(session)
+        else:
+            self.on_connect(True, session)
+
 
     def on_connect(self, result, context):
         Trace.info("{} connected {} {}", self.name, result, context)
@@ -69,26 +83,48 @@ class SessionBasedLink(Link):
 
     def _setup(self):
         super(SessionBasedLink, self)._setup()
+
         self.bind(LinkSessionConnected().setattrs(link_name = self.name),
             self.on_link_session_connected)
         self.bind(LinkSessionDisconnected().setattrs(link_name = self.name),
             self.on_link_session_disconnected)
 
+        if self.has_channel_strategy:
+            self.channel_strategy.link = self
+            self.channel_strategy.setup()
+
+        if self.has_heartbeat_strategy:
+            self.heartbeat_strategy.link = self
+            self.heartbeat_strategy.setup()
+
+            self.bind(Hub.heartbeat_event, self.on_heartbeat_event)
+
     def _teardown(self):
-        super(SessionBasedLink, self)._teardown()
+        if self.has_heartbeat_strategy:
+            self.heartbeat_strategy.teardown()
+            self.heartbeat_strategy = None
+        if self.has_channel_strategy:
+            self.channel_strategy.teardown()
+            self.channel_strategy = None
+
         self.unbind(LinkSessionConnected().setattrs(link_name = self.name),
             self.on_link_session_connected)
         self.unbind(LinkSessionDisconnected().setattrs(link_name = self.name),
             self.on_link_session_disconnected)
 
-    def on_link_session_connected(self, e):
-        self.on_session_connected(e.result, e.context)
+        super(SessionBasedLink, self)._teardown()
 
-    def on_link_session_disconnected(self, e):
-        self.on_session_disconnected(e.handle, e.context)
+    def on_link_session_connected(self, event):
+        self.on_session_connected(event.result, event.context)
+
+    def on_link_session_disconnected(self, event):
+        self.on_session_disconnected(event.handle, event.context)
 
     def on_session_connected(self, result, context):
         pass
 
     def on_session_disconnected(slef, handle, context):
         pass
+
+    def on_heartbeat_event(self, event):
+        self.heartbeat_strategy.on_heartbeat()

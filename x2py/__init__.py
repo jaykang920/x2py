@@ -2,7 +2,7 @@
 # See the file LICENSE for details.
 """Import core names of x2py."""
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 from x2py.buffer_transform import BufferTransform
 from x2py.builtin_events import *

@@ -16,20 +16,29 @@ class LinkSession(object):
         self.link = link
         self.handle = 0
         self.polarity = False
-        self.buffer_transform = None
-        self.rx_transform_ready = False
-        self.tx_transform_ready = False
         self.rx_buffer = bytearray()
+        self.channel_strategy = None
+        self.heartbeat_strategy = None
+
+    @property
+    def has_channel_strategy(self):
+        return (self.channel_strategy is not None)
+
+    @property
+    def has_heartbeat_strategy(self):
+        return (self.heartbeat_strategy is not None)
 
     def cleanup(self):
-        if self.buffer_transform is not None:
-            self.buffer_transform.cleanup()
-            self.buffer_transform = None
+        if self.has_channel_strategy:
+            self.channel_strategy.cleanup()
 
     def close(self):
         self.cleanup()
 
     def on_receive(self, data):
+        if self.has_heartbeat_strategy:
+            self.heartbeat_strategy.on_receive()
+
         self.rx_buffer += data
 
         deserializer = Deserializer()
@@ -46,13 +55,12 @@ class LinkSession(object):
             buffer = self.rx_buffer[num_bytes:num_bytes + length]
             self.rx_buffer = self.rx_buffer[num_bytes + length:]
 
-            if self.buffer_transform is not None:
-                if self.rx_transform_ready and transformed:
-                    try:
-                        buffer = self.buffer_transform.inverse_transform(buffer)
-                    except Exception as ex:
-                        Trace.error("{} inverse transform error {}", self.link.name, ex)
-                        continue
+            if self.has_channel_strategy and transformed:
+                try:
+                    buffer = self.channel_strategy.after_receive(buffer)
+                except Exception as ex:
+                    Trace.error("{} inverse transform error {}", self.link.name, ex)
+                    continue
 
             deserializer.buffer = buffer
             deserializer.pos = 0
@@ -61,50 +69,27 @@ class LinkSession(object):
 
             event = self.link.create_event(type_id)
             if event is None:
+                Trace.Error("unknown event type id {}", type_id)
                 continue
             event.deserialize(deserializer)
 
             Trace.debug("{} received {}", self.link.name, event)
 
-            if self._process(event):
-                continue
+            processed = False
 
-            event._handle = self.handle
+            if self.has_channel_strategy:
+                processed = self.channel_strategy.process(event)
+            elif not processed and self.has_heartbeat_strategy:
+                processed = self.heartbeat_strategy.process(event)
+            elif not processed:
+                processed = self._process(event)
 
-            Hub.post(event)
+            if not processed:
+                event._handle = self.handle
+                Hub.post(event)
 
     def _process(self, event):
-        type_id = event.type_id()
-        if type_id == LinkEventType.HANDSHAKE_REQ:
-            response = None
-            try:
-                response = self.buffer_transform.handshake(event.data)
-            except Exception as ex:
-                Trace.error("{} error handshaking {}", self.link.name, ex)
-            self.send(HandshakeResp().setattrs(
-                _transform = False,
-                data = response
-            ))
-        elif type_id == LinkEventType.HANDSHAKE_RESP:
-            result = False
-            try:
-                result = self.buffer_transform.fini_handshake(event.data)
-            except Exception as ex:
-                Trace.error("{} error finishing handshake {}", self.link.name, ex)
-            if result:
-                self.rx_transform_ready = True
-            self.send(HandshakeAck().setattrs(
-                _transform = False,
-                result = result
-            ))
-        elif type_id == LinkEventType.HANDSHAKE_ACK:
-            result = event.result
-            if result:
-                self.tx_transform_ready = True
-            self.link.on_connect(result, self)
-        else:
-            return False
-        return True
+        return False
 
     def send(self, event):
         serializer = Serializer()
@@ -113,13 +98,14 @@ class LinkSession(object):
         buffer = serializer.buffer
 
         transformed = False
-        if self.buffer_transform is not None:
-            if self.tx_transform_ready and event._transform:
-                buffer = self.buffer_transform.transform(buffer)
-                transformed = True
+        if self.has_channel_strategy and event._transform:
+            transformed, buffer = self.channel_strategy.before_send(buffer)
 
         header_buffer = self.build_header(buffer, transformed)
 
         data = bytes(header_buffer + buffer)
+
+        if self.has_heartbeat_strategy:
+            self.heartbeat_strategy.on_send(event)
 
         self._send(data)

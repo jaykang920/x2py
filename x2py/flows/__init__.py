@@ -4,3 +4,4 @@
 from x2py.flows.multi_thread_flow import MultiThreadFlow
 from x2py.flows.single_thread_flow import SingleThreadFlow
 from x2py.flows.threadless_flow import ThreadlessFlow
+from x2py.flows.time_flow import TimeFlow

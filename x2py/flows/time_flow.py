@@ -70,7 +70,9 @@ class Timer(object):
             self.reserved.remove(timer_token)
             heapq.heapify(self.reserved)
 
-    def reserve_repetition(self, state, time_delta, next_utc_time=datetime.utcnow()):
+    def reserve_repetition(self, state, time_delta, next_utc_time=None):
+        if next_utc_time is None:
+            next_utc_time = datetime.utcnow() + time_delta
         self.repeater.add(state, Timer.Tag(time_delta, next_utc_time))
 
     def cancel_repetition(self, state):
@@ -130,7 +132,9 @@ class TimeFlow(FrameBasedFlow):
     def cancel(self, timer_token):
         self.timer.cancel(timer_token)
 
-    def reserve_repetition(self, event, time_delta, next_utc_time=datetime.utcnow()):
+    def reserve_repetition(self, event, time_delta, next_utc_time=None):
+        if next_utc_time is None:
+            next_utc_time = datetime.utcnow() + time_delta
         self.timer.reserve_repetition(event, time_delta, next_utc_time)
 
     def cancel_repetition(self, event):

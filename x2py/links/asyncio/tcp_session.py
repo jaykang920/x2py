@@ -16,16 +16,27 @@ class TcpSession(LinkSession, asyncio.Protocol):
 
     def cleanup(self):
         super(TcpSession, self).cleanup()
+        self.transport.close()
+
+    def connected(self):
+        if self.transport is not None:
+            if self.transport._sock is not None:
+                return (self.transport._sock.fileno() >= 0)
+        return False
 
     def connection_made(self, transport):
         self.transport = transport
         self.link.init_session(self)
 
-    def connection_lost(self, transport):
+    def connection_lost(self, exc=None):
         self.link.on_disconnect(self.handle, self)
         self.transport = None
+        super(TcpSession, self).connection_lost(exc)
 
     def data_received(self, data):
+        if not data:
+            self.connection_lost(self.transport)
+            return
         Trace.trace("{} received {}", self.link.name, data)
         self.on_receive(data)
 

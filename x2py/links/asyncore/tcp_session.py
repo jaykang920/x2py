@@ -28,6 +28,12 @@ class TcpSession(LinkSession):
 
     def cleanup(self):
         super(TcpSession, self).cleanup()
+        self.dispatcher.close()
+
+    def connected(self):
+        if self.socket is not None:
+            return (self.socket.fileno() >= 0)
+        return False
 
     def handle_read(self):
         data = self.dispatcher.recv(4096)

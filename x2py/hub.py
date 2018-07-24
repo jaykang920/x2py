@@ -1,9 +1,13 @@
 # Copyright (c) 2017, 2018 Jae-jun Kang
 # See the file LICENSE for details.
 
+from datetime import timedelta
+
 from x2py.builtin_events import HeartbeatEvent
+from x2py.config import Config
 from x2py.event import Event
 from x2py.flow import Flow
+from x2py.flows.time_flow import TimeFlow
 from x2py.util.rwlock import ReadLock, WriteLock, ReadWriteLock
 from x2py.util.trace import Trace
 
@@ -133,6 +137,8 @@ class Hub(object):
         Trace.debug("starting up")
         Hub.instance.setup()
         Hub.instance.start_flows()
+        TimeFlow.get().reserve_repetition(Hub.heartbeat_event, \
+            timedelta(seconds=Config.heartbeat_interval))
         Trace.info("started")
 
     @staticmethod

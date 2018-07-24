@@ -7,6 +7,7 @@ __version__ = '0.4.1'
 from x2py.buffer_transform import BufferTransform
 from x2py.builtin_events import *
 from x2py.case import Case
+from x2py.config import Config
 from x2py.event import Event
 from x2py.event_factory import EventFactory
 from x2py.event_sink import EventSink

@@ -50,6 +50,7 @@ class HeartbeatStrategy(SessionBasedLinkStrategy):
 
     class SubStrategy(LinkSessionStrategy):
         def __init__(self):
+            super(HeartbeatStrategy.SubStrategy, self).__init__()
             self.marked = False
 
         def on_heartbeat(self):

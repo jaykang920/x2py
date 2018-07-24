@@ -33,6 +33,10 @@ class Flow(object):
     def unbind(event, handler):
         Flow.thread_local.current.unsubscribe(event, handler)
 
+    @staticmethod
+    def unbind_with(token):
+        Flow.thread_local.current.unsubscribe(token[0], token[1])
+
     def attach(self):
         from x2py.hub import Hub
         Hub.instance.attach(self)

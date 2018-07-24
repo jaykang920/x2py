@@ -15,7 +15,7 @@ class WaitForSeconds(object):
         TimeFlow.get().reserve(e, timedelta(seconds=seconds))
 
     def on_timeout(self, e):
-        Flow.unbind(self.token[0], self.token[1])
+        Flow.unbind_with(self.token)
         self.coroutine.result = e
         self.coroutine.next()
 
@@ -28,6 +28,6 @@ class WaitForNothing(object):
         e.post()
 
     def on_event(self, e):
-        Flow.unbind(self.token[0], self.token[1])
+        Flow.unbind_with(self.token)
         self.coroutine.result = self.result
         self.coroutine.next()

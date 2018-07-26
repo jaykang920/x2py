@@ -25,7 +25,7 @@ class Coroutine(object):
         if not self.next():
             if self.parent:
                 # Indirectly chain into the parent coroutine.
-                WaitForNothing(self.parent, self.result)
+                WaitForNext(self.parent, self.result)
 
     def next(self):
         if not self.running:

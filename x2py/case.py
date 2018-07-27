@@ -18,7 +18,7 @@ class Case(EventSink):
         backup = Flow.thread_local.current
         Flow.thread_local.current = flow
 
-        self._setup()
+        self.setup()
 
         Flow.thread_local.current = backup
 
@@ -28,19 +28,11 @@ class Case(EventSink):
         backup = Flow.thread_local.current
         Flow.thread_local.current = flow
 
-        self._teardown()
+        self.teardown()
 
         Flow.thread_local.current = backup
 
         self.cleanup()  # eventsink cleanup
-
-    def start(self):
-        """Called after the holding flow starts."""
-        self.on_start()
-
-    def stop(self):
-        """Called before the holding flow stops."""
-        self.on_stop()
 
     def setup(self):
         """Overridden by subclasses to build a initialization chain."""
@@ -57,14 +49,6 @@ class Case(EventSink):
     def on_stop(self):
         """Overridden by subclasses to build a flow shutdown handler chain."""
         pass
-
-    def _setup(self):
-        """Called internally when this case is initialized."""
-        self.setup()
-
-    def _teardown(self):
-        """Called internally when this case is cleaned up."""
-        self.teardown()
 
 class CaseStack(object):
     """Handles a group of cases."""
@@ -108,13 +92,13 @@ class CaseStack(object):
             except BaseException as ex:
                 Trace.error("{} {} teardown: {}", flow.name, type(case).__name__, ex)
 
-    def start(self):
+    def on_start(self):
         for case in self.cases:
-            case.start()
+            case.on_start()
 
-    def stop(self):
+    def on_stop(self):
         for case in reversed(self.cases):
             try:
-                case.stop()
+                case.on_stop()
             except:
                 pass

@@ -83,17 +83,25 @@ class Flow(object):
     def feed(self, event):
         raise NotImplementedError()
 
-    def on_start(self, event):
+    def on_flow_start(self, event):
+        self.on_start()
+        self.cases.on_start()
+
+    def on_flow_stop(self, event):
+        self.cases.on_stop()
+        self.on_stop()
+
+    def on_start(self):
         pass
 
-    def on_stop(self, event):
+    def on_stop(self):
         pass
 
     def _setup(self):
         """Called internally when this flow starts up."""
 
-        self.subscribe(FlowStart(), self.on_start)
-        self.subscribe(FlowStop(), self.on_stop)
+        self.subscribe(FlowStart(), self.on_flow_start)
+        self.subscribe(FlowStop(), self.on_flow_stop)
 
         self.setup()
 
@@ -111,8 +119,8 @@ class Flow(object):
         """Called internally when this flow shuts down."""
         self.teardown()
 
-        self.subscribe(FlowStop(), self.on_stop)
-        self.subscribe(FlowStart(), self.on_start)
+        self.subscribe(FlowStop(), self.on_flow_stop)
+        self.subscribe(FlowStart(), self.on_flow_start)
 
     def teardown(self):
         """Overridden by subclasses to build a flow shutdown handler chain."""

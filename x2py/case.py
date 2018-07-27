@@ -18,7 +18,7 @@ class Case(EventSink):
         backup = Flow.thread_local.current
         Flow.thread_local.current = flow
 
-        self.setup()
+        self._setup()
 
         Flow.thread_local.current = backup
 
@@ -28,7 +28,7 @@ class Case(EventSink):
         backup = Flow.thread_local.current
         Flow.thread_local.current = flow
 
-        self.teardown()
+        self._teardown()
 
         Flow.thread_local.current = backup
 
@@ -49,6 +49,14 @@ class Case(EventSink):
     def on_stop(self):
         """Overridden by subclasses to build a flow shutdown handler chain."""
         pass
+
+    def _setup(self):
+        """Called internally when this case is initialized."""
+        self.setup()
+
+    def _teardown(self):
+        """Called internally when this case is cleaned up."""
+        self.teardown()
 
 class CaseStack(object):
     """Handles a group of cases."""

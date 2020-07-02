@@ -36,6 +36,7 @@ setup(
         'x2py.links.asyncore',
         'x2py.transforms',
         'x2py.util',
+        'x2py.yields',
         'xpiler',
     ],
     scripts=['scripts/x2py.xpiler.py']

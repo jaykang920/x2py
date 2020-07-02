@@ -24,3 +24,9 @@ Installation
 ```
 pip install x2py
 ```
+
+To upgrade x2py PyPI package:
+
+```
+pip install --upgrade x2py
+```

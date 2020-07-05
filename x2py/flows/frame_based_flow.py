@@ -1,6 +1,7 @@
 # Copyright (c) 2017, 2018 Jae-jun Kang
 # See the file LICENSE for details.
 
+import sys
 import time
 from threading import Lock, Thread
 
@@ -12,6 +13,12 @@ from x2py.util.trace import Trace
 
 class Time(object):
     """Utility class to handle time information within a frame-based flow."""
+
+    # time.clock was deprected in 3.3 and removed in 3.8
+    if sys.version_info >= (3, 3):
+        clock = time.perf_counter
+    else:
+        clock = time.clock
 
     def __init__(self):
         pass
@@ -28,10 +35,6 @@ class Time(object):
 
     def after_update(self):
         self.last_clock = self.current_clock
-
-    @staticmethod
-    def clock():
-        return time.clock()
 
 class FrameBasedFlow(Flow):
     """Abstract base class for frame-based (looping) execution flows."""
